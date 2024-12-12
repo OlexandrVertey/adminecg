@@ -1,6 +1,8 @@
 import 'package:adminecg/common/extensions/lang_extension/app_localizations.dart';
+import 'package:adminecg/ui/login_page/login_page.dart';
 import 'package:adminecg/ui/main_app/locale_provider.dart';
 import 'package:adminecg/ui/main_app/main_app.dart';
+import 'package:adminecg/ui/main_management_page/main_management_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +31,8 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: const MainApp(),
+          // home: const LoginPage(),
+          home: const MainManagementPage(),
         );
       },
     );
