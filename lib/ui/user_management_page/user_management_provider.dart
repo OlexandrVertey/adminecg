@@ -1,4 +1,5 @@
 import 'package:adminecg/common/models/user_model/user_model.dart';
+import 'package:adminecg/common/repo/delete_user_repo/delete_user_repo.dart';
 import 'package:adminecg/common/repo/get_all_users_repo/get_all_users_repo.dart';
 import 'package:adminecg/common/repo/get_user_repo/get_user_repo.dart';
 import 'package:adminecg/common/repo/set_user_repo/set_user_repo.dart';
@@ -14,6 +15,7 @@ class UserManagementProvider extends ChangeNotifier {
     required this.getUserRepo,
     required this.updateUserRepo,
     required this.getAllUsersRepo,
+    required this.deleteUserRepo,
   }){
     getUserModel();
   }
@@ -23,6 +25,7 @@ class UserManagementProvider extends ChangeNotifier {
   final GetUserRepo getUserRepo;
   final UpdateUserRepo updateUserRepo;
   final GetAllUsersRepo getAllUsersRepo;
+  final DeleteUserRepo deleteUserRepo;
 
 
   UserManagementState state = UserManagementState();
@@ -32,21 +35,38 @@ class UserManagementProvider extends ChangeNotifier {
   }
 
   void getUserModel() async {
-    print('---UserManagementProvider getUserModel 1');
     try {
-      print('---UserManagementProvider getUserModel 2');
-      List<UserModel>? listUserModel = await getAllUsersRepo.getAllUsers();
-      print('---UserManagementProvider getUserModel 33 = ${listUserModel?[0].userUid}');
-      print('---UserManagementProvider getUserModel 34 = ${listUserModel?[1].userUid}');
-      print('---UserManagementProvider getUserModel 35 = ${listUserModel?[2].userUid}');
-    } catch (e) {
-      print('---UserManagementProvider getUserModel catch = ${e}');
-    }
+      state.listUserModel = await getAllUsersRepo.getAllUsers();
+    } catch (e) {}
+    notifyListeners();
+  }
+
+  void deleteUser({required String userUid}) async {
+    try {
+      await deleteUserRepo.deleteUser(userUid: userUid);
+      getUserModel();
+    } catch (e) {}
+  }
+
+  void updateUser({required String userUid, required String fullName, required String email}) async {
+    print('---Provider updateUser 1 userUid = ${userUid}');
+    print('---Provider updateUser 2 fullName = ${fullName}');
+    print('---Provider updateUser 3 email = ${email}');
+    try {
+      await updateUserRepo.updateUser(
+        userUid: userUid,
+        fullName: fullName,
+        email: email,
+      );
+      print('---Provider updateUser 4');
+      getUserModel();
+      print('---Provider updateUser 5');
+    } catch (e) {}
     notifyListeners();
   }
 
 }
 
 class UserManagementState {
-  // List<UserModel>? listUserModel;
+  List<UserModel> listUserModel = [];
 }

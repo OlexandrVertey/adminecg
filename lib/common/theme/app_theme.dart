@@ -91,7 +91,7 @@ class AppTheme {
         ),
         headlineSmall: TextStyle(
           color: textColorLight,
-          fontFamily: 'assets/fonts/PlusJakartaSans-Regular.ttf',
+          fontFamily: 'InterLight',
           fontSize: 14,
         ),
       ),
@@ -164,8 +164,8 @@ class AppTheme {
         ),
         headlineSmall: TextStyle(
           color: textColorDark,
-          fontFamily: 'assets/fonts/PlusJakartaSans-Bold.ttf',
-          fontSize: 20,
+          fontFamily: 'InterLight',
+          fontSize: 14,
         ),
       ),
     );
@@ -212,6 +212,8 @@ class AppTheme {
 // Weight 400
 // Size 10px
 
-/// Font Plus Jakarta Sans - headlineSmall
-// Weight 400
+/// Font InterLight - headlineSmall
+// Weight 300
 // Size 14px
+
+

@@ -7,12 +7,14 @@ class AppButton extends StatelessWidget {
     required this.onTap,
     this.isLoading,
     this.isActive = true,
+    this.width = 500,
   });
 
   final String text;
   final Function() onTap;
   final bool? isLoading;
   final bool isActive;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class AppButton extends StatelessWidget {
       child: Container(
         alignment: Alignment.center,
         height: 56,
-        width: 500,
+        width: width,
         decoration: BoxDecoration(
           color: isActive ? const Color(0xff0A4E74) : Colors.white,
           borderRadius: const BorderRadius.all(Radius.circular(15.0)),

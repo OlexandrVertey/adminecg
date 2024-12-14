@@ -6,25 +6,16 @@ class GetAllUsersRepo {
 
   final UsersCollection usersCollection;
 
-  Future<List<UserModel>?> getAllUsers() async {
+  Future<List<UserModel>> getAllUsers() async {
     try {
-      await usersCollection.collectionReference
-          // .where('countryName', isEqualTo: countryName)
-          // .where('id', isNotEqualTo: userUid)
-          .get()
-          .then((value) {
-        if (value.docs.isNotEmpty) {
-          print('---GetUserRepo 1 = ${value.docs.map((e) => UserModel.fromJson(e.data() as Map<String, dynamic>)).first.userUid}');
-          return value.docs.map((e) => UserModel.fromJson(e.data() as Map<String, dynamic>)).toList();
-          // return UserModel.fromJson(value.docs as Map<String, dynamic>);
-        } else {
-          print('---getAllUsers 2');
-          return null;
-        }
-      });
+      final users = await usersCollection.collectionReference.get();
+      if (users.docs.isNotEmpty) {
+        return users.docs.map((e) => UserModel.fromJson(e.data() as Map<String, dynamic>)).toList();
+      } else {
+        return [];
+      }
     } catch (e) {
-      print('---GetUserRepo 3 e = ${e}');
+      return [];
     }
-    return null;
   }
 }

@@ -92,3 +92,6 @@ flutter:
     - family: JakartaExtraBold
       fonts:
         - asset: assets/fonts/PlusJakartaSans-ExtraBold.ttf
+    - family: InterLight
+      fonts:
+        - asset: assets/fonts/Inter_18pt-Light.ttf

@@ -1,4 +1,5 @@
 import 'package:adminecg/common/extensions/lang_extension/app_localizations.dart';
+import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/login_page/login_page.dart';
 import 'package:adminecg/ui/main_app/locale_provider.dart';
 import 'package:adminecg/ui/main_app/main_app.dart';
@@ -27,10 +28,7 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
           ],
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-            useMaterial3: true,
-          ),
+          theme: AppTheme.light(),
           // home: const LoginPage(),
           home: const MainManagementPage(),
         );
