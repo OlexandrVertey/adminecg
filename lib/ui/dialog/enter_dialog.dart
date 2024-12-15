@@ -5,25 +5,34 @@ class EnterDialog {
   static Future<void> show(
     BuildContext context,
     String title,
-    Function(String) success, {
+    Function(String en, String he) success, {
     String? imagePath,
     String? currentValue,
   }) async {
-    TextEditingController controller =
+    TextEditingController controllerEn =
         TextEditingController(text: currentValue);
+    TextEditingController controllerHe =
+    TextEditingController(text: currentValue);
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('AlertDialog Title'),
+          title: const Text('Enter Text'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('This is a demo alert dialog.'),
+                Text('Enter EN version'),
                 TextFieldWidget(
-                  controllerText: controller,
-                  hintTextField: 'full name',
+                  controllerText: controllerEn,
+                  hintTextField: 'EN version',
+                  textInputType: TextInputType.text,
+                ),
+                SizedBox(height: 16,),
+                Text('Enter HE version'),
+                TextFieldWidget(
+                  controllerText: controllerHe,
+                  hintTextField: 'HE version',
                   textInputType: TextInputType.text,
                 ),
               ],
@@ -31,9 +40,12 @@ class EnterDialog {
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('ok'),
+              child: const Text('Ok'),
               onPressed: () {
-                Navigator.of(context).pop();
+                if(controllerEn.text.isNotEmpty || controllerHe.text.isNotEmpty ){
+                  Navigator.of(context).pop();
+                  success(controllerEn.text, controllerHe.text);
+                }
               },
             ),
             TextButton(

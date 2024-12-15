@@ -19,35 +19,99 @@ class DiagnosisTopicsPage extends StatefulWidget {
 }
 
 class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
+
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      widget.diagnosisRepo.fetch().then((_)=> setState(() {}));
+      widget.topicRepo.fetch().then((_)=> setState(() {}));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          AddEventWidget(
-            title: 'Diagnosis',
-            textButton: 'Diagnos',
-            onTap: () {
-              EnterDialog.show(context, 'title', (value) {});
-            },
+    return Row(
+      children: [
+        SizedBox(
+          width: 16,
+        ),
+        Expanded(
+          child: Card(
+            child: Column(
+              children: [
+                AddEventWidget(
+                  title: 'Diagnosis',
+                  textButton: 'Diagnos',
+                  onTap: () {
+                    EnterDialog.show(context, 'title', (en, he) {
+                      widget.diagnosisRepo.add(en, he).then((_)=> setState(() {}));
+                    });
+                  },
+                ),
+                Expanded(
+                  child: widget.diagnosisRepo.list.isEmpty ? _empty() : _diagnosisList(),
+                ),
+              ],
+            ),
           ),
-          SizedBox(
-            height: 100,
-            child: Placeholder(),
+        ),
+        SizedBox(
+          width: 16,
+        ),
+        Expanded(
+          child: Card(
+            child: Column(
+              children: [
+                AddEventWidget(
+                  title: 'Topics',
+                  textButton: 'Topic',
+                  onTap: () {
+                    EnterDialog.show(context, 'title', (en, he) {
+                      widget.topicRepo.add(en, he).then((_)=> setState(() {}));
+                    });
+                  },
+                ),
+                Expanded(
+                  child: widget.topicRepo.list.isEmpty ? _empty() : _topicList(),
+                ),
+              ],
+            ),
           ),
-          AddEventWidget(
-            title: 'Topics',
-            textButton: 'Topic',
-            onTap: () {
-              EnterDialog.show(context, 'title', (value) {});
-            },
-          ),
-          SizedBox(
-            height: 100,
-            child: Placeholder(),
-          ),
-        ],
-      ),
+        ),
+        SizedBox(
+          width: 16,
+        ),
+      ],
+    );
+  }
+
+  Widget _topicList(){
+    return ListView.builder(
+      itemCount: widget.topicRepo.list.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          title: Text(widget.topicRepo.list[index].titleEn),
+        );
+      },
+    );
+  }
+
+  Widget _diagnosisList(){
+    return ListView.builder(
+      itemCount: widget.topicRepo.list.length,
+      itemBuilder: (BuildContext context, int index) {
+        return ListTile(
+          title: Text(widget.topicRepo.list[index].titleEn),
+        );
+      },
+    );
+  }
+
+  Widget _empty(){
+    return Center(
+      child: Text('Empty'),
     );
   }
 }

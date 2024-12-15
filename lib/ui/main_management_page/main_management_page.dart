@@ -33,6 +33,8 @@ class _MainManagementPageState extends State<MainManagementPage> {
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             LeftAdminBar(
               currentIndex: index,
