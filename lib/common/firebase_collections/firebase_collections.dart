@@ -14,3 +14,29 @@ class UsersCollection extends Collection {
     _ref = cloud_firestore.FirebaseFirestore.instance.collection('Users');
   }
 }
+
+class TopicCollection extends Collection {
+  TopicCollection() {
+    _ref = cloud_firestore.FirebaseFirestore.instance.collection('Topic');
+  }
+}
+
+class DiagnosisCollection extends Collection {
+  DiagnosisCollection() {
+    _ref = cloud_firestore.FirebaseFirestore.instance.collection('Diagnosis');
+  }
+}
+
+class EventCollection extends Collection {
+  EventCollection() {
+    _ref = cloud_firestore.FirebaseFirestore.instance.collection('Event');
+  }
+}
+
+class LearningCollection extends Collection {
+  LearningCollection() {
+    _ref = cloud_firestore.FirebaseFirestore.instance.collection('Learning');
+  }
+}
+
+
