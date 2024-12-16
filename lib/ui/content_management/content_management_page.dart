@@ -21,23 +21,23 @@ class ContentManagementPage extends StatefulWidget {
 class _ContentManagementPageState extends State<ContentManagementPage> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return const SingleChildScrollView(
       child: Column(
         children: [
-          AddEventWidget(
-            title: 'Practice Mode',
-            textButton: 'Question',
-            onTap: () => context.openEventDialog(() => setState(() {})),
-          ),
+          // AddEventWidget(
+          //   title: 'Practice Mode',
+          //   textButton: 'Question',
+          //   onTap: () => context.openEventDialog(() => setState(() {})),
+          // ),
           SizedBox(
             height: 100,
             child: Placeholder(),
           ),
-          AddEventWidget(
-            title: 'Learning mode',
-            textButton: 'Topic',
-            onTap: () {},
-          ),
+          // AddEventWidget(
+          //   title: 'Learning mode',
+          //   textButton: 'Topic',
+          //   onTap: () {},
+          // ),
           SizedBox(
             height: 100,
             child: Placeholder(),

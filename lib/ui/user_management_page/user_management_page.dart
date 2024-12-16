@@ -180,7 +180,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           SizedBox(
             width: 25,
             child: Text(
-              index < 10 ? "0${index + 1}" : "${index + 1}",
+              index < 9 ? "0${index + 1}" : "${index + 1}",
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: const Color(0xff1A1919),
                 fontSize: 12,

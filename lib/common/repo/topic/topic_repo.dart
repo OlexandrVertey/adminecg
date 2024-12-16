@@ -2,36 +2,35 @@ import 'package:adminecg/common/firebase_collections/firebase_collections.dart';
 import 'package:adminecg/common/models/topic/topic_model.dart';
 import 'package:flutter/foundation.dart';
 
-class TopicRepo{
+class TopicRepo {
+  TopicRepo({required this.topicCollection});
 
-  TopicRepo(this.collection);
-  final TopicCollection collection;
-  List<TopicModel>list = [];
+  final TopicCollection topicCollection;
 
-  Future fetch() async {
+  List<TopicModel> list = [];
+
+  Future<List<TopicModel>> getListTopicModel() async {
     try {
-      final diagnosis = await collection.collectionReference.get();
+      final diagnosis = await topicCollection.collectionReference.get();
       if (kDebugMode) {
         print('Topics fetch. Topics = ${diagnosis.docs.length}');
       }
       if (diagnosis.docs.isNotEmpty) {
-        list = diagnosis.docs
-            .map((e) =>
-            TopicModel.fromJson(e.data() as Map<String, dynamic>))
-            .toList();
+        list = diagnosis.docs.map((e) => TopicModel.fromJson(e.data() as Map<String, dynamic>)).toList();
+        return list;
       }
     } catch (e) {
       print('Topics fetch. Error = $e');
     }
+    return [];
   }
 
-  Future add(String en, String he) async {
+  Future addTopic({required String en, required String he}) async {
     String id = list.length.toString();
     try {
-      await collection.collectionReference
-          .doc(list.length.toString())
+      await topicCollection.collectionReference.doc(list.length.toString())
           .set(TopicModel(id: id, titleEn: en, titleHe: he).toJson());
-      await fetch();
+      await getListTopicModel();
       if (kDebugMode) {
         print('Topics add. Success');
       }
@@ -42,10 +41,8 @@ class TopicRepo{
 
   Future edit(TopicModel model) async {
     try {
-      await collection.collectionReference
-          .doc(model.id)
-          .set(model.toJson());
-      await fetch();
+      await topicCollection.collectionReference.doc(model.id).set(model.toJson());
+      await getListTopicModel();
 
       if (kDebugMode) {
         print('Topics edit. Success');
@@ -57,7 +54,7 @@ class TopicRepo{
 
   Future remove(TopicModel model) async {
     try {
-      await collection.collectionReference.doc(model.id).delete();
+      await topicCollection.collectionReference.doc(model.id).delete();
       if (kDebugMode) {
         print('Topics remove. Success');
       }
@@ -65,5 +62,4 @@ class TopicRepo{
       print('Topics remove. Error = $e');
     }
   }
-
 }

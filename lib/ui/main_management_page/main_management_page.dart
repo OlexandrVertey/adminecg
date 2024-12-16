@@ -28,8 +28,8 @@ class _MainManagementPageState extends State<MainManagementPage> {
     ];
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      context.read<DiagnosisRepo>().fetch();
-      context.read<TopicRepo>().fetch();
+      context.read<DiagnosisRepo>().getListDiagnoseModel();
+      context.read<TopicRepo>().getListTopicModel();
     });
   }
 

@@ -1,12 +1,12 @@
-class DiagnosisModel {
+class DiagnoseModel {
   final String id;
   final String titleEn;
   final String titleHe;
 
-  DiagnosisModel(
+  DiagnoseModel(
       {required this.id, required this.titleEn, required this.titleHe});
 
-  factory DiagnosisModel.fromJson(Map<String, dynamic> json) => DiagnosisModel(
+  factory DiagnoseModel.fromJson(Map<String, dynamic> json) => DiagnoseModel(
         id: json["id"],
         titleEn: json["titleEn"],
         titleHe: json["titleHe"],

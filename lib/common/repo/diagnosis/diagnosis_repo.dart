@@ -3,11 +3,11 @@ import 'package:adminecg/common/models/diagnosis/diagnosis_model.dart';
 import 'package:flutter/foundation.dart';
 
 class DiagnosisRepo {
-  DiagnosisRepo(this.collection);
+  DiagnosisRepo({required this.diagnosisCollection});
 
-  final DiagnosisCollection collection;
+  final DiagnosisCollection diagnosisCollection;
 
-  List<DiagnosisModel> list = [];
+  List<DiagnoseModel> list = [];
 
   List<String> ids() {
     List<String> list = ['-1'];
@@ -29,30 +29,28 @@ class DiagnosisRepo {
     return '';
   }
 
-  Future fetch() async {
+  Future<List<DiagnoseModel>> getListDiagnoseModel() async {
     try {
-      final diagnosis = await collection.collectionReference.get();
+      final diagnosis = await diagnosisCollection.collectionReference.get();
       if (kDebugMode) {
         print('Diagnosis fetch. Diagnisis = ${diagnosis.docs.length}');
       }
       if (diagnosis.docs.isNotEmpty) {
-        list = diagnosis.docs
-            .map((e) =>
-                DiagnosisModel.fromJson(e.data() as Map<String, dynamic>))
-            .toList();
+        list = diagnosis.docs.map((e) => DiagnoseModel.fromJson(e.data() as Map<String, dynamic>)).toList();
+        return list;
       }
     } catch (e) {
       print('Diagnosis fetch. Error = $e');
     }
+    return [];
   }
 
-  Future add(String en, String he) async {
+  Future<void> addDiagnose({required String en, required String he}) async {
     String id = list.length.toString();
     try {
-      await collection.collectionReference
-          .doc(list.length.toString())
-          .set(DiagnosisModel(id: id, titleEn: en, titleHe: he).toJson());
-      await fetch();
+      await diagnosisCollection.collectionReference.doc(list.length.toString())
+          .set(DiagnoseModel(id: id, titleEn: en, titleHe: he).toJson());
+      await getListDiagnoseModel();
       if (kDebugMode) {
         print('Diagnosis add. Success');
       }
@@ -61,10 +59,10 @@ class DiagnosisRepo {
     }
   }
 
-  Future edit(DiagnosisModel model) async {
+  Future edit(DiagnoseModel model) async {
     try {
-      await collection.collectionReference.doc(model.id).set(model.toJson());
-      await fetch();
+      await diagnosisCollection.collectionReference.doc(model.id).set(model.toJson());
+      await getListDiagnoseModel();
 
       if (kDebugMode) {
         print('Diagnosis edit. Success');
@@ -74,9 +72,9 @@ class DiagnosisRepo {
     }
   }
 
-  Future remove(DiagnosisModel model) async {
+  Future remove(DiagnoseModel model) async {
     try {
-      await collection.collectionReference.doc(model.id).delete();
+      await diagnosisCollection.collectionReference.doc(model.id).delete();
       if (kDebugMode) {
         print('Diagnosis remove. Success');
       }
