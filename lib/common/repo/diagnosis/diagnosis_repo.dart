@@ -9,6 +9,26 @@ class DiagnosisRepo {
 
   List<DiagnosisModel> list = [];
 
+  List<String> ids() {
+    List<String> list = ['-1'];
+    for (var value in this.list) {
+      list.add(value.id);
+    }
+    return list;
+  }
+
+  String value(String id, String locale) {
+    if (id == '-1') {
+      return '';
+    }
+    final index = list.indexWhere((e) => e.id == id);
+    print('---------- $index');
+    if (index >= 0) {
+      return list[index].titleEn;
+    }
+    return '';
+  }
+
   Future fetch() async {
     try {
       final diagnosis = await collection.collectionReference.get();
@@ -43,9 +63,7 @@ class DiagnosisRepo {
 
   Future edit(DiagnosisModel model) async {
     try {
-      await collection.collectionReference
-          .doc(model.id)
-          .set(model.toJson());
+      await collection.collectionReference.doc(model.id).set(model.toJson());
       await fetch();
 
       if (kDebugMode) {

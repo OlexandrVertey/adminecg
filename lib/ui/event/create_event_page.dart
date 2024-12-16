@@ -3,7 +3,6 @@ import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
-import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:flutter/material.dart';
 
 class CreateEventPage extends StatefulWidget {
@@ -25,20 +24,22 @@ class CreateEventPage extends StatefulWidget {
 }
 
 class _CreateEventPageState extends State<CreateEventPage> {
+  late List<String> ids;
 
   String? image;
   late final TextEditingController textController;
-  String? correctAnswer;
-  String? answerA;
-  String? answerB;
-  String? answerC;
-  String? answerD;
+  String correctAnswer = '-1';
+  String answerA = '-1';
+  String answerB = '-1';
+  String answerC = '-1';
+  String answerD = '-1';
   bool isPremium = false;
 
   @override
   void initState() {
+    ids = widget.diagnosisRepo.ids();
     textController = TextEditingController(text: widget.eventModel?.text);
-    if(widget.eventModel != null){
+    if (widget.eventModel != null) {
       correctAnswer = widget.eventModel!.correctAnswer;
       answerA = widget.eventModel!.answerA;
       answerB = widget.eventModel!.answerB;
@@ -56,74 +57,81 @@ class _CreateEventPageState extends State<CreateEventPage> {
         borderRadius: BorderRadius.circular(26.0),
       ),
       content: Container(
-        constraints: BoxConstraints(
-          maxWidth: 350
-        ),
+        constraints: BoxConstraints(maxWidth: 350),
         child: Column(
           // crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'title',
-              // textAlign: TextAlign.center,
               style: Theme.of(context)
                   .textTheme
                   .headlineMedium
                   ?.copyWith(fontSize: 28),
             ),
             const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Name",
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium
-                    ?.copyWith(fontSize: 14, color: Colors.black),
+            _dropDown(correctAnswer, ids, (value) {
+              setState(() {
+                correctAnswer = value;
+              });
+            }),
+            const SizedBox(height: 16),
+            Text(
+              'Image',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontSize: 28),
+            ),
+            Card(
+              child: SizedBox(
+                width: 360,
+                height: 100,
+                child: Container(
+                  color: Colors.red,
+                ),
               ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Answers',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontSize: 28),
             ),
             const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Email",
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium
-                    ?.copyWith(fontSize: 14, color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 10),
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Password",
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium
-                    ?.copyWith(fontSize: 14, color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Organization",
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium
-                    ?.copyWith(fontSize: 14, color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 20),
-            // const SelectDialogWidget(),
+            _dropDown(answerA, ids, (value) {
+              setState(() {
+                answerA = value;
+              });
+            }),
+            const SizedBox(height: 16),
+            _dropDown(answerB, ids, (value) {
+              setState(() {
+                answerB = value;
+              });
+            }),
+            const SizedBox(height: 16),
+            _dropDown(answerC, ids, (value) {
+              setState(() {
+                answerC = value;
+              });
+            }),
+            const SizedBox(height: 16),
+            _dropDown(answerD, ids, (value) {
+              setState(() {
+                answerD = value;
+              });
+            }),
             const SizedBox(height: 30),
             _premium(),
             const SizedBox(height: 10),
             AppButton(
               width: 370,
-              text: widget.eventModel != null ? 'Update Question' : 'Add New Question',
+              text: widget.eventModel != null
+                  ? 'Update Question'
+                  : 'Add New Question',
               isActive: true,
               // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
               onTap: () {},
@@ -141,16 +149,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
     );
   }
 
-  Widget _premium(){
+  Widget _premium() {
     return Row(
       children: [
         Expanded(
           child: AppButton(
             width: 370,
             text: 'Free',
-            isActive: true,
-            // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
-            onTap: () {},
+            isActive: isPremium == false,
+            onTap: () => setState(() => isPremium = false),
           ),
         ),
         const SizedBox(width: 10),
@@ -158,11 +165,33 @@ class _CreateEventPageState extends State<CreateEventPage> {
           child: AppButton(
             width: 370,
             text: 'Premium',
-            isActive: false,
-            onTap: () => context.backPage(),
+            isActive: isPremium == true,
+            onTap: () => setState(() => isPremium = true),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _dropDown(
+    String value,
+    List<String> values,
+    Function(String newValue) onChanged,
+  ) {
+    return DropdownButton(
+      value: value,
+      icon: const Icon(Icons.keyboard_arrow_down),
+      items: values.map((String items) {
+        return DropdownMenuItem(
+          value: items,
+          child: Text(widget.diagnosisRepo.value(items, 'locale')),
+        );
+      }).toList(),
+      onChanged: (e) {
+        if (e != null) {
+          onChanged(e);
+        }
+      },
     );
   }
 }

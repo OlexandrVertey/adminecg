@@ -24,10 +24,6 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      widget.diagnosisRepo.fetch().then((_)=> setState(() {}));
-      widget.topicRepo.fetch().then((_)=> setState(() {}));
-    });
   }
 
   @override

@@ -1,9 +1,12 @@
+import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
+import 'package:adminecg/common/repo/topic/topic_repo.dart';
 import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/content_management/content_management_module.dart';
 import 'package:adminecg/ui/diagnosis_topics/diagnosis_topics_module.dart';
 import 'package:adminecg/ui/user_management_page/user_management_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class MainManagementPage extends StatefulWidget {
   const MainManagementPage({super.key});
@@ -24,6 +27,10 @@ class _MainManagementPageState extends State<MainManagementPage> {
       const DiagnosisTopicsModule(),
     ];
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      context.read<DiagnosisRepo>().fetch();
+      context.read<TopicRepo>().fetch();
+    });
   }
 
   @override
