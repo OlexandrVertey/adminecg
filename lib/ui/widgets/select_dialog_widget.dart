@@ -1,100 +1,163 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class SelectDialogWidget extends StatefulWidget {
-  const SelectDialogWidget({super.key});
+  const SelectDialogWidget({
+    super.key,
+    required this.title,
+    required this.firstItem,
+    required this.secondItem,
+  });
+
+  final String title;
+  final String firstItem;
+  final String secondItem;
 
   @override
   State<SelectDialogWidget> createState() => _SelectDialogWidgetState();
 }
 
 class _SelectDialogWidgetState extends State<SelectDialogWidget> with TickerProviderStateMixin {
-  Animation<double>? _animationSport;
-  AnimationController? _controllerShowSport;
-  // AnimationController? _controllerRotationSport;
-  bool _rotationSport = false;
+  late AnimationController _controller;
+  final _animationDuration = const Duration(milliseconds: 300);
+
+  bool _isExpanded = false;
+  String _selectedText = '';
 
   @override
   void initState() {
     super.initState();
-    _controllerShowSport = AnimationController(
-      duration: const Duration(milliseconds: 400),
+    _selectedText = widget.title;
+    _controller = AnimationController(
+      duration: _animationDuration,
       vsync: this,
-    );
-    // _controllerRotationSport = AnimationController(
-    //   vsync: this,
-    //   duration: const Duration(milliseconds: 300),
-    //   upperBound: 0.5,
-    // );
-    _animationSport = CurvedAnimation(
-      parent: _controllerShowSport!,
-      curve: Curves.linear,
     );
   }
 
   @override
   void dispose() {
+    _controller.dispose();
     super.dispose();
-    _controllerShowSport!.dispose();
-    // _controllerRotationSport!.dispose();
-  }
-
-  _showSport() {
-    if (_animationSport!.status != AnimationStatus.completed) {
-      _controllerShowSport!.forward();
-    } else {
-      _controllerShowSport!.animateBack(
-        0,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeOut,
-      );
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return SizeTransition(
-      sizeFactor: _animationSport!,
-      axis: Axis.vertical,
-      child: InkWell(
-        onTap: () {
-          setState(() {
-            if (_rotationSport) {
-              _controllerShowSport!..forward(from: 0.0);
-            } else {
-              _controllerShowSport!..reverse(from: 0.5);
-            }
-            _rotationSport = !_rotationSport;
-            _showSport();
-          });
-        },
-        child: Container(
-          height: 50,
-          width: 100,
-          color: Colors.grey,
-          child: Column(
-            children: [
-              Container(
-                height: 50,
-                width: 100,
-                color: Colors.red,
-              ),
-              Container(
-                height: 50,
-                width: 100,
-                color: Colors.blue,
-              ),
-              Container(
-                height: 50,
-                width: 100,
-                color: Colors.green,
-              ),
-            ],
+    return Column(
+      children: [
+        InkWell(
+          hoverColor: Colors.transparent,
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          onTap: () {
+            _isExpanded ? _controller.reverse() : _controller.forward();
+            setState(() {
+              _isExpanded = !_isExpanded;
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 15,
+              vertical: 11,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: _isExpanded
+                  ? const BorderRadius.only(
+                      topRight: Radius.circular(15.0),
+                      topLeft: Radius.circular(15.0),
+                    )
+                  : const BorderRadius.all(Radius.circular(15.0)),
+              border: Border.all(color: Colors.black.withOpacity(0.1), width: 1.3),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _selectedText,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
+                ),
+                _isExpanded
+                    ? const Icon(Icons.keyboard_arrow_down, color: Colors.grey)
+                    : const Icon(
+                        Icons.keyboard_arrow_up,
+                        color: Colors.grey,
+                      )
+              ],
+            ),
           ),
         ),
-      ),
+        SizeTransition(
+          sizeFactor: Tween<double>(begin: 0, end: 1).animate(
+            CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
+          ),
+          axisAlignment: -1,
+          axis: Axis.vertical,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 15,
+              vertical: 11,
+            ),
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(15.0),
+                bottomRight: Radius.circular(15.0),
+              ),
+              border: Border(
+                left: BorderSide(color: Colors.black.withOpacity(0.1), width: 1.3),
+                right: BorderSide(color: Colors.black.withOpacity(0.1), width: 1.3),
+                bottom: BorderSide(color: Colors.black.withOpacity(0.1), width: 1.3),
+              ),
+            ),
+            child: Column(
+              children: [
+                InkWell(
+                  hoverColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    _isExpanded ? _controller.reverse() : _controller.forward();
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                      _selectedText = widget.firstItem;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 11,
+                    ),
+                    child: Text(
+                      widget.firstItem,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  hoverColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () {
+                    _isExpanded ? _controller.reverse() : _controller.forward();
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                      _selectedText = widget.secondItem;
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 11,
+                    ),
+                    child: Text(
+                      widget.secondItem,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
-// SvgPicture.asset("assets/images/svg/edit.svg")
-// SvgPicture.asset("assets/images/svg/delete.svg"),

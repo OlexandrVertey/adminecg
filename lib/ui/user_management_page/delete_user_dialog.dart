@@ -33,7 +33,7 @@ class DeleteUserDialog extends StatelessWidget {
           AppButton(
             text: 'Yes  (Delete)',
             isActive: true,
-            onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
+            onTap: () => context.read<UserManagementProvider>().deleteUser(context: context, userUid: userUid),
           ),
           const  SizedBox(height: 20),
           AppButton(

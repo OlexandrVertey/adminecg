@@ -5,6 +5,7 @@ import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/common/repo/get_all_users_repo/get_all_users_repo.dart';
 import 'package:adminecg/common/repo/get_user_repo/get_user_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
+import 'package:adminecg/common/repo/register_repo/register_repo.dart';
 import 'package:adminecg/common/repo/set_user_repo/set_user_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
 import 'package:adminecg/common/repo/update_user_repo/update_user_repo.dart';
@@ -12,15 +13,18 @@ import 'package:adminecg/common/shared_preference/shared_preference.dart';
 import 'package:adminecg/ui/login_page/login_page_provider.dart';
 import 'package:adminecg/ui/main_app/locale_provider.dart';
 import 'package:adminecg/ui/user_management_page/user_management_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void runAppWithInjectedDependencies({required Widget app}) async {
   final sharedPreference = await SharedPreferences.getInstance();
+  final FirebaseAuth auth = FirebaseAuth.instance;
   runApp(
     CollectionsDependenciesProvider(
       sharedPreference: sharedPreference,
+      auth: auth,
       child: app,
     ),
   );
@@ -31,6 +35,7 @@ class CollectionsDependenciesProvider extends MultiProvider {
     super.key,
     required SharedPreferences sharedPreference,
     required Widget child,
+    required FirebaseAuth auth,
   }) : super(providers: [
     Provider<SharedPreference>(create: (context) => SharedPreference(sharedPreference)),
     Provider<UsersCollection>(create: (context) => UsersCollection()),
@@ -40,6 +45,7 @@ class CollectionsDependenciesProvider extends MultiProvider {
     Provider<LearningCollection>(create: (context) => LearningCollection()),
   ],
     child: RepoDependenciesProvider(
+      auth: auth,
       child: child,
     ),
   );
@@ -49,7 +55,9 @@ class RepoDependenciesProvider extends MultiProvider {
   RepoDependenciesProvider({
     super.key,
     required Widget child,
+    required FirebaseAuth auth,
   }) : super(providers: [
+    Provider<RegisterRepo>(create: (context) => RegisterRepo(auth: auth)),
     Provider<SetUserRepo>(create: (context) => SetUserRepo(usersCollection: context.read<UsersCollection>())),
     Provider<GetUserRepo>(create: (context) => GetUserRepo(usersCollection: context.read<UsersCollection>())),
     Provider<UpdateUserRepo>(create: (context) => UpdateUserRepo(usersCollection: context.read<UsersCollection>())),
@@ -82,6 +90,7 @@ class BlocDependenciesProvider extends StatelessWidget {
             updateUserRepo: context.read<UpdateUserRepo>(),
             getAllUsersRepo: context.read<GetAllUsersRepo>(),
             deleteUserRepo: context.read<DeleteUserRepo>(),
+            registerRepo: context.read<RegisterRepo>(),
           ),
         ),
       ],

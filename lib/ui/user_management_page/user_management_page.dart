@@ -1,4 +1,5 @@
 import 'package:adminecg/common/models/user_model/user_model.dart';
+import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/user_management_page/delete_user_dialog.dart';
 import 'package:adminecg/ui/user_management_page/edit_user_dialog.dart';
 import 'package:adminecg/ui/user_management_page/user_management_provider.dart';
@@ -17,8 +18,6 @@ class _UserManagementPageState extends State<UserManagementPage> {
   final TextEditingController _userNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final bool _editUser = false;
-  final int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -32,70 +31,136 @@ class _UserManagementPageState extends State<UserManagementPage> {
   Widget build(BuildContext context) {
     return Consumer<UserManagementProvider>(
         builder: (context, value, child) {
-          return Container(
-            padding: const EdgeInsets.all(25),
-            decoration: BoxDecoration(
-              borderRadius: const BorderRadius.all(Radius.circular(26.0)),
-              border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 5,
-                  blurRadius: 7,
-                  offset: const Offset(0, 3),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+          return Column(
+            children: [
+              SizedBox(
+                width: 743,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _titleItemWidget(title: 'No.'),
-                    const SizedBox(width: 37),
-                    _titleItemWidget(title: 'Name'),
-                    const SizedBox(width: 100),
-                    _titleItemWidget(title: 'Email'),
-                    const SizedBox(width: 180),
-                    _titleItemWidget(title: 'Organization'),
-                    const SizedBox(width: 60),
-                    _titleItemWidget(title: 'Status'),
-                    const SizedBox(width: 70),
-                    _titleItemWidget(title: 'Edit'),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Add New User',
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Users  List',
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
+                        ),
+                      ],
+                    ),
+                    InkWell(
+                      hoverColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () => showDialog(
+                        context: context,
+                        builder: (_) => EditUserDialog(
+                          title: 'Add New User',
+                          userNameController: _userNameController,
+                          emailController: _emailController,
+                          passwordController: _passwordController,
+                          nameButton: 'Create & Send Login Details',
+                          callBack: () => value.registerUser(
+                            context: context,
+                            userName: _userNameController.text,
+                            email: _emailController.text,
+                            password: _passwordController.text,
+                          ),
+                        ),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 25),
+                        alignment: Alignment.center,
+                        height: 56,
+                        width: 180,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff0A4E74),
+                          borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                          border: Border.all(color: const Color(0xff0A4E74), width: 1.3),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Add New User',
+                              style: Theme.of(context).textTheme.labelSmall!.copyWith(
+                                color: Colors.white,
+                              ),
+                            ),
+                            const Icon(Icons.add, color: Colors.white)
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  width: 690,
-                  height: 1,
-                  color: Colors.grey.withOpacity(0.5),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                width: 743,
+                padding: const EdgeInsets.all(25),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+                  border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
                 ),
-                if (value.state.listUserModel.isNotEmpty)
-                SizedBox(
-                  width: 690,
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    shrinkWrap: true,
-                    itemCount: value.state.listUserModel.length,
-                    itemBuilder: (context, index) {
-                      UserModel item = value.state.listUserModel[index];
-                      return _itemUserWidget(
-                        item: item,
-                        index: index,
-                        // deleteUser: () => value.deleteUser(userUid: item.userUid!),
-                        updateUser: () {
-                          value.updateUser(userUid: item.userUid!,
-                            fullName: '',
-                            email: '',
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        _titleItemWidget(title: 'No.'),
+                        const SizedBox(width: 37),
+                        _titleItemWidget(title: 'Name'),
+                        const SizedBox(width: 100),
+                        _titleItemWidget(title: 'Email'),
+                        const SizedBox(width: 180),
+                        _titleItemWidget(title: 'Organization'),
+                        const SizedBox(width: 60),
+                        _titleItemWidget(title: 'Status'),
+                        const SizedBox(width: 70),
+                        _titleItemWidget(title: 'Edit'),
+                      ],
+                    ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      width: 690,
+                      height: 1,
+                      color: Colors.grey.withOpacity(0.5),
+                    ),
+                    if (value.state.listUserModel.isNotEmpty)
+                    SizedBox(
+                      width: 690,
+                      child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        itemCount: value.state.listUserModel.length,
+                        itemBuilder: (context, index) {
+                          UserModel item = value.state.listUserModel[index];
+                          return _itemUserWidget(
+                            item: item,
+                            index: index,
                           );
                         },
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
     );
@@ -104,8 +169,6 @@ class _UserManagementPageState extends State<UserManagementPage> {
   Widget _itemUserWidget({
     required UserModel item,
     required int index,
-    // required Function() deleteUser,
-    required Function() updateUser,
   }) {
     return Container(
       height: 25,
@@ -127,9 +190,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           const SizedBox(width: 37),
           SizedBox(
             width: 83,
-            child: _editUser && _selectedIndex == index
-              ? _itemTextFieldWidget(controller: _userNameController, width: 83)
-              : Text(
+            child: Text(
                   item.fullName!,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                     color: const Color(0xff1A1919),
@@ -140,9 +201,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           const SizedBox(width: 55),
           SizedBox(
             width: 190,
-            child: _editUser && _selectedIndex == index
-              ? _itemTextFieldWidget(controller: _emailController, width: 190)
-              : Text(
+            child: Text(
               item.email!,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: const Color(0xff1A1919),
@@ -174,7 +233,6 @@ class _UserManagementPageState extends State<UserManagementPage> {
           ),
           const SizedBox(width: 36),
           InkWell(
-            // onTap: () => deleteUser(),
             onTap: () => showDialog(
                 context: context,
                 builder: (_) => DeleteUserDialog(title: 'Delete User', userUid: item.userUid!),
@@ -184,6 +242,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
           const SizedBox(width: 10),
           InkWell(
             onTap: () {
+              _userNameController.text = item.fullName!;
+              _emailController.text = item.email!;
+              _passwordController.text = item.password!;
               showDialog(
                 context: context,
                 builder: (_) => EditUserDialog(
@@ -192,30 +253,21 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   userNameController: _userNameController,
                   emailController: _emailController,
                   passwordController: _passwordController,
+                  nameButton: 'Update & Send Login Details',
+                  callBack: () => context.read<UserManagementProvider>().updateUser(
+                    context: context,
+                    userUid: item.userUid!,
+                    fullName: _userNameController.text,
+                    email: _emailController.text,
+                    password: _passwordController.text,
+                  ),
                 ),
               );
-              // setState(() {
-              //   _editUser = !_editUser;
-              //   _selectedIndex = index;
-              //   if (_editUser) {
-              //     _userNameController.text = item.fullName!;
-              //     _emailController.text = item.email!;
-              //   }
-              //
-              //     if (!_editUser && _selectedIndex == index) {
-              //       print('---Page Update user OnTap');
-              //       context.read<UserManagementProvider>().updateUser(
-              //         userUid: item.userUid!,
-              //         fullName: _userNameController.text,
-              //         email: _emailController.text,
-              //       );
-              //   }
-              // });
             },
             child: SvgPicture.asset(
               width: 20,
               height: 20,
-              "assets/images/svg/${_editUser && _selectedIndex == index ? "save.svg" : "edit.svg"}",
+              "assets/images/svg/edit.svg",
             ),
           ),
         ],
@@ -228,27 +280,6 @@ class _UserManagementPageState extends State<UserManagementPage> {
       title,
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
         color: const Color(0xff656575),
-      ),
-    );
-  }
-
-  Widget _itemTextFieldWidget({required TextEditingController controller, required double width}) {
-    return SizedBox(
-      width: width,
-      child: TextField(
-        maxLines: 1,
-        onChanged: (text) {},
-        textCapitalization: TextCapitalization.words,
-        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-          color: const Color(0xff1A1919),
-          fontSize: 12,
-        ),
-        controller: controller,
-        textAlign: TextAlign.start,
-          decoration: const InputDecoration(
-            isDense: true,
-            border: InputBorder.none,
-          ),
       ),
     );
   }
