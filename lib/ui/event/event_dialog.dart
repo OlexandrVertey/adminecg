@@ -106,7 +106,7 @@ class EditUserDialog extends StatelessWidget {
 
 
           const SizedBox(height: 20),
-          const SelectDialogWidget(),
+          // const SelectDialogWidget(),
 
 
           const SizedBox(height: 30),

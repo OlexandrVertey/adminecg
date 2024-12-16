@@ -117,7 +117,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               ),
             ),
             const SizedBox(height: 20),
-            const SelectDialogWidget(),
+            // const SelectDialogWidget(),
             const SizedBox(height: 30),
             _premium(),
             const SizedBox(height: 10),
