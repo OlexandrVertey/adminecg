@@ -3,6 +3,7 @@ import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
+import 'package:adminecg/ui/widgets/toast.dart';
 import 'package:flutter/material.dart';
 
 class CreateEventPage extends StatefulWidget {
@@ -134,7 +135,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   : 'Add New Question',
               isActive: true,
               // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
-              onTap: () {},
+              onTap: () => done(),
             ),
             const SizedBox(height: 10),
             AppButton(
@@ -193,5 +194,17 @@ class _CreateEventPageState extends State<CreateEventPage> {
         }
       },
     );
+  }
+
+  void done() {
+    if (correctAnswer == '-1' ||
+        answerA == '-1' ||
+        answerB == '-1' ||
+        answerC == '-1' ||
+        answerD == '-1') {
+      print('');
+      Toast.show(message: 'Error');
+      return;
+    }
   }
 }
