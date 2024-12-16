@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
@@ -27,7 +29,8 @@ class CreateEventPage extends StatefulWidget {
 class _CreateEventPageState extends State<CreateEventPage> {
   late List<String> ids;
 
-  String? image;
+  String? currentImage;
+  Uint8List? newImage;
   late final TextEditingController textController;
   String correctAnswer = '-1';
   String answerA = '-1';
@@ -197,14 +200,43 @@ class _CreateEventPageState extends State<CreateEventPage> {
   }
 
   void done() {
-    if (correctAnswer == '-1' ||
-        answerA == '-1' ||
+    if (correctAnswer == '-1') {
+      Toast.show(message: 'Select diagnosis');
+      return;
+    }
+    if (answerA == '-1' ||
         answerB == '-1' ||
         answerC == '-1' ||
         answerD == '-1') {
-      print('');
-      Toast.show(message: 'Error');
+      Toast.show(message: 'Select all answers');
       return;
     }
+
+    if (answerA == answerB ||
+        answerA == answerC ||
+        answerA == answerD ||
+        answerB == answerC ||
+        answerB == answerD ||
+        answerC == answerD) {
+      Toast.show(message: 'Answers do not must repeat');
+      return;
+    }
+
+    if (correctAnswer != answerA &&
+        correctAnswer != answerB &&
+        correctAnswer != answerC &&
+        correctAnswer != answerD) {
+      Toast.show(message: 'Answers must have correct answer');
+      return;
+    }
+
+
+    if(currentImage == null && newImage == null){
+      Toast.show(message: 'Set Image please');
+      return;
+    }
+    Toast.show(message: 'Done');
   }
+
+
 }
