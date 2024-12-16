@@ -9,14 +9,14 @@ class UpdateUserRepo {
     required String userUid,
     required String fullName,
     required String email,
-    // required String password,
+    required String password,
   }) async {
     try {
       print('---UpdateUserRepo try userUid = ${userUid}');
       await usersCollection.collectionReference.doc(userUid).update({
         'fullName': fullName,
         'email': email,
-        // 'password': password,
+        'password': password,
       });
     } catch (e) {
       print('---UpdateUserRepo e = ${e}');
