@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
 import 'package:adminecg/ui/widgets/add_event_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -97,7 +100,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   }
 }
 
-class EventItemWidget extends StatelessWidget {
+class EventItemWidget extends StatefulWidget {
   const EventItemWidget({
     super.key,
     required this.model,
@@ -110,6 +113,34 @@ class EventItemWidget extends StatelessWidget {
   final Function() remove;
 
   @override
+  State<EventItemWidget> createState() => _EventItemWidgetState();
+}
+
+class _EventItemWidgetState extends State<EventItemWidget> {
+
+  Uint8List? image;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImageUrl();
+  }
+
+  Future<void> _loadImageUrl() async {
+    try {
+      Reference ref = FirebaseStorage.instance.ref().child('diagnose').child(widget.model.image);
+      Uint8List? downloadedImage = await ref.getData();
+      if(downloadedImage != null){
+        setState(() {
+          image = downloadedImage;
+        });
+      }
+    } catch (e) {
+      print('Error retrieving image URL: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 200,
@@ -117,21 +148,14 @@ class EventItemWidget extends StatelessWidget {
       child: Column(
         children: [
           Expanded(
-            child: CachedNetworkImage(
-              progressIndicatorBuilder: (context, url, progress) => Center(
-                child: CircularProgressIndicator(
-                  value: progress.progress,
-                ),
-              ),
-              imageUrl: model.image,
-            ),
+            child: image != null ? Image.memory(image!) : Center(child: Text('data')),
           ),
           Row(
             children: [
               Text('data'),
               Spacer(),
               InkWell(
-                onTap: edit,
+                onTap: widget.edit,
                 child: SvgPicture.asset(
                   width: 20,
                   height: 20,
@@ -142,7 +166,7 @@ class EventItemWidget extends StatelessWidget {
                 width: 16,
               ),
               InkWell(
-                onTap: remove,
+                onTap: widget.remove,
                 child: SvgPicture.asset(
                   width: 20,
                   height: 20,

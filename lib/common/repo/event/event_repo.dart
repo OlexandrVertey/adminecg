@@ -30,7 +30,7 @@ class EventRepo{
   Future add(EventModel model) async {
     String id = DateTime.now().millisecondsSinceEpoch.toString();
     try {
-      await collection.collectionReference.doc(model.id)
+      await collection.collectionReference.doc(id)
           .set(model.toJson());
       await getList();
       if (kDebugMode) {

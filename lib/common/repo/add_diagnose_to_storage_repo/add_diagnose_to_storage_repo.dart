@@ -30,38 +30,46 @@ class AddDiagnoseToStorageRepo {
   // }
 
   Future<void> addDiagnose({
-    String? name,
-    String? path,
     required Function(String) callBack,
     required Uint8List data,
+    required String name,
   }) async {
-    if (name != null && name.isNotEmpty) {
-      final uploadTask = diagnoseStorage.storageReference.child('diagnose').child(name).putData(data);
-
-      await Future(() => uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) async {
-            switch (taskSnapshot.state) {
-              case TaskState.running:
-                final progress = 100.0 * (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
-                print("Upload is $progress% complete.");
-                break;
-              case TaskState.paused:
-                print("Upload is paused.");
-                callBack('');
-              case TaskState.canceled:
-                print("Upload was canceled");
-                callBack('');
-              case TaskState.error:
-                print("Error");
-                callBack('');
-              case TaskState.success:
-                String imageUrl = await diagnoseStorage.storageReference.child("diagnose").child(name).getDownloadURL();
-                print('---addDiagnose Repo callBack = ${imageUrl}');
-                callBack(imageUrl);
-            }
-          }));
-    } else {
-      callBack('');
-    }
-    callBack('');
+    final uploadTask = diagnoseStorage.storageReference
+        .child('diagnose')
+        .child(name)
+        .putData(data);
+    await Future(() =>
+        uploadTask.snapshotEvents.listen((TaskSnapshot taskSnapshot) async {
+          switch (taskSnapshot.state) {
+            case TaskState.running:
+              final progress = 100.0 *
+                  (taskSnapshot.bytesTransferred / taskSnapshot.totalBytes);
+              print("Upload is $progress% complete.");
+              break;
+            case TaskState.paused:
+              print("Upload is paused.");
+              callBack('');
+              break;
+            case TaskState.canceled:
+              print("Upload was canceled");
+              callBack('');
+              break;
+            case TaskState.error:
+              print("Error");
+              callBack('');
+              break;
+            case TaskState.success:
+              String imageUrl = await diagnoseStorage.storageReference
+                  .child("diagnose")
+                  .child(name)
+                  .getDownloadURL();
+              print('---addDiagnose Repo callBack = ${imageUrl}');
+              callBack(imageUrl);
+              break;
+            default:
+              callBack('');
+              break;
+          }
+        }));
   }
 }

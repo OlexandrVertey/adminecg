@@ -22,7 +22,6 @@ class DiagnosisRepo {
       return '';
     }
     final index = list.indexWhere((e) => e.id == id);
-    print('---------- $index');
     if (index >= 0) {
       return list[index].titleEn;
     }

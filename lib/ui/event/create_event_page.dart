@@ -1,12 +1,17 @@
 import 'dart:typed_data';
 
+import 'package:adminecg/admin_ecg_app.dart';
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/common/models/event/event_model.dart';
+import 'package:adminecg/common/repo/add_diagnose_to_storage_repo/add_diagnose_to_storage_repo.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
+import 'package:adminecg/ui/widgets/image_compressor.dart';
+import 'package:adminecg/ui/widgets/image_picker.dart';
 import 'package:adminecg/ui/widgets/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CreateEventPage extends StatefulWidget {
   const CreateEventPage({
@@ -56,96 +61,112 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      contentPadding: const EdgeInsets.all(35),
+      contentPadding: EdgeInsets.all(35),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(26.0),
       ),
       content: Container(
-        constraints: BoxConstraints(maxWidth: 350),
-        child: Column(
-          // crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'title',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(fontSize: 28),
-            ),
-            const SizedBox(height: 16),
-            _dropDown(correctAnswer, ids, (value) {
-              setState(() {
-                correctAnswer = value;
-              });
-            }),
-            const SizedBox(height: 16),
-            Text(
-              'Image',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(fontSize: 28),
-            ),
-            Card(
-              child: SizedBox(
-                width: 360,
-                height: 100,
-                child: Container(),
+        constraints: BoxConstraints(maxWidth: 380),
+        child: ScrollConfiguration(
+          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+          child: SingleChildScrollView(
+            child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'title',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontSize: 28),
+                  ),
+                  const SizedBox(height: 16),
+                  _dropDown(correctAnswer, ids, (value) {
+                    setState(() {
+                      correctAnswer = value;
+                    });
+                  }),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Image',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontSize: 28),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      var a = await AppImagePicker.getImage();
+                      if(a != null){
+                        setState(() {
+                          newImage = a;
+                        });
+                      }
+                    },
+                    child: Card(
+                      child: SizedBox(
+                        width: 360,
+                        height: 150,
+                        child: _image(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Answers',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontSize: 28),
+                  ),
+                  const SizedBox(height: 10),
+                  _dropDown(answerA, ids, (value) {
+                    setState(() {
+                      answerA = value;
+                    });
+                  }),
+                  const SizedBox(height: 16),
+                  _dropDown(answerB, ids, (value) {
+                    setState(() {
+                      answerB = value;
+                    });
+                  }),
+                  const SizedBox(height: 16),
+                  _dropDown(answerC, ids, (value) {
+                    setState(() {
+                      answerC = value;
+                    });
+                  }),
+                  const SizedBox(height: 16),
+                  _dropDown(answerD, ids, (value) {
+                    setState(() {
+                      answerD = value;
+                    });
+                  }),
+                  const SizedBox(height: 30),
+                  _premium(),
+                  const SizedBox(height: 10),
+                  AppButton(
+                    width: 360,
+                    text: widget.eventModel != null
+                        ? 'Update Question'
+                        : 'Add New Question',
+                    isActive: true,
+                    // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
+                    onTap: () => done(),
+                  ),
+                  const SizedBox(height: 10),
+                  AppButton(
+                    width: 360,
+                    text: 'Back',
+                    isActive: false,
+                    onTap: () => context.backPage(),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Answers',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(fontSize: 28),
-            ),
-            const SizedBox(height: 10),
-            _dropDown(answerA, ids, (value) {
-              setState(() {
-                answerA = value;
-              });
-            }),
-            const SizedBox(height: 16),
-            _dropDown(answerB, ids, (value) {
-              setState(() {
-                answerB = value;
-              });
-            }),
-            const SizedBox(height: 16),
-            _dropDown(answerC, ids, (value) {
-              setState(() {
-                answerC = value;
-              });
-            }),
-            const SizedBox(height: 16),
-            _dropDown(answerD, ids, (value) {
-              setState(() {
-                answerD = value;
-              });
-            }),
-            const SizedBox(height: 30),
-            _premium(),
-            const SizedBox(height: 10),
-            AppButton(
-              width: 370,
-              text: widget.eventModel != null
-                  ? 'Update Question'
-                  : 'Add New Question',
-              isActive: true,
-              // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
-              onTap: () => done(),
-            ),
-            const SizedBox(height: 10),
-            AppButton(
-              width: 370,
-              text: 'Back',
-              isActive: false,
-              onTap: () => context.backPage(),
-            ),
-          ],
+            )
+          ),
         ),
       ),
     );
@@ -156,7 +177,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       children: [
         Expanded(
           child: AppButton(
-            width: 370,
+            width: 360,
             text: 'Free',
             isActive: isPremium == false,
             onTap: () => setState(() => isPremium = false),
@@ -165,7 +186,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         const SizedBox(width: 10),
         Expanded(
           child: AppButton(
-            width: 370,
+            width: 360,
             text: 'Premium',
             isActive: isPremium == true,
             onTap: () => setState(() => isPremium = true),
@@ -195,6 +216,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
         }
       },
     );
+  }
+
+  Widget _image(){
+    if(newImage != null){
+      return Image.memory(newImage!, fit: BoxFit.cover,);
+    }
+    return Container();
   }
 
   Future<void> done() async {
@@ -228,20 +256,34 @@ class _CreateEventPageState extends State<CreateEventPage> {
       return;
     }
 
+    if (currentImage == null && newImage == null) {
+      Toast.show(message: 'Set Image please');
+      return;
+    }
 
-    String tempImage =
-        'https://pharmaceutical-journal.com/wp-content/uploads/2023/03/ecg-reading.jpg';
-    // if (currentImage == null && newImage == null) {
-    //   Toast.show(message: 'Set Image please');
-    //   return;
-    // }
+    if(newImage != null){
+      resizeAndCompressImage(newImage!, (image) async{
+        String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
+        await context.read<AddDiagnoseToStorageRepo>().addDiagnose(name: name, callBack: (uri){
+          if(uri.isNotEmpty){
+            setModel(name);
+          } else {
+            Toast.show(message: 'Image error');
+          }
+        }, data: image);
+      });
+    }
 
+    if(currentImage != null){
+      setModel(currentImage!);
+    }
+  }
 
-
+  void setModel(String downloadImageUri) async{
     var model = EventModel(
       id: widget.eventModel?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
-      image: tempImage,
+      image: downloadImageUri,
       text: textController.text,
       correctAnswer: correctAnswer,
       answerA: answerA,
