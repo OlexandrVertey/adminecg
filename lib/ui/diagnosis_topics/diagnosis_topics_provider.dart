@@ -1,17 +1,8 @@
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/common/models/diagnosis/diagnosis_model.dart';
 import 'package:adminecg/common/models/topic/topic_model.dart';
-import 'package:adminecg/common/models/user_model/user_model.dart';
-import 'package:adminecg/common/repo/delete_user_repo/delete_user_repo.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
-import 'package:adminecg/common/repo/get_all_users_repo/get_all_users_repo.dart';
-import 'package:adminecg/common/repo/get_user_repo/get_user_repo.dart';
-import 'package:adminecg/common/repo/register_repo/register_repo.dart';
-import 'package:adminecg/common/repo/set_user_repo/set_user_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
-import 'package:adminecg/common/repo/update_user_repo/update_user_repo.dart';
-import 'package:adminecg/common/shared_preference/shared_preference.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

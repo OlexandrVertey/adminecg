@@ -1,5 +1,6 @@
 import 'package:adminecg/common/firebase_collections/firebase_collections.dart';
 import 'package:adminecg/common/firebase_storage/firebase_storage.dart';
+import 'package:adminecg/common/repo/add_diagnose_to_storage_repo/add_diagnose_to_storage_repo.dart';
 import 'package:adminecg/common/repo/delete_user_repo/delete_user_repo.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
@@ -70,6 +71,7 @@ class RepoDependenciesProvider extends MultiProvider {
     Provider<TopicRepo>(create: (context) => TopicRepo(topicCollection: context.read<TopicCollection>())),
     Provider<EventRepo>(create: (context) => EventRepo(context.read<EventCollection>())),
     Provider<LearningRepo>(create: (context) => LearningRepo(context.read<LearningCollection>())),
+    Provider<AddDiagnoseToStorageRepo>(create: (context) => AddDiagnoseToStorageRepo(diagnoseStorage: context.read<DiagnoseStorage>())),
   ],
     child: BlocDependenciesProvider(child: child),
   );

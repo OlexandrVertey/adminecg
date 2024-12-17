@@ -33,7 +33,7 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
   Widget build(BuildContext context) {
     return Consumer<DiagnosisTopicsProvider>(
       builder: (context, value, child) {
-        return Row(
+        return Wrap(
           children: [
             Container(
               width: 460,
@@ -260,7 +260,7 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
     required Function() remove,
   }) {
     return Container(
-      height: 25,
+      height: 30,
       margin: const EdgeInsets.only(bottom: 10.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
