@@ -46,9 +46,9 @@ class DiagnosisRepo {
   }
 
   Future<void> addDiagnose({required String en, required String he}) async {
-    String id = list.length.toString();
+    String id = DateTime.now().millisecondsSinceEpoch.toString();
     try {
-      await diagnosisCollection.collectionReference.doc(list.length.toString())
+      await diagnosisCollection.collectionReference.doc(id)
           .set(DiagnoseModel(id: id, titleEn: en, titleHe: he).toJson());
       await getListDiagnoseModel();
       if (kDebugMode) {
@@ -73,6 +73,7 @@ class DiagnosisRepo {
   }
 
   Future remove(DiagnoseModel model) async {
+    print('Diagnosis remove. Start $model');
     try {
       await diagnosisCollection.collectionReference.doc(model.id).delete();
       if (kDebugMode) {
