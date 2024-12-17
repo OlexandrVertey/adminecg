@@ -1,4 +1,5 @@
 import 'package:adminecg/common/firebase_collections/firebase_collections.dart';
+import 'package:adminecg/common/firebase_storage/firebase_storage.dart';
 import 'package:adminecg/common/repo/delete_user_repo/delete_user_repo.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
@@ -39,6 +40,7 @@ class CollectionsDependenciesProvider extends MultiProvider {
     required FirebaseAuth auth,
   }) : super(providers: [
     Provider<SharedPreference>(create: (context) => SharedPreference(sharedPreference)),
+    Provider<DiagnoseStorage>(create: (context) => DiagnoseStorage()),
     Provider<UsersCollection>(create: (context) => UsersCollection()),
     Provider<TopicCollection>(create: (context) => TopicCollection()),
     Provider<DiagnosisCollection>(create: (context) => DiagnosisCollection()),
