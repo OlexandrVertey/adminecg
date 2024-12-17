@@ -26,21 +26,45 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   List<Widget> listEvent = [];
   List<Widget> listLearning = [];
 
-  Future<void> fetchEvent() async {}
+  Future<void> fetchEvent() async {
+    EventRepo repo = context.read<EventRepo>();
+    repo.getList().then((_) {
+      setEventOnScreen();
+    });
+  }
 
-  Future<void> fetchLearning() async {}
+  void setEventOnScreen() {
+    listEvent.clear();
+    EventRepo repo = context.read<EventRepo>();
+    for (var model in repo.list) {
+      listEvent.add(
+        EventItemWidget(
+          model: model,
+          edit: () {
+            context.openEventDialog(() => setEventOnScreen(), event: model);
+          },
+          remove: () {
+            context
+                .read<EventRepo>()
+                .remove(model)
+                .then((_) => setEventOnScreen());
+          },
+        ),
+      );
+    }
+    setState(() {});
+  }
+
+  Future<void> fetchLearning() async {
+    listLearning.clear();
+  }
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      EventRepo repo = context.read<EventRepo>();
-      repo.getList().then((_) {
-        for (var e in repo.list) {
-          listEvent.add(EventItemWidget(model: e, edit: (){}, remove: (){},));
-        }
-        setState(() {});
-      });
+      fetchEvent();
+      fetchLearning();
     });
   }
 
@@ -92,15 +116,16 @@ class EventItemWidget extends StatelessWidget {
       height: 90,
       child: Column(
         children: [
-          Expanded(child:  CachedNetworkImage(
-            progressIndicatorBuilder: (context, url, progress) => Center(
-              child: CircularProgressIndicator(
-                value: progress.progress,
+          Expanded(
+            child: CachedNetworkImage(
+              progressIndicatorBuilder: (context, url, progress) => Center(
+                child: CircularProgressIndicator(
+                  value: progress.progress,
+                ),
               ),
+              imageUrl: model.image,
             ),
-            imageUrl:
-            model.image,
-          ),),
+          ),
           Row(
             children: [
               Text('data'),

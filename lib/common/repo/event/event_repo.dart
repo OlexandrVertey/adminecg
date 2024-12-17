@@ -15,14 +15,14 @@ class EventRepo{
     try {
       final diagnosis = await collection.collectionReference.get();
       if (kDebugMode) {
-        print('Topics fetch. Topics = ${diagnosis.docs.length}');
+        print('Event fetch. Topics = ${diagnosis.docs.length}');
       }
       if (diagnosis.docs.isNotEmpty) {
         list = diagnosis.docs.map((e) => EventModel.fromJson(e.data() as Map<String, dynamic>)).toList();
         return list;
       }
     } catch (e) {
-      print('Topics fetch. Error = $e');
+      print('Event fetch. Error = $e');
     }
     return [];
   }
@@ -34,10 +34,10 @@ class EventRepo{
           .set(model.toJson());
       await getList();
       if (kDebugMode) {
-        print('Topics add. Success');
+        print('Event add. Success');
       }
     } catch (e) {
-      print('Topics add. Error = $e');
+      print('Event add. Error = $e');
     }
   }
 
@@ -47,21 +47,22 @@ class EventRepo{
       await getList();
 
       if (kDebugMode) {
-        print('Topics edit. Success');
+        print('Event edit. Success');
       }
     } catch (e) {
-      print('Topics edit. Error = $e');
+      print('Event edit. Error = $e');
     }
   }
 
   Future remove(EventModel model) async {
     try {
       await collection.collectionReference.doc(model.id).delete();
+      await getList();
       if (kDebugMode) {
-        print('Topics remove. Success');
+        print('Event remove. Success');
       }
     } catch (e) {
-      print('Topics remove. Error = $e');
+      print('Event remove. Error = $e');
     }
   }
 
