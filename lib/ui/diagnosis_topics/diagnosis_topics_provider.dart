@@ -51,6 +51,30 @@ class DiagnosisTopicsProvider extends ChangeNotifier {
     context.backPage();
   }
 
+  Future<void> editDiagnose(BuildContext context, DiagnoseModel model) async {
+    await diagnosisRepo.edit(model);
+    await getDiagnoseModel();
+    context.backPage();
+  }
+
+  Future<void> removeDiagnose(DiagnoseModel model) async {
+    await diagnosisRepo.remove(model);
+    await getDiagnoseModel();
+    updatePage();
+  }
+
+  Future<void> editTopic(BuildContext context, TopicModel model) async {
+    await topicRepo.edit(model);
+    await getTopicModel();
+    context.backPage();
+  }
+
+  Future<void> removeTopic(TopicModel model) async {
+    await topicRepo.remove(model);
+    await getTopicModel();
+    updatePage();
+  }
+
 }
 
 class DiagnosisTopicsState {

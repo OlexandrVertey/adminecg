@@ -26,9 +26,9 @@ class TopicRepo {
   }
 
   Future addTopic({required String en, required String he}) async {
-    String id = list.length.toString();
+    String id = DateTime.now().millisecondsSinceEpoch.toString();
     try {
-      await topicCollection.collectionReference.doc(list.length.toString())
+      await topicCollection.collectionReference.doc(id)
           .set(TopicModel(id: id, titleEn: en, titleHe: he).toJson());
       await getListTopicModel();
       if (kDebugMode) {

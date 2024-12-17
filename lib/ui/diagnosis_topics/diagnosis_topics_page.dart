@@ -1,9 +1,12 @@
 import 'package:adminecg/common/extensions/navigation.dart';
+import 'package:adminecg/common/models/diagnosis/diagnosis_model.dart';
+import 'package:adminecg/common/models/topic/topic_model.dart';
 import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/diagnosis_topics/diagnosis_topics_provider.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class DiagnosisTopicsPage extends StatefulWidget {
@@ -58,12 +61,18 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                         children: [
                           Text(
                             'Add New Diagnosis',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(fontSize: 22),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Diagnosis  List',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(color: AppTheme.textColorLight),
                           ),
                         ],
                       ),
@@ -104,6 +113,26 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                           return _itemWidget(
                             item: item.titleEn,
                             index: index,
+                            edit: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => _addNewItemDialogWidget(
+                                  title: 'Edit Diagnose',
+                                  callBack: () {
+                                    var newModel = DiagnoseModel(
+                                        id: item.id,
+                                        titleEn: _itemEnController.text,
+                                        titleHe: _itemHeController.text);
+                                    value.editDiagnose(context, newModel);
+                                    _itemEnController.clear();
+                                    _itemHeController.clear();
+                                  },
+                                ),
+                              );
+                            },
+                            remove: () {
+                              value.removeDiagnose(item);
+                            },
                           );
                         },
                       ),
@@ -138,12 +167,18 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                         children: [
                           Text(
                             'Add New Topic',
-                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineMedium
+                                ?.copyWith(fontSize: 22),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Topic  List',
-                            style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelSmall
+                                ?.copyWith(color: AppTheme.textColorLight),
                           ),
                         ],
                       ),
@@ -184,6 +219,26 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                           return _itemWidget(
                             item: item.titleEn,
                             index: index,
+                            edit: () {
+                              showDialog(
+                                context: context,
+                                builder: (_) => _addNewItemDialogWidget(
+                                  title: 'Edit Diagnose',
+                                  callBack: () {
+                                    var newModel = TopicModel(
+                                        id: item.id,
+                                        titleEn: _itemEnController.text,
+                                        titleHe: _itemHeController.text);
+                                    value.editTopic(context, newModel);
+                                    _itemEnController.clear();
+                                    _itemHeController.clear();
+                                  },
+                                ),
+                              );
+                            },
+                            remove: () {
+                              value.removeTopic(item);
+                            },
                           );
                         },
                       ),
@@ -201,6 +256,8 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
   Widget _itemWidget({
     required String item,
     required int index,
+    required Function() edit,
+    required Function() remove,
   }) {
     return Container(
       height: 25,
@@ -230,6 +287,26 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                   ),
             ),
           ),
+          Spacer(),
+          InkWell(
+            onTap: edit,
+            child: SvgPicture.asset(
+              width: 20,
+              height: 20,
+              "assets/images/svg/edit.svg",
+            ),
+          ),
+          SizedBox(
+            width: 16,
+          ),
+          InkWell(
+            onTap: remove,
+            child: SvgPicture.asset(
+              width: 20,
+              height: 20,
+              "assets/images/svg/delete.svg",
+            ),
+          )
         ],
       ),
     );
@@ -275,14 +352,20 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 28),
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontSize: 28),
             ),
             const SizedBox(height: 16),
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 "EN version",
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium
+                    ?.copyWith(fontSize: 14, color: Colors.black),
               ),
             ),
             const SizedBox(height: 10),
@@ -300,7 +383,10 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
               alignment: Alignment.centerLeft,
               child: Text(
                 "HE version",
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium
+                    ?.copyWith(fontSize: 14, color: Colors.black),
               ),
             ),
             const SizedBox(height: 10),
