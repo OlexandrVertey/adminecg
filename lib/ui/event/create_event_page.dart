@@ -91,9 +91,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
               child: SizedBox(
                 width: 360,
                 height: 100,
-                child: Container(
-                  color: Colors.red,
-                ),
+                child: Container(),
               ),
             ),
             const SizedBox(height: 16),
@@ -199,7 +197,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
     );
   }
 
-  void done() {
+  Future<void> done() async {
     if (correctAnswer == '-1') {
       Toast.show(message: 'Select diagnosis');
       return;
@@ -231,12 +229,34 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
 
 
-    if(currentImage == null && newImage == null){
-      Toast.show(message: 'Set Image please');
-      return;
+    String tempImage =
+        'https://pharmaceutical-journal.com/wp-content/uploads/2023/03/ecg-reading.jpg';
+    // if (currentImage == null && newImage == null) {
+    //   Toast.show(message: 'Set Image please');
+    //   return;
+    // }
+
+
+
+    var model = EventModel(
+      id: widget.eventModel?.id ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
+      image: tempImage,
+      text: textController.text,
+      correctAnswer: correctAnswer,
+      answerA: answerA,
+      answerB: answerB,
+      answerC: answerC,
+      answerD: answerD,
+      isPremium: isPremium,
+    );
+    if(widget.eventModel != null){
+      await widget.eventRepo.edit(model);
+    } else {
+      await widget.eventRepo.add(model);
     }
+    context.backPage();
+    widget.success();
     Toast.show(message: 'Done');
   }
-
-
 }

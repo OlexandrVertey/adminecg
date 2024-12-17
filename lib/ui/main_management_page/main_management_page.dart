@@ -1,4 +1,5 @@
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
+import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
 import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/content_management/content_management_module.dart';
@@ -52,7 +53,12 @@ class _MainManagementPageState extends State<MainManagementPage> {
               },
             ),
             const SizedBox(width: 100),
-            Expanded(child: list[index]),
+            Expanded(
+              child: IndexedStack(
+                index: index,
+                children: list,
+              ),
+            ),
           ],
         ),
       ),
