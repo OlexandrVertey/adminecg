@@ -306,7 +306,7 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
               height: 20,
               "assets/images/svg/delete.svg",
             ),
-          )
+          ),
         ],
       ),
     );
