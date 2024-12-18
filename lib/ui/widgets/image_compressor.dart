@@ -36,7 +36,7 @@ Future<void> resizeAndCompressImage(Uint8List bytes, Function(Uint8List) callbac
 
       // Повторюємо процес зі стисненням до досягнення цілі (200 кБ)
       int quality = 100;
-      while (compressedBytes.length / 1024 > 70 && quality > 10) {
+      while (compressedBytes.length / 1024 > 200 && quality > 10) {
         compressedBytes =
             (await resizedImage.toByteData(format: ui.ImageByteFormat.png))!
                 .buffer

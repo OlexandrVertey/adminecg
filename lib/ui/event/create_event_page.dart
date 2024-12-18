@@ -266,7 +266,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
         String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
         await context.read<AddDiagnoseToStorageRepo>().addDiagnose(name: name, callBack: (uri){
           if(uri.isNotEmpty){
-            setModel(name);
+            setModel(uri);
           } else {
             Toast.show(message: 'Image error');
           }

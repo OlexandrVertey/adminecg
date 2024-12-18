@@ -30,27 +30,22 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   List<Widget> listLearning = [];
 
   Future<void> fetchEvent() async {
-    EventRepo repo = context.read<EventRepo>();
-    repo.getList().then((_) {
+    widget.eventRepo.getList().then((_) {
       setEventOnScreen();
     });
   }
 
   void setEventOnScreen() {
     listEvent.clear();
-    EventRepo repo = context.read<EventRepo>();
-    for (var model in repo.list) {
+    for (var model in widget.eventRepo.list) {
       listEvent.add(
         EventItemWidget(
           model: model,
           edit: () {
             context.openEventDialog(() => setEventOnScreen(), event: model);
           },
-          remove: () {
-            context
-                .read<EventRepo>()
-                .remove(model)
-                .then((_) => setEventOnScreen());
+          remove: () async {
+            await widget.eventRepo.remove(model).then((_) => setEventOnScreen());
           },
         ),
       );
@@ -118,27 +113,27 @@ class EventItemWidget extends StatefulWidget {
 
 class _EventItemWidgetState extends State<EventItemWidget> {
 
-  Uint8List? image;
+  // String? image;
 
   @override
   void initState() {
     super.initState();
-    _loadImageUrl();
+    // _loadImageUrl();
   }
 
-  Future<void> _loadImageUrl() async {
-    try {
-      Reference ref = FirebaseStorage.instance.ref().child('diagnose').child(widget.model.image);
-      Uint8List? downloadedImage = await ref.getData();
-      if(downloadedImage != null){
-        setState(() {
-          image = downloadedImage;
-        });
-      }
-    } catch (e) {
-      print('Error retrieving image URL: $e');
-    }
-  }
+  // Future<void> _loadImageUrl() async {
+  //   print('Load Image ${widget.model.image}');
+  //
+  //   try {
+  //     Reference ref = FirebaseStorage.instance.ref().child('diagnose').child(widget.model.image);
+  //     String? downloadedUrl = await ref.getDownloadURL();
+  //     setState(() {
+  //       image = downloadedUrl;
+  //     });
+  //   } catch (e) {
+  //     print('Load Image error: $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +143,13 @@ class _EventItemWidgetState extends State<EventItemWidget> {
       child: Column(
         children: [
           Expanded(
-            child: image != null ? Image.memory(image!) : Center(child: Text('data')),
+            child: widget.model.image != null ? CachedNetworkImage(
+              width: 200,
+              imageUrl: widget.model.image,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+            ) : Center(child: Text('data')),
           ),
           Row(
             children: [
