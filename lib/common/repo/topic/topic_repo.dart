@@ -9,6 +9,25 @@ class TopicRepo {
 
   List<TopicModel> list = [];
 
+  List<String> ids() {
+    List<String> list = ['-1'];
+    for (var value in this.list) {
+      list.add(value.id);
+    }
+    return list;
+  }
+
+  String value(String id, String locale) {
+    if (id == '-1') {
+      return '';
+    }
+    final index = list.indexWhere((e) => e.id == id);
+    if (index >= 0) {
+      return list[index].titleEn;
+    }
+    return '';
+  }
+
   Future<List<TopicModel>> getListTopicModel() async {
     try {
       final diagnosis = await topicCollection.collectionReference.get();

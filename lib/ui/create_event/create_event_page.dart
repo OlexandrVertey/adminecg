@@ -1,6 +1,4 @@
 import 'dart:typed_data';
-
-import 'package:adminecg/admin_ecg_app.dart';
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/repo/add_diagnose_to_storage_repo/add_diagnose_to_storage_repo.dart';
@@ -9,6 +7,7 @@ import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/image_compressor.dart';
 import 'package:adminecg/ui/widgets/image_picker.dart';
+import 'package:adminecg/ui/widgets/text_field_widget.dart';
 import 'package:adminecg/ui/widgets/toast.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -54,6 +53,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       answerB = widget.eventModel!.answerB;
       answerC = widget.eventModel!.answerC;
       answerD = widget.eventModel!.answerD;
+      isPremium = widget.eventModel!.isPremium;
     }
     super.initState();
   }
@@ -144,6 +144,24 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       answerD = value;
                     });
                   }),
+                  const SizedBox(height: 30),
+                  Text(
+                    'Explain Text',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontSize: 28),
+                  ),
+                  const SizedBox(height: 10),
+                  SizedBox(
+                    width: 370,
+                    child: TextFieldWidget(
+                      controllerText: textController,
+                      hintTextField: 'enter text',
+                      textInputType: TextInputType.text,
+                      callBackTextField: (text) {},
+                    ),
+                  ),
                   const SizedBox(height: 30),
                   _premium(),
                   const SizedBox(height: 10),
