@@ -15,17 +15,22 @@ class EventRepo {
       if (kDebugMode) {
         print('Event fetch. Success = ${diagnosis.docs.length}');
       }
-      list = diagnosis.docs.map((e) => EventModel.fromJson(e.data() as Map<String, dynamic>)).toList();
+      list = diagnosis.docs
+          .map((e) => EventModel.fromJson(e.data() as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       print('Event fetch. Error = $e');
     }
   }
 
   Future add(EventModel model) async {
-    String id = DateTime.now().millisecondsSinceEpoch.toString();
     try {
-      await collection.collectionReference.doc(id).set(model.toJson());
-      await getList();
+      await collection.collectionReference
+          .doc(model.id)
+          .set(model.toJson())
+          .then((_) async {
+        await getList();
+      });
       if (kDebugMode) {
         print('Event add. Success');
       }
@@ -36,8 +41,9 @@ class EventRepo {
 
   Future edit(EventModel model) async {
     try {
-      await collection.collectionReference.doc(model.id).set(model.toJson());
-      await getList();
+      await collection.collectionReference.doc(model.id).set(model.toJson()).then((_) async {
+        await getList();
+      });
 
       if (kDebugMode) {
         print('Event edit. Success');
@@ -49,8 +55,11 @@ class EventRepo {
 
   Future remove(EventModel model) async {
     try {
-      await collection.collectionReference.doc(model.id).delete().then((_) async {
-        print('Event remove. Success 000');
+      await collection.collectionReference
+          .doc(model.id)
+          .delete()
+          .then((_) async {
+        await getList();
       });
       if (kDebugMode) {
         print('Event remove. Success ${model.id}');

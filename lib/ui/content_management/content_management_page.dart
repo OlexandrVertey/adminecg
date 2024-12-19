@@ -45,7 +45,9 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
             context.openEventDialog(() => setEventOnScreen(), event: model);
           },
           remove: () async {
-            await widget.eventRepo.remove(model).then((_) => setEventOnScreen());
+            await widget.eventRepo
+                .remove(model)
+                .then((_) => setEventOnScreen());
           },
         ),
       );
@@ -76,7 +78,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
           AddEventWidget(
             title: 'Practice Mode',
             textButton: 'Question',
-            onTap: () => context.openEventDialog(() => setState(() {})),
+            onTap: () => context.openEventDialog(() => setEventOnScreen()),
           ),
           Wrap(
             children: listEvent,
@@ -112,7 +114,6 @@ class EventItemWidget extends StatefulWidget {
 }
 
 class _EventItemWidgetState extends State<EventItemWidget> {
-
   // String? image;
 
   @override
@@ -143,13 +144,15 @@ class _EventItemWidgetState extends State<EventItemWidget> {
       child: Column(
         children: [
           Expanded(
-            child: widget.model.image != null ? CachedNetworkImage(
-              width: 200,
-              imageUrl: widget.model.image,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-            ) : Center(child: Text('data')),
+            child: widget.model.image != null
+                ? CachedNetworkImage(
+                    width: 200,
+                    imageUrl: widget.model.image,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  )
+                : Center(child: Text('data')),
           ),
           Row(
             children: [

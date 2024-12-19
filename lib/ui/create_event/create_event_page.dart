@@ -293,10 +293,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
       isPremium: isPremium,
     );
     if(widget.eventModel != null){
-      await widget.eventRepo.edit(model);
+      await widget.eventRepo.edit(model).then((_) => finish());
     } else {
-      await widget.eventRepo.add(model);
+      await widget.eventRepo.add(model).then((_) => finish());
     }
+  }
+
+  void finish(){
     context.backPage();
     widget.success();
     Toast.show(message: 'Done');

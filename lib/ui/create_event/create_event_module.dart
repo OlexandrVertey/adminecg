@@ -1,7 +1,7 @@
 import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
-import 'package:adminecg/ui/event/create_event_page.dart';
+import 'package:adminecg/ui/create_event/create_event_page.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
