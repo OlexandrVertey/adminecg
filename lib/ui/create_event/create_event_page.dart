@@ -7,9 +7,11 @@ import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/image_compressor.dart';
 import 'package:adminecg/ui/widgets/image_picker.dart';
+import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:adminecg/ui/widgets/text_field_widget.dart';
 import 'package:adminecg/ui/widgets/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class CreateEventPage extends StatefulWidget {
@@ -61,12 +63,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      contentPadding: EdgeInsets.all(35),
+      contentPadding: const EdgeInsets.all(35),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(26.0),
       ),
       content: Container(
-        constraints: BoxConstraints(maxWidth: 380),
+        constraints: const BoxConstraints(maxWidth: 380),
         child: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
           child: SingleChildScrollView(
@@ -74,97 +76,149 @@ class _CreateEventPageState extends State<CreateEventPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    'title',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(fontSize: 28),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Organization",
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
+                    ),
                   ),
+                  const SizedBox(height: 12),
+                  SelectDialogWidget(title: '', items: ids),
                   const SizedBox(height: 16),
-                  _dropDown(correctAnswer, ids, (value) {
-                    setState(() {
-                      correctAnswer = value;
-                    });
-                  }),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Image',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(fontSize: 28),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "ECG image",
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
+                    ),
                   ),
-                  InkWell(
-                    onTap: () async {
-                      var a = await AppImagePicker.getImage();
-                      if(a != null){
-                        setState(() {
-                          newImage = a;
-                        });
-                      }
-                    },
-                    child: Card(
-                      child: SizedBox(
+                  const SizedBox(height: 12),
+                  // _dropDown(correctAnswer, ids, (value) {
+                  //   setState(() {
+                  //     correctAnswer = value;
+                  //   });
+                  // }),
+                  // const SizedBox(height: 16),
+                  // Text(
+                  //   'Image',
+                  //   style: Theme.of(context)
+                  //       .textTheme
+                  //       .headlineMedium
+                  //       ?.copyWith(fontSize: 28),
+                  // ),
+                  Stack(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all( Radius.circular(15.0)),
+                          border: Border.all(color: Colors.black.withOpacity(0.1), width: 1.3),
+                        ),
                         width: 360,
                         height: 150,
                         child: _image(),
                       ),
+                      Positioned(
+                        bottom: 15,
+                        right: 15,
+                        child: InkWell(
+                          hoverColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () async {
+                            var a = await AppImagePicker.getImage();
+                            if(a != null){
+                              setState(() {
+                                newImage = a;
+                              });
+                            }
+                          },
+                          child: SvgPicture.asset("assets/images/svg/plus.svg"),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "4 Answers",
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Answers',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(fontSize: 28),
-                  ),
                   const SizedBox(height: 10),
-                  _dropDown(answerA, ids, (value) {
-                    setState(() {
-                      answerA = value;
-                    });
-                  }),
-                  const SizedBox(height: 16),
-                  _dropDown(answerB, ids, (value) {
-                    setState(() {
-                      answerB = value;
-                    });
-                  }),
-                  const SizedBox(height: 16),
-                  _dropDown(answerC, ids, (value) {
-                    setState(() {
-                      answerC = value;
-                    });
-                  }),
-                  const SizedBox(height: 16),
-                  _dropDown(answerD, ids, (value) {
-                    setState(() {
-                      answerD = value;
-                    });
-                  }),
-                  const SizedBox(height: 30),
-                  Text(
-                    'Explain Text',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineMedium
-                        ?.copyWith(fontSize: 28),
+
+                  SelectDialogWidget(title: 'A.', items: ids),
+                  const SizedBox(height: 12),
+                  SelectDialogWidget(title: 'B.', items: ids),
+                  const SizedBox(height: 12),
+                  SelectDialogWidget(title: 'C.', items: ids),
+                  const SizedBox(height: 12),
+                  SelectDialogWidget(title: 'D.', items: ids),
+                  const SizedBox(height: 36),
+                  // _dropDown(answerA, ids, (value) {
+                  //   setState(() {
+                  //     answerA = value;
+                  //   });
+                  // }),
+                  // const SizedBox(height: 16),
+                  // _dropDown(answerB, ids, (value) {
+                  //   setState(() {
+                  //     answerB = value;
+                  //   });
+                  // }),
+                  // const SizedBox(height: 16),
+                  // _dropDown(answerC, ids, (value) {
+                  //   setState(() {
+                  //     answerC = value;
+                  //   });
+                  // }),
+                  // const SizedBox(height: 16),
+                  // _dropDown(answerD, ids, (value) {
+                  //   setState(() {
+                  //     answerD = value;
+                  //   });
+                  // }),
+                  // const SizedBox(height: 30),
+                  // Text(
+                  //   'Explain Text',
+                  //   style: Theme.of(context)
+                  //       .textTheme
+                  //       .headlineMedium
+                  //       ?.copyWith(fontSize: 28),
+                  // ),
+                  // const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Explain Text",
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   SizedBox(
                     width: 370,
+                    height: 150,
                     child: TextFieldWidget(
                       controllerText: textController,
-                      hintTextField: 'enter text',
+                      hintTextField: '',
                       textInputType: TextInputType.text,
+                      maxLines: 20,
                       callBackTextField: (text) {},
                     ),
                   ),
-                  const SizedBox(height: 30),
-                  _premium(),
+                  const SizedBox(height: 20),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Choose the type of question",
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
+                    ),
+                  ),
                   const SizedBox(height: 10),
+                  _premium(),
+                  const SizedBox(height: 30),
                   AppButton(
                     width: 360,
                     text: widget.eventModel != null
@@ -174,7 +228,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
                     onTap: () => done(),
                   ),
-                  const SizedBox(height: 10),
+                  const  SizedBox(height: 20),
                   AppButton(
                     width: 360,
                     text: 'Back',
@@ -214,33 +268,33 @@ class _CreateEventPageState extends State<CreateEventPage> {
     );
   }
 
-  Widget _dropDown(
-    String value,
-    List<String> values,
-    Function(String newValue) onChanged,
-  ) {
-    return DropdownButton(
-      value: value,
-      icon: const Icon(Icons.keyboard_arrow_down),
-      items: values.map((String items) {
-        return DropdownMenuItem(
-          value: items,
-          child: Text(widget.diagnosisRepo.value(items, 'locale')),
-        );
-      }).toList(),
-      onChanged: (e) {
-        if (e != null) {
-          onChanged(e);
-        }
-      },
-    );
-  }
+  // Widget _dropDown(
+  //   String value,
+  //   List<String> values,
+  //   Function(String newValue) onChanged,
+  // ) {
+  //   return DropdownButton(
+  //     value: value,
+  //     icon: const Icon(Icons.keyboard_arrow_down),
+  //     items: values.map((String items) {
+  //       return DropdownMenuItem(
+  //         value: items,
+  //         child: Text(widget.diagnosisRepo.value(items, 'locale')),
+  //       );
+  //     }).toList(),
+  //     onChanged: (e) {
+  //       if (e != null) {
+  //         onChanged(e);
+  //       }
+  //     },
+  //   );
+  // }
 
   Widget _image(){
     if(newImage != null){
       return Image.memory(newImage!, fit: BoxFit.cover,);
     }
-    return Container();
+    return SvgPicture.asset("assets/images/svg/image.svg");
   }
 
   Future<void> done() async {

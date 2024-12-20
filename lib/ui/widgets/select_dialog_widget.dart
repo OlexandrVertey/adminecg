@@ -4,13 +4,11 @@ class SelectDialogWidget extends StatefulWidget {
   const SelectDialogWidget({
     super.key,
     required this.title,
-    required this.firstItem,
-    required this.secondItem,
+    required this.items,
   });
 
   final String title;
-  final String firstItem;
-  final String secondItem;
+  final List<String> items;
 
   @override
   State<SelectDialogWidget> createState() => _SelectDialogWidgetState();
@@ -107,54 +105,88 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget> with TickerProv
                 bottom: BorderSide(color: Colors.black.withOpacity(0.1), width: 1.3),
               ),
             ),
-            child: Column(
-              children: [
-                InkWell(
-                  hoverColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    _isExpanded ? _controller.reverse() : _controller.forward();
-                    setState(() {
-                      _isExpanded = !_isExpanded;
-                      _selectedText = widget.firstItem;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 11,
+            child: SizedBox(
+              height:  widget.items.length * 40,
+              width: 155,
+              child: ListView.builder(
+                padding: EdgeInsets.zero,
+                shrinkWrap: true,
+                itemCount: widget.items.length,
+                itemBuilder: (context, index) {
+                  var item = widget.items[index];
+                  return InkWell(
+                    hoverColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                    onTap: () {
+                      _isExpanded ? _controller.reverse() : _controller.forward();
+                      setState(() {
+                        _isExpanded = !_isExpanded;
+                        _selectedText = item;
+                      });
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 15,
+                        vertical: 11,
+                      ),
+                      child: Text(
+                        item,
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
+                      ),
                     ),
-                    child: Text(
-                      widget.firstItem,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
-                    ),
-                  ),
-                ),
-                InkWell(
-                  hoverColor: Colors.transparent,
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onTap: () {
-                    _isExpanded ? _controller.reverse() : _controller.forward();
-                    setState(() {
-                      _isExpanded = !_isExpanded;
-                      _selectedText = widget.secondItem;
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 11,
-                    ),
-                    child: Text(
-                      widget.secondItem,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
-                    ),
-                  ),
-                ),
-              ],
+                  );
+                },
+              ),
             ),
+            // Column(
+            //   children: [
+            //     InkWell(
+            //       hoverColor: Colors.transparent,
+            //       splashColor: Colors.transparent,
+            //       highlightColor: Colors.transparent,
+            //       onTap: () {
+            //         _isExpanded ? _controller.reverse() : _controller.forward();
+            //         setState(() {
+            //           _isExpanded = !_isExpanded;
+            //           _selectedText = widget.firstItem;
+            //         });
+            //       },
+            //       child: Padding(
+            //         padding: const EdgeInsets.symmetric(
+            //           horizontal: 15,
+            //           vertical: 11,
+            //         ),
+            //         child: Text(
+            //           widget.firstItem,
+            //           style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
+            //         ),
+            //       ),
+            //     ),
+            //     InkWell(
+            //       hoverColor: Colors.transparent,
+            //       splashColor: Colors.transparent,
+            //       highlightColor: Colors.transparent,
+            //       onTap: () {
+            //         _isExpanded ? _controller.reverse() : _controller.forward();
+            //         setState(() {
+            //           _isExpanded = !_isExpanded;
+            //           _selectedText = widget.secondItem;
+            //         });
+            //       },
+            //       child: Padding(
+            //         padding: const EdgeInsets.symmetric(
+            //           horizontal: 15,
+            //           vertical: 11,
+            //         ),
+            //         child: Text(
+            //           widget.secondItem,
+            //           style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
           ),
         ),
       ],

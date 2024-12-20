@@ -107,7 +107,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
               ),
             ),
             const SizedBox(height: 12),
-            const SelectDialogWidget(title: 'Organization', firstItem: 'School', secondItem: 'Hospital'),
+            const SelectDialogWidget(title: 'Organization', items: ['School', 'Hospital']),
             const SizedBox(height: 12),
             Align(
               alignment: Alignment.centerLeft,
@@ -151,7 +151,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
               ),
             ),
             const SizedBox(height: 10),
-            const SelectDialogWidget(title: 'Time Duration', firstItem: '1 Months|', secondItem: '3 Months|'),
+            // const SelectDialogWidget(title: 'Time Duration', firstItem: '1 Months|', secondItem: '3 Months|'),
+            const SelectDialogWidget(title: 'Time Duration', items: ['1 Months|', '3 Months|']),
             const SizedBox(height: 25),
             AppButton(
               width: 370,

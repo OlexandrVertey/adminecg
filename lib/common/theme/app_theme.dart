@@ -1,4 +1,3 @@
-// import 'package:appecg/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
 
 class AppTheme {
@@ -62,7 +61,7 @@ class AppTheme {
         ),
         labelMedium: TextStyle(
           color: textColorLight,
-          fontFamily: 'assets/fonts/PlusJakartaSans-SemiBold.ttf',
+          fontFamily: 'JakartaBold',
           fontSize: 16,
           letterSpacing: 0.7,
         ),
@@ -139,7 +138,7 @@ class AppTheme {
         ),
         labelMedium: TextStyle(
           color: textColorDark,
-          fontFamily: 'assets/fonts/PlusJakartaSans-Bold.ttf',
+          fontFamily: 'JakartaBold',
           fontSize: 16,
         ),
         labelSmall: TextStyle(

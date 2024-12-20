@@ -6,6 +6,7 @@ class TextFieldWidget extends StatelessWidget {
   final String hintTextField;
   final TextInputType textInputType;
   final bool showEye;
+  final int maxLines;
   final bool obscureText;
   final Function(String)? callBackTextField;
   final Function()? callBackHidePassword;
@@ -16,6 +17,7 @@ class TextFieldWidget extends StatelessWidget {
     required this.hintTextField,
     required this.textInputType,
     this.showEye = false,
+    this.maxLines = 1,
     this.obscureText = false,
     this.callBackTextField,
     this.callBackHidePassword,
@@ -31,11 +33,12 @@ class TextFieldWidget extends StatelessWidget {
               callBackTextField!(text);
             }
           },
+          maxLines: maxLines,
           obscureText: obscureText,
           textCapitalization: TextCapitalization.words,
           style: Theme.of(context).textTheme.bodyLarge,
           controller: controllerText,
-          textAlign: TextAlign.start,
+          textAlign: TextAlign.justify,
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(
@@ -52,9 +55,9 @@ class TextFieldWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(15.0),
             ),
             hintText: hintTextField,
-            contentPadding: const EdgeInsets.only(
+            contentPadding: EdgeInsets.only(
               left: 15,
-              right: 50,
+              right: showEye ? 50 : 15,
               top: 18,
               bottom: 18,
             ),
