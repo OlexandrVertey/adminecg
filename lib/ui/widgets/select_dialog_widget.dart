@@ -1,3 +1,4 @@
+import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:flutter/material.dart';
 
 class SelectDialogWidget extends StatefulWidget {
@@ -5,16 +6,23 @@ class SelectDialogWidget extends StatefulWidget {
     super.key,
     required this.title,
     required this.items,
+    this.diagnosisRepo,
+    this.onSelect,
+    this.currentValue,
   });
 
   final String title;
   final List<String> items;
+  final DiagnosisRepo? diagnosisRepo;
+  final Function(String)? onSelect;
+  final String? currentValue;
 
   @override
   State<SelectDialogWidget> createState() => _SelectDialogWidgetState();
 }
 
-class _SelectDialogWidgetState extends State<SelectDialogWidget> with TickerProviderStateMixin {
+class _SelectDialogWidgetState extends State<SelectDialogWidget>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   final _animationDuration = const Duration(milliseconds: 300);
 
@@ -24,7 +32,7 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget> with TickerProv
   @override
   void initState() {
     super.initState();
-    _selectedText = widget.title;
+    _selectedText = widget.currentValue ?? widget.title;
     _controller = AnimationController(
       duration: _animationDuration,
       vsync: this,
@@ -63,14 +71,18 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget> with TickerProv
                       topLeft: Radius.circular(15.0),
                     )
                   : const BorderRadius.all(Radius.circular(15.0)),
-              border: Border.all(color: Colors.black.withOpacity(0.1), width: 1.3),
+              border:
+                  Border.all(color: Colors.black.withOpacity(0.1), width: 1.3),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  _selectedText,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
+                  '${widget.title} ${widget.diagnosisRepo != null ? widget.diagnosisRepo!.value(_selectedText, 'locale'): _selectedText}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontSize: 14),
                 ),
                 _isExpanded
                     ? const Icon(Icons.keyboard_arrow_down, color: Colors.grey)
@@ -100,13 +112,16 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget> with TickerProv
                 bottomRight: Radius.circular(15.0),
               ),
               border: Border(
-                left: BorderSide(color: Colors.black.withOpacity(0.1), width: 1.3),
-                right: BorderSide(color: Colors.black.withOpacity(0.1), width: 1.3),
-                bottom: BorderSide(color: Colors.black.withOpacity(0.1), width: 1.3),
+                left: BorderSide(
+                    color: Colors.black.withOpacity(0.1), width: 1.3),
+                right: BorderSide(
+                    color: Colors.black.withOpacity(0.1), width: 1.3),
+                bottom: BorderSide(
+                    color: Colors.black.withOpacity(0.1), width: 1.3),
               ),
             ),
             child: SizedBox(
-              height:  widget.items.length * 40,
+              height: widget.items.length * 40,
               width: 155,
               child: ListView.builder(
                 padding: EdgeInsets.zero,
@@ -119,7 +134,12 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget> with TickerProv
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () {
-                      _isExpanded ? _controller.reverse() : _controller.forward();
+                      if(widget.onSelect != null){
+                        widget.onSelect!(item);
+                      }
+                      _isExpanded
+                          ? _controller.reverse()
+                          : _controller.forward();
                       setState(() {
                         _isExpanded = !_isExpanded;
                         _selectedText = item;
@@ -131,8 +151,11 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget> with TickerProv
                         vertical: 11,
                       ),
                       child: Text(
-                        item,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
+                        widget.diagnosisRepo != null ? widget.diagnosisRepo!.value(item, 'locale'): item,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontSize: 14),
                       ),
                     ),
                   );

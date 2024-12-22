@@ -10,6 +10,7 @@ import 'package:adminecg/ui/widgets/image_picker.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:adminecg/ui/widgets/text_field_widget.dart';
 import 'package:adminecg/ui/widgets/toast.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +57,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       answerC = widget.eventModel!.answerC;
       answerD = widget.eventModel!.answerD;
       isPremium = widget.eventModel!.isPremium;
+      _downloadImage(widget.eventModel!.image);
     }
     super.initState();
   }
@@ -72,173 +74,173 @@ class _CreateEventPageState extends State<CreateEventPage> {
         child: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
           child: SingleChildScrollView(
-            child: Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Organization",
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
-                    ),
+              child: Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Organization",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(fontSize: 14, color: Colors.black),
                   ),
-                  const SizedBox(height: 12),
-                  SelectDialogWidget(title: '', items: ids),
-                  const SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "ECG image",
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
-                    ),
+                ),
+                const SizedBox(height: 12),
+                SelectDialogWidget(
+                  title: '',
+                  items: ids,
+                  diagnosisRepo: widget.diagnosisRepo,
+                  onSelect: (item) => correctAnswer = item,
+                  currentValue: correctAnswer,
+                ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "ECG image",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(fontSize: 14, color: Colors.black),
                   ),
-                  const SizedBox(height: 12),
-                  // _dropDown(correctAnswer, ids, (value) {
-                  //   setState(() {
-                  //     correctAnswer = value;
-                  //   });
-                  // }),
-                  // const SizedBox(height: 16),
-                  // Text(
-                  //   'Image',
-                  //   style: Theme.of(context)
-                  //       .textTheme
-                  //       .headlineMedium
-                  //       ?.copyWith(fontSize: 28),
-                  // ),
-                  Stack(
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.all( Radius.circular(15.0)),
-                          border: Border.all(color: Colors.black.withOpacity(0.1), width: 1.3),
-                        ),
-                        width: 360,
-                        height: 150,
-                        child: _image(),
+                ),
+                const SizedBox(height: 12),
+                Stack(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(15.0)),
+                        border: Border.all(
+                            color: Colors.black.withOpacity(0.1), width: 1.3),
                       ),
-                      Positioned(
-                        bottom: 15,
-                        right: 15,
-                        child: InkWell(
-                          hoverColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            var a = await AppImagePicker.getImage();
-                            if(a != null){
-                              setState(() {
-                                newImage = a;
-                              });
-                            }
-                          },
-                          child: SvgPicture.asset("assets/images/svg/plus.svg"),
-                        ),
+                      width: 360,
+                      height: 150,
+                      child: _image(),
+                    ),
+                    Positioned(
+                      bottom: 15,
+                      right: 15,
+                      child: InkWell(
+                        hoverColor: Colors.transparent,
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onTap: () async {
+                          var a = await AppImagePicker.getImage();
+                          if (a != null) {
+                            setState(() {
+                              newImage = a;
+                            });
+                          }
+                        },
+                        child: SvgPicture.asset("assets/images/svg/plus.svg"),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "4 Answers",
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
                     ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "4 Answers",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(fontSize: 14, color: Colors.black),
                   ),
-                  const SizedBox(height: 10),
-
-                  SelectDialogWidget(title: 'A.', items: ids),
-                  const SizedBox(height: 12),
-                  SelectDialogWidget(title: 'B.', items: ids),
-                  const SizedBox(height: 12),
-                  SelectDialogWidget(title: 'C.', items: ids),
-                  const SizedBox(height: 12),
-                  SelectDialogWidget(title: 'D.', items: ids),
-                  const SizedBox(height: 36),
-                  // _dropDown(answerA, ids, (value) {
-                  //   setState(() {
-                  //     answerA = value;
-                  //   });
-                  // }),
-                  // const SizedBox(height: 16),
-                  // _dropDown(answerB, ids, (value) {
-                  //   setState(() {
-                  //     answerB = value;
-                  //   });
-                  // }),
-                  // const SizedBox(height: 16),
-                  // _dropDown(answerC, ids, (value) {
-                  //   setState(() {
-                  //     answerC = value;
-                  //   });
-                  // }),
-                  // const SizedBox(height: 16),
-                  // _dropDown(answerD, ids, (value) {
-                  //   setState(() {
-                  //     answerD = value;
-                  //   });
-                  // }),
-                  // const SizedBox(height: 30),
-                  // Text(
-                  //   'Explain Text',
-                  //   style: Theme.of(context)
-                  //       .textTheme
-                  //       .headlineMedium
-                  //       ?.copyWith(fontSize: 28),
-                  // ),
-                  // const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Explain Text",
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
-                    ),
+                ),
+                const SizedBox(height: 10),
+                SelectDialogWidget(
+                  title: 'A.',
+                  items: ids,
+                  diagnosisRepo: widget.diagnosisRepo,
+                  onSelect: (item) => answerA = item,
+                  currentValue: answerA,
+                ),
+                const SizedBox(height: 12),
+                SelectDialogWidget(
+                  title: 'B.',
+                  items: ids,
+                  diagnosisRepo: widget.diagnosisRepo,
+                  onSelect: (item) => answerB = item,
+                  currentValue: answerB,
+                ),
+                const SizedBox(height: 12),
+                SelectDialogWidget(
+                  title: 'C.',
+                  items: ids,
+                  diagnosisRepo: widget.diagnosisRepo,
+                  onSelect: (item) => answerC = item,
+                  currentValue: answerC,
+                ),
+                const SizedBox(height: 12),
+                SelectDialogWidget(
+                  title: 'D.',
+                  items: ids,
+                  diagnosisRepo: widget.diagnosisRepo,
+                  onSelect: (item) => answerD = item,
+                  currentValue: answerD,
+                ),
+                const SizedBox(height: 36),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Explain Text",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(fontSize: 14, color: Colors.black),
                   ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: 370,
-                    height: 150,
-                    child: TextFieldWidget(
-                      controllerText: textController,
-                      hintTextField: '',
-                      textInputType: TextInputType.text,
-                      maxLines: 20,
-                      callBackTextField: (text) {},
-                    ),
+                ),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: 370,
+                  height: 150,
+                  child: TextFieldWidget(
+                    controllerText: textController,
+                    hintTextField: '',
+                    textInputType: TextInputType.text,
+                    maxLines: 20,
+                    callBackTextField: (text) {},
                   ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Choose the type of question",
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
-                    ),
+                ),
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Choose the type of question",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(fontSize: 14, color: Colors.black),
                   ),
-                  const SizedBox(height: 10),
-                  _premium(),
-                  const SizedBox(height: 30),
-                  AppButton(
-                    width: 360,
-                    text: widget.eventModel != null
-                        ? 'Update Question'
-                        : 'Add New Question',
-                    isActive: true,
-                    // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
-                    onTap: () => done(),
-                  ),
-                  const  SizedBox(height: 20),
-                  AppButton(
-                    width: 360,
-                    text: 'Back',
-                    isActive: false,
-                    onTap: () => context.backPage(),
-                  ),
-                ],
-              ),
-            )
-          ),
+                ),
+                const SizedBox(height: 10),
+                _premium(),
+                const SizedBox(height: 30),
+                AppButton(
+                  width: 360,
+                  text: widget.eventModel != null
+                      ? 'Update Question'
+                      : 'Add New Question',
+                  isActive: true,
+                  // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
+                  onTap: () => done(),
+                ),
+                const SizedBox(height: 20),
+                AppButton(
+                  width: 360,
+                  text: 'Back',
+                  isActive: false,
+                  onTap: () => context.backPage(),
+                ),
+              ],
+            ),
+          )),
         ),
       ),
     );
@@ -268,31 +270,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
     );
   }
 
-  // Widget _dropDown(
-  //   String value,
-  //   List<String> values,
-  //   Function(String newValue) onChanged,
-  // ) {
-  //   return DropdownButton(
-  //     value: value,
-  //     icon: const Icon(Icons.keyboard_arrow_down),
-  //     items: values.map((String items) {
-  //       return DropdownMenuItem(
-  //         value: items,
-  //         child: Text(widget.diagnosisRepo.value(items, 'locale')),
-  //       );
-  //     }).toList(),
-  //     onChanged: (e) {
-  //       if (e != null) {
-  //         onChanged(e);
-  //       }
-  //     },
-  //   );
-  // }
-
-  Widget _image(){
-    if(newImage != null){
-      return Image.memory(newImage!, fit: BoxFit.cover,);
+  Widget _image() {
+    if (newImage != null) {
+      return Image.memory(
+        newImage!,
+        fit: BoxFit.cover,
+      );
     }
     return SvgPicture.asset("assets/images/svg/image.svg");
   }
@@ -333,25 +316,28 @@ class _CreateEventPageState extends State<CreateEventPage> {
       return;
     }
 
-    if(newImage != null){
-      resizeAndCompressImage(newImage!, (image) async{
+    if (newImage != null) {
+      resizeAndCompressImage(newImage!, (image) async {
         String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
-        await context.read<AddDiagnoseToStorageRepo>().addDiagnose(name: name, callBack: (uri){
-          if(uri.isNotEmpty){
-            setModel(uri);
-          } else {
-            Toast.show(message: 'Image error');
-          }
-        }, data: image);
+        await context.read<AddDiagnoseToStorageRepo>().addDiagnose(
+            name: name,
+            callBack: (uri) {
+              if (uri.isNotEmpty) {
+                setModel(uri);
+              } else {
+                Toast.show(message: 'Image error');
+              }
+            },
+            data: image);
       });
     }
 
-    if(currentImage != null){
+    if (currentImage != null) {
       setModel(currentImage!);
     }
   }
 
-  void setModel(String downloadImageUri) async{
+  void setModel(String downloadImageUri) async {
     var model = EventModel(
       id: widget.eventModel?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
@@ -364,16 +350,32 @@ class _CreateEventPageState extends State<CreateEventPage> {
       answerD: answerD,
       isPremium: isPremium,
     );
-    if(widget.eventModel != null){
+    if (widget.eventModel != null) {
       await widget.eventRepo.edit(model).then((_) => finish());
     } else {
       await widget.eventRepo.add(model).then((_) => finish());
     }
   }
 
-  void finish(){
+  void finish() {
     context.backPage();
     widget.success();
     Toast.show(message: 'Done');
+  }
+
+
+  Future<void> _downloadImage(String imagePath) async {
+    try {
+      final storageRef = FirebaseStorage.instance.ref(imagePath);
+      const int maxSize = 1024 * 1024 * 1; // Задайте максимальный размер (например, 10 MB)
+      Uint8List? fileData = await storageRef.getData(maxSize);
+      if(fileData != null){
+        setState(() {
+          newImage = fileData;
+        });
+      }
+    } catch (e) {
+      print('Error image download: $e');
+    }
   }
 }
