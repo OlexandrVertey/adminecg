@@ -16,8 +16,8 @@ class AppButtonAdd extends StatelessWidget {
       onTap: onTap,
       child: Container(
         alignment: Alignment.center,
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        height: 48,
         decoration: BoxDecoration(
           color: const Color(0xff0A4E74),
           borderRadius: const BorderRadius.all(Radius.circular(15.0)),
@@ -32,7 +32,7 @@ class AppButtonAdd extends StatelessWidget {
                     color: Colors.white,
                   ),
             ),
-            Icon(Icons.add, color: Colors.white,)
+            const Icon(Icons.add, color: Colors.white,)
           ],
         ),
       ),

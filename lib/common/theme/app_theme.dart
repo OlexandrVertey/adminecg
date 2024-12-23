@@ -85,7 +85,7 @@ class AppTheme {
         ),
         headlineMedium: TextStyle(
           color: textColorLight,
-          fontFamily: 'assets/fonts/PlusJakartaSans-ExtraBold.ttf',
+          fontFamily: 'JakartaExtraBold',
           fontSize: 20,
         ),
         headlineSmall: TextStyle(
@@ -158,7 +158,7 @@ class AppTheme {
         ),
         headlineMedium: TextStyle(
           color: textColorDark,
-          fontFamily: 'assets/fonts/PlusJakartaSans-Bold.ttf',
+          fontFamily: 'JakartaExtraBold',
           fontSize: 20,
         ),
         headlineSmall: TextStyle(

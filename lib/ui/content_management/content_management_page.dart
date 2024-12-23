@@ -1,9 +1,12 @@
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/models/learning/learning_model.dart';
+import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
-import 'package:adminecg/ui/widgets/add_event_widget.dart';
+import 'package:adminecg/common/repo/topic/topic_repo.dart';
+import 'package:adminecg/ui/widgets/app_button_add.dart';
+import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,10 +16,14 @@ class ContentManagementPage extends StatefulWidget {
     super.key,
     required this.eventRepo,
     required this.learningRepo,
+    required this.topicRepo,
+    required this.diagnosisRepo,
   });
 
   final EventRepo eventRepo;
   final LearningRepo learningRepo;
+  final TopicRepo topicRepo;
+  final DiagnosisRepo diagnosisRepo;
 
   @override
   State<ContentManagementPage> createState() => _ContentManagementPageState();
@@ -78,6 +85,9 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
     setState(() {});
   }
 
+  List<String> _idsTopics = [];
+  List<String> _idsDiagnose = [];
+
   @override
   void initState() {
     super.initState();
@@ -89,24 +99,89 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
 
   @override
   Widget build(BuildContext context) {
+    _idsTopics = widget.topicRepo.ids();
+    _idsDiagnose = widget.diagnosisRepo.ids();
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          AddEventWidget(
-            title: 'Practice Mode',
-            textButton: 'Question',
-            onTap: () => context.openEventDialog(() => setEventOnScreen()),
+
+          Stack(
+            alignment: AlignmentDirectional.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 200),
+                child: SelectDialogWidget(
+                  title: 'Select diagnosis',
+                  items: _idsDiagnose,
+                  diagnosisRepo: widget.diagnosisRepo,
+                ),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Text(
+                  'Practice Mode',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: AppButtonAdd(
+                  text: 'Add New Question',
+                  onTap: () => context.openEventDialog(() => setEventOnScreen()),
+                ),
+              ),
+            ],
           ),
+
+          // AddEventWidget(
+          //   title: 'Practice Mode',
+          //   textButton: 'Question',
+          //   onTap: () => context.openEventDialog(() => setEventOnScreen()),
+          // ),
           Wrap(
             children: listEvent,
           ),
-          AddEventWidget(
-            title: 'Learning mode',
-            textButton: 'Topic',
-            onTap: () => context.openLearningDialog(() => setLearningOnScreen()),
+
+          Stack(
+            alignment: AlignmentDirectional.center,
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 200),
+                child: SelectDialogWidget(
+                  title: 'Select Topic',
+                  items: _idsTopics,
+                  topicRepo: widget.topicRepo,
+                ),
+              ),
+              Positioned(
+                top: 0,
+                left: 0,
+                child: Text(
+                  'Learning Mode',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                ),
+              ),
+              Positioned(
+                top: 0,
+                right: 0,
+                child: AppButtonAdd(
+                  text: 'Add New Topic',
+                  onTap: () => context.openLearningDialog(() => setLearningOnScreen()),
+                ),
+              ),
+            ],
           ),
+
+          // AddEventWidget(
+          //   title: 'Learning mode',
+          //   textButton: 'Topic',
+          //   onTap: () => context.openLearningDialog(() => setLearningOnScreen()),
+          // ),
+
           Wrap(
             children: listLearning,
           ),
