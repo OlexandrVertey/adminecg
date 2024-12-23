@@ -130,7 +130,7 @@ class LeftAdminBar extends StatelessWidget {
       onTap: () => onChange(index),
       child: Container(
         width: 260,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(8.0)),
           color: isSelected ? AppTheme.accessColor : Colors.white,

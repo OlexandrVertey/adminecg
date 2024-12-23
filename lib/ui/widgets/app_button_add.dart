@@ -4,10 +4,12 @@ class AppButtonAdd extends StatelessWidget {
   const AppButtonAdd({
     super.key,
     required this.text,
+    this.width = 170,
     required this.onTap,
   });
 
   final String text;
+  final double? width;
   final Function() onTap;
 
   @override
@@ -18,6 +20,7 @@ class AppButtonAdd extends StatelessWidget {
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 8),
         height: 48,
+        width: width,
         decoration: BoxDecoration(
           color: const Color(0xff0A4E74),
           borderRadius: const BorderRadius.all(Radius.circular(15.0)),

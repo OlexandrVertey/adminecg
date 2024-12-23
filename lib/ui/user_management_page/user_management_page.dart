@@ -3,6 +3,7 @@ import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/user_management_page/delete_user_dialog.dart';
 import 'package:adminecg/ui/user_management_page/edit_user_dialog.dart';
 import 'package:adminecg/ui/user_management_page/user_management_provider.dart';
+import 'package:adminecg/ui/widgets/app_button_add.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -52,10 +53,8 @@ class _UserManagementPageState extends State<UserManagementPage> {
                         ),
                       ],
                     ),
-                    InkWell(
-                      hoverColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      highlightColor: Colors.transparent,
+                    AppButtonAdd(
+                      text: 'Add New User',
                       onTap: () => showDialog(
                         context: context,
                         builder: (_) => EditUserDialog(
@@ -70,29 +69,6 @@ class _UserManagementPageState extends State<UserManagementPage> {
                             email: _emailController.text,
                             password: _passwordController.text,
                           ),
-                        ),
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 25),
-                        alignment: Alignment.center,
-                        height: 56,
-                        width: 180,
-                        decoration: BoxDecoration(
-                          color: const Color(0xff0A4E74),
-                          borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                          border: Border.all(color: const Color(0xff0A4E74), width: 1.3),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Add New User',
-                              style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                            const Icon(Icons.add, color: Colors.white)
-                          ],
                         ),
                       ),
                     ),

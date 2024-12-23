@@ -106,7 +106,6 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-
           Stack(
             alignment: AlignmentDirectional.center,
             children: [
@@ -119,7 +118,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                 ),
               ),
               Positioned(
-                top: 0,
+                top: 10,
                 left: 0,
                 child: Text(
                   'Practice Mode',
@@ -136,6 +135,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
               ),
             ],
           ),
+          const SizedBox(height: 20),
 
           // AddEventWidget(
           //   title: 'Practice Mode',
@@ -146,6 +146,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
             children: listEvent,
           ),
 
+          const SizedBox(height: 20),
           Stack(
             alignment: AlignmentDirectional.center,
             children: [
@@ -158,7 +159,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                 ),
               ),
               Positioned(
-                top: 0,
+                top: 10,
                 left: 0,
                 child: Text(
                   'Learning Mode',
@@ -175,6 +176,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
               ),
             ],
           ),
+          const SizedBox(height: 20),
 
           // AddEventWidget(
           //   title: 'Learning mode',
@@ -205,24 +207,37 @@ class EventItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 200,
-      height: 90,
+    return Container(
+      margin: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xff99ABC6).withOpacity(0.1),
+        borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+        border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+      ),
+      width: 230,
+      height: 130,
       child: Column(
         children: [
           Expanded(
-            child: CachedNetworkImage(
-              width: 200,
-              imageUrl: model.image,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(Icons.error),
+            child: Container(
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(12.0)),
+              ),
+              child: CachedNetworkImage(
+                width: 200,
+                imageUrl: model.image,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => const CircularProgressIndicator(),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
             ),
           ),
+          const SizedBox(height: 13),
           Row(
             children: [
-              Text('data'),
-              Spacer(),
+              const Text('data'),
+              const Spacer(),
               InkWell(
                 onTap: edit,
                 child: SvgPicture.asset(
@@ -231,9 +246,7 @@ class EventItemWidget extends StatelessWidget {
                   "assets/images/svg/edit.svg",
                 ),
               ),
-              SizedBox(
-                width: 16,
-              ),
+              const SizedBox(width: 16),
               InkWell(
                 onTap: remove,
                 child: SvgPicture.asset(
@@ -243,7 +256,7 @@ class EventItemWidget extends StatelessWidget {
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -264,15 +277,22 @@ class LearningItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+      margin: const EdgeInsets.all(5),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: const Color(0xff99ABC6).withOpacity(0.1),
+        borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+        border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+      ),
       width: 200,
-      height: 90,
+      height: 120,
       child: Column(
         children: [
           Row(
             children: [
               Text(model.id),
-              Spacer(),
+              const Spacer(),
               InkWell(
                 onTap: edit,
                 child: SvgPicture.asset(
@@ -281,7 +301,7 @@ class LearningItemWidget extends StatelessWidget {
                   "assets/images/svg/edit.svg",
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 width: 16,
               ),
               InkWell(
@@ -293,7 +313,9 @@ class LearningItemWidget extends StatelessWidget {
                 ),
               ),
             ],
-          )
+          ),
+          const SizedBox(height: 10),
+          const Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,'),
         ],
       ),
     );

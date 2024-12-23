@@ -5,6 +5,7 @@ import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/diagnosis_topics/diagnosis_topics_provider.dart';
 import 'package:adminecg/ui/dialog/enter_dialog.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
+import 'package:adminecg/ui/widgets/app_button_add.dart';
 import 'package:adminecg/ui/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -75,10 +76,8 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                         ],
                       ),
                       const Spacer(),
-                      InkWell(
-                        hoverColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
+                      AppButtonAdd(
+                        text: 'Add New Diagnose',
                         onTap: () => showDialog(
                           context: context,
                           builder: (_) => EnterDialog.show(
@@ -90,10 +89,29 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                                   en: en,
                                   he: he,
                                 );
-                              }),
+                              },
+                          ),
                         ),
-                        child: _addNewItem(item: 'Add New Diagnose'),
                       ),
+                      // InkWell(
+                      //   hoverColor: Colors.transparent,
+                      //   splashColor: Colors.transparent,
+                      //   highlightColor: Colors.transparent,
+                      //   onTap: () => showDialog(
+                      //     context: context,
+                      //     builder: (_) => EnterDialog.show(
+                      //         context: context,
+                      //         title: 'Add New Diagnose',
+                      //         callBack: (en, he) {
+                      //           value.addNewDiagnose(
+                      //             context: context,
+                      //             en: en,
+                      //             he: he,
+                      //           );
+                      //         }),
+                      //   ),
+                      //   child: _addNewItem(item: 'Add New Diagnose'),
+                      // ),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -177,21 +195,34 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                         ],
                       ),
                       const Spacer(),
-                      InkWell(
-                        hoverColor: Colors.transparent,
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.transparent,
+                      AppButtonAdd(
+                        text: 'Add New Topic',
                         onTap: () => showDialog(
+                          context: context,
+                          builder: (_) => EnterDialog.show(
                             context: context,
-                            builder: (_) => EnterDialog.show(
-                                context: context,
-                                title: 'Add New Topic',
-                                callBack: (en, he) {
-                                  value.addNewTopic(
-                                      context: context, en: en, he: he);
-                                })),
-                        child: _addNewItem(item: 'Add New Topic'),
+                            title: 'Add New Topic',
+                            callBack: (en, he) {
+                              value.addNewTopic(context: context, en: en, he: he);
+                            },
+                          ),
+                        ),
                       ),
+                      // InkWell(
+                      //   hoverColor: Colors.transparent,
+                      //   splashColor: Colors.transparent,
+                      //   highlightColor: Colors.transparent,
+                      //   onTap: () => showDialog(
+                      //       context: context,
+                      //       builder: (_) => EnterDialog.show(
+                      //           context: context,
+                      //           title: 'Add New Topic',
+                      //           callBack: (en, he) {
+                      //             value.addNewTopic(
+                      //                 context: context, en: en, he: he);
+                      //           })),
+                      //   child: _addNewItem(item: 'Add New Topic'),
+                      // ),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -298,29 +329,29 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
     );
   }
 
-  Widget _addNewItem({required String item}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      alignment: Alignment.center,
-      height: 56,
-      width: 200,
-      decoration: BoxDecoration(
-        color: const Color(0xff0A4E74),
-        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-        border: Border.all(color: const Color(0xff0A4E74), width: 1.3),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            item,
-            style: Theme.of(context).textTheme.labelSmall!.copyWith(
-                  color: Colors.white,
-                ),
-          ),
-          const Icon(Icons.add, color: Colors.white)
-        ],
-      ),
-    );
-  }
+  // Widget _addNewItem({required String item}) {
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 20),
+  //     alignment: Alignment.center,
+  //     height: 56,
+  //     width: 200,
+  //     decoration: BoxDecoration(
+  //       color: const Color(0xff0A4E74),
+  //       borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+  //       border: Border.all(color: const Color(0xff0A4E74), width: 1.3),
+  //     ),
+  //     child: Row(
+  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //       children: [
+  //         Text(
+  //           item,
+  //           style: Theme.of(context).textTheme.labelSmall!.copyWith(
+  //                 color: Colors.white,
+  //               ),
+  //         ),
+  //         const Icon(Icons.add, color: Colors.white)
+  //       ],
+  //     ),
+  //   );
+  // }
 }
