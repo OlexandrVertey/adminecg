@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class CategoryIconWidget extends StatefulWidget {
-  const CategoryIconWidget({super.key});
+  const CategoryIconWidget({super.key, required this.onChange, required this.currentIcon});
+  final Function(String selectedItem)onChange;
+  final String currentIcon;
 
   @override
   State<CategoryIconWidget> createState() => _CategoryIconWidgetState();
@@ -20,6 +22,14 @@ class _CategoryIconWidgetState extends State<CategoryIconWidget> {
   ];
 
   String? selectedSvg;
+
+  @override
+  void initState() {
+    if(widget.currentIcon != '-1'){
+      selectedSvg = 'assets/images/svg/category_${widget.currentIcon}.svg';
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +50,9 @@ class _CategoryIconWidgetState extends State<CategoryIconWidget> {
         );
       }).toList(),
       onChanged: (String? newValue) {
+        String a = newValue!.split('_').last;
+        String updated = a.replaceAll(RegExp(r'\.svg\b'), '');
+        widget.onChange(updated);
         setState(() {
           selectedSvg = newValue;
         });

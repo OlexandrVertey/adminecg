@@ -36,7 +36,8 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
   String categoryId = '-1';
   String diagnoseId = '-1';
   bool isPremium = false;
-
+  List<ElementModel> list = [];
+  String selectedIcon = '-1';
 
   @override
   void initState() {
@@ -46,6 +47,7 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
       categoryId = widget.learningModel!.categoryId;
       diagnoseId = widget.learningModel!.diagnoseId;
       isPremium = widget.learningModel!.isPremium;
+      selectedIcon = widget.learningModel!.selectedIcon;
     }
     super.initState();
   }
@@ -59,97 +61,146 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
       ),
       content: Container(
         constraints: const BoxConstraints(maxWidth: 380),
-        child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-          child: SingleChildScrollView(
-              child: Container(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Select Category",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelMedium
-                        ?.copyWith(fontSize: 14, color: Colors.black),
+                Card(
+                  child: IconButton(
+                    onPressed: () {
+                      Toast.show(message: 'In progress');
+                      // EnterDialog.show(context: context, title: 'Add Text', callBack: (en, he){
+                      //   setState(() {
+                      //     list.add(ElementModel(he: he, en: en, type: ElementType.text));
+                      //   });
+                      // });
+                    },
+                    icon: const Icon(Icons.add_comment_rounded,
+                        color: Colors.grey),
                   ),
                 ),
-                const SizedBox(height: 12),
-                SelectDialogWidget(
-                  title: '',
-                  items: idsTopics,
-                  topicRepo: widget.topicRepo,
-                  // onSelect: (item) => correctAnswer = item,
-                  // currentValue: correctAnswer,
-                ),
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Select Diagnosis",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelMedium
-                        ?.copyWith(fontSize: 14, color: Colors.black),
+                Card(
+                  child: IconButton(
+                    onPressed: () {
+                      Toast.show(message: 'In progress');
+                    },
+                    icon: const Icon(
+                      Icons.add_photo_alternate,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                SelectDialogWidget(
-                  title: '',
-                  items: idsDiagnose,
-                  diagnosisRepo: widget.diagnosisRepo,
-                  // onSelect: (item) => correctAnswer = item,
-                  // currentValue: correctAnswer,
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Select Icon",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelMedium
-                        ?.copyWith(fontSize: 14, color: Colors.black),
-                  ),
-                ),
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: CategoryIconWidget(),
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Premium/Free",
-                    style: Theme.of(context)
-                        .textTheme
-                        .labelMedium
-                        ?.copyWith(fontSize: 14, color: Colors.black),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                _premium(),
-                const SizedBox(height: 30),
-                AppButton(
-                  width: 360,
-                  text: widget.learningModel != null
-                      ? 'Update Lesson'
-                      : 'Add New Lesson',
-                  isActive: true,
-                  onTap: () => done(),
-                ),
-                const SizedBox(height: 20),
-                AppButton(
-                  width: 360,
-                  text: 'Back',
-                  isActive: false,
-                  onTap: () => context.backPage(),
                 ),
               ],
             ),
-          )),
+            ScrollConfiguration(
+              behavior:
+                  ScrollConfiguration.of(context).copyWith(scrollbars: false),
+              child: SingleChildScrollView(
+                  child: Container(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Select Category",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SelectDialogWidget(
+                      title: '',
+                      items: idsTopics,
+                      topicRepo: widget.topicRepo,
+                      onSelect: (item) => categoryId = item,
+                      currentValue: categoryId,
+                    ),
+                    const SizedBox(height: 12),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Select Diagnosis",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SelectDialogWidget(
+                      title: '',
+                      items: idsDiagnose,
+                      diagnosisRepo: widget.diagnosisRepo,
+                      onSelect: (item) => diagnoseId = item,
+                      currentValue: diagnoseId,
+                    ),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Select Icon",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: CategoryIconWidget( onChange: (e){selectedIcon = e;}, currentIcon: selectedIcon,),
+                    ),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Premium/Free",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _premium(),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Content",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    contentWidget(),
+                    const SizedBox(height: 30),
+                    AppButton(
+                      width: 360,
+                      text: widget.learningModel != null
+                          ? 'Update Lesson'
+                          : 'Add New Lesson',
+                      isActive: true,
+                      onTap: () => done(),
+                    ),
+                    const SizedBox(height: 20),
+                    AppButton(
+                      width: 360,
+                      text: 'Back',
+                      isActive: false,
+                      onTap: () => context.backPage(),
+                    ),
+                  ],
+                ),
+              )),
+            )
+          ],
         ),
       ),
     );
@@ -179,6 +230,18 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
     );
   }
 
+  Widget contentWidget() {
+    List<Widget> list = [];
+    this.list.forEach((e) {
+      list.add(Text(e.en));
+    });
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: list,
+    );
+  }
+
   Future<void> done() async {
     if (categoryId == '-1') {
       Toast.show(message: 'Select category');
@@ -189,31 +252,34 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
       Toast.show(message: 'Select diagnosis');
       return;
     }
+
+    if (selectedIcon == '-1') {
+      Toast.show(message: 'Select Icon');
+      return;
+    }
+    setModel();
   }
 
-  // void setModel(String downloadImageUri) async {
-  //   var model = EventModel(
-  //     id: widget.eventModel?.id ??
-  //         DateTime.now().millisecondsSinceEpoch.toString(),
-  //     image: downloadImageUri,
-  //     text: textController.text,
-  //     correctAnswer: correctAnswer,
-  //     answerA: answerA,
-  //     answerB: answerB,
-  //     answerC: answerC,
-  //     answerD: answerD,
-  //     isPremium: isPremium,
-  //   );
-  //   if (widget.eventModel != null) {
-  //     await widget.eventRepo.edit(model).then((_) => finish());
-  //   } else {
-  //     await widget.eventRepo.add(model).then((_) => finish());
-  //   }
-  // }
+  void setModel() async {
+    var model = LearningModel(
+      id: widget.learningModel?.id ??
+          DateTime.now().millisecondsSinceEpoch.toString(),
+      categoryId: categoryId,
+      diagnoseId: diagnoseId,
+      isPremium: isPremium,
+      selectedIcon: selectedIcon,
+      list: list,
+    );
+    if (widget.learningModel != null) {
+      await widget.learningRepo.edit(model).then((_) => finish());
+    } else {
+      await widget.learningRepo.add(model).then((_) => finish());
+    }
+  }
 
-  // void finish() {
-  //   context.backPage();
-  //   widget.success();
-  //   Toast.show(message: 'Done');
-  // }
+  void finish() {
+    context.backPage();
+    widget.success();
+    Toast.show(message: 'Done');
+  }
 }

@@ -12,13 +12,13 @@ class LearningRepo {
     try {
       final diagnosis = await collection.collectionReference.get();
       if (kDebugMode) {
-        print('Event fetch. Success = ${diagnosis.docs.length}');
+        print('Learning fetch. Success = ${diagnosis.docs.length}');
       }
       list = diagnosis.docs
           .map((e) => LearningModel.fromJson(e.data() as Map<String, dynamic>))
           .toList();
     } catch (e) {
-      print('Event fetch. Error = $e');
+      print('Learning fetch. Error = $e');
     }
   }
 
@@ -31,10 +31,10 @@ class LearningRepo {
         await getList();
       });
       if (kDebugMode) {
-        print('Event add. Success');
+        print('Learning add. Success');
       }
     } catch (e) {
-      print('Event add. Error = $e');
+      print('Learning add. Error = $e');
     }
   }
 
@@ -45,10 +45,10 @@ class LearningRepo {
       });
 
       if (kDebugMode) {
-        print('Event edit. Success');
+        print('Learning edit. Success');
       }
     } catch (e) {
-      print('Event edit. Error = $e');
+      print('Learning edit. Error = $e');
     }
   }
 
@@ -61,10 +61,10 @@ class LearningRepo {
         await getList();
       });
       if (kDebugMode) {
-        print('Event remove. Success ${model.id}');
+        print('Learning remove. Success ${model.id}');
       }
     } catch (e) {
-      print('Event remove. Error = $e');
+      print('Learning remove. Error = $e');
     }
   }
 }

@@ -2,6 +2,7 @@ class LearningModel {
   final String id;
   final String categoryId;
   final String diagnoseId;
+  final String selectedIcon;
   final bool isPremium;
   final List<ElementModel>? list;
 
@@ -9,6 +10,7 @@ class LearningModel {
     required this.id,
     required this.categoryId,
     required this.diagnoseId,
+    required this.selectedIcon,
     required this.isPremium,
     required this.list,
   });
@@ -17,6 +19,7 @@ class LearningModel {
     id: json["id"],
     categoryId: json["categoryId"],
     diagnoseId: json["diagnoseId"],
+    selectedIcon: json["selectedIcon"],
     isPremium: json["isPremium"],
     list: json["list"] != null
         ? List<ElementModel>.from(json["list"].map((x) => ElementModel.fromJson(x)))
@@ -27,6 +30,7 @@ class LearningModel {
     "id": id,
     "categoryId": categoryId,
     "diagnoseId": diagnoseId,
+    "selectedIcon": selectedIcon,
     "isPremium": isPremium,
     "list": list != null
         ? List<dynamic>.from(list!.map((x) => x.toJson()))
