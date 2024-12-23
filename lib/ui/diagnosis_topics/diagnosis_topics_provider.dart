@@ -14,8 +14,7 @@ class DiagnosisTopicsProvider extends ChangeNotifier {
 
   final DiagnosisRepo diagnosisRepo;
   final TopicRepo topicRepo;
-
-
+  
   DiagnosisTopicsState state = DiagnosisTopicsState();
 
   void updatePage() {
@@ -33,19 +32,16 @@ class DiagnosisTopicsProvider extends ChangeNotifier {
   Future<void> addNewDiagnose({required BuildContext context, required String en, required String he}) async {
     await diagnosisRepo.addDiagnose(en: en, he: he);
     await getDiagnoseModel();
-    context.backPage();
 }
 
   Future<void> addNewTopic({required BuildContext context, required String en, required String he}) async {
     await topicRepo.addTopic(en: en, he: he);
     await getTopicModel();
-    context.backPage();
   }
 
   Future<void> editDiagnose(BuildContext context, DiagnoseModel model) async {
     await diagnosisRepo.edit(model);
     await getDiagnoseModel();
-    context.backPage();
   }
 
   Future<void> removeDiagnose(DiagnoseModel model) async {
@@ -57,7 +53,6 @@ class DiagnosisTopicsProvider extends ChangeNotifier {
   Future<void> editTopic(BuildContext context, TopicModel model) async {
     await topicRepo.edit(model);
     await getTopicModel();
-    context.backPage();
   }
 
   Future<void> removeTopic(TopicModel model) async {
@@ -65,7 +60,6 @@ class DiagnosisTopicsProvider extends ChangeNotifier {
     await getTopicModel();
     updatePage();
   }
-
 }
 
 class DiagnosisTopicsState {

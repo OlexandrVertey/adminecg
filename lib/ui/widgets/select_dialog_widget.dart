@@ -1,4 +1,5 @@
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
+import 'package:adminecg/common/repo/topic/topic_repo.dart';
 import 'package:flutter/material.dart';
 
 class SelectDialogWidget extends StatefulWidget {
@@ -9,11 +10,13 @@ class SelectDialogWidget extends StatefulWidget {
     this.diagnosisRepo,
     this.onSelect,
     this.currentValue,
+    this.topicRepo,
   });
 
   final String title;
   final List<String> items;
   final DiagnosisRepo? diagnosisRepo;
+  final TopicRepo? topicRepo;
   final Function(String)? onSelect;
   final String? currentValue;
 
@@ -43,6 +46,28 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget>
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  String selectedText() {
+    if (widget.topicRepo != null) {
+      return '${widget.title} ${widget.topicRepo != null ? widget.topicRepo!.value(_selectedText, 'locale') : _selectedText}';
+    }
+
+    if (widget.diagnosisRepo != null) {
+      return '${widget.title} ${widget.diagnosisRepo != null ? widget.diagnosisRepo!.value(_selectedText, 'locale') : _selectedText}';
+    }
+    return _selectedText;
+  }
+
+  String valueText(String item) {
+    if (widget.topicRepo != null) {
+      return widget.topicRepo!.value(item, 'locale');
+    }
+
+    if (widget.diagnosisRepo != null) {
+      return widget.diagnosisRepo!.value(item, 'locale');
+    }
+    return item;
   }
 
   @override
@@ -78,7 +103,7 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${widget.title} ${widget.diagnosisRepo != null ? widget.diagnosisRepo!.value(_selectedText, 'locale'): _selectedText}',
+                  selectedText(),
                   style: Theme.of(context)
                       .textTheme
                       .bodyLarge
@@ -134,7 +159,7 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget>
                     splashColor: Colors.transparent,
                     highlightColor: Colors.transparent,
                     onTap: () {
-                      if(widget.onSelect != null){
+                      if (widget.onSelect != null) {
                         widget.onSelect!(item);
                       }
                       _isExpanded
@@ -151,7 +176,7 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget>
                         vertical: 11,
                       ),
                       child: Text(
-                        widget.diagnosisRepo != null ? widget.diagnosisRepo!.value(item, 'locale'): item,
+                        valueText(item),
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge

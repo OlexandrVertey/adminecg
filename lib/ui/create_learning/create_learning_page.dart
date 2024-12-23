@@ -4,6 +4,9 @@ import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
+import 'package:adminecg/ui/widgets/category_icon_widget.dart';
+import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
+import 'package:adminecg/ui/widgets/toast.dart';
 import 'package:flutter/material.dart';
 
 class CreateLearningPage extends StatefulWidget {
@@ -34,15 +37,11 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
   String diagnoseId = '-1';
   bool isPremium = false;
 
-  late final TextEditingController titleEnController;
-  late final TextEditingController titleHeController;
-  late final TextEditingController descEnController;
-  late final TextEditingController descHeController;
 
   @override
   void initState() {
     idsDiagnose = widget.diagnosisRepo.ids();
-    titleEnController = TextEditingController(text: widget.learningModel?.titleEn);
+    idsTopics = widget.topicRepo.ids();
     if (widget.learningModel != null) {
       categoryId = widget.learningModel!.categoryId;
       diagnoseId = widget.learningModel!.diagnoseId;
@@ -54,12 +53,12 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      contentPadding: EdgeInsets.all(35),
+      contentPadding: const EdgeInsets.all(35),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(26.0),
       ),
       content: Container(
-        constraints: BoxConstraints(maxWidth: 380),
+        constraints: const BoxConstraints(maxWidth: 380),
         child: ScrollConfiguration(
           behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
           child: SingleChildScrollView(
@@ -67,56 +66,81 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  'Category',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium
-                      ?.copyWith(fontSize: 28),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Select Category",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(fontSize: 14, color: Colors.black),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SelectDialogWidget(
+                  title: '',
+                  items: idsTopics,
+                  topicRepo: widget.topicRepo,
+                  // onSelect: (item) => correctAnswer = item,
+                  // currentValue: correctAnswer,
+                ),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Select Diagnosis",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(fontSize: 14, color: Colors.black),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SelectDialogWidget(
+                  title: '',
+                  items: idsDiagnose,
+                  diagnosisRepo: widget.diagnosisRepo,
+                  // onSelect: (item) => correctAnswer = item,
+                  // currentValue: correctAnswer,
                 ),
                 const SizedBox(height: 16),
-                _dropDown(categoryId, idsTopics, (value) {
-                  setState(() {
-                    categoryId = value;
-                  });
-                }),
-                const SizedBox(height: 16),
-                Text(
-                  'Diagnosis',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium
-                      ?.copyWith(fontSize: 28),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Select Icon",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(fontSize: 14, color: Colors.black),
+                  ),
                 ),
-                _dropDown(categoryId, idsTopics, (value) {
-                  setState(() {
-                    categoryId = value;
-                  });
-                }),
-                const SizedBox(height: 16),
-                Text(
-                  'Answers',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium
-                      ?.copyWith(fontSize: 28),
+                const Align(
+                  alignment: Alignment.centerLeft,
+                  child: CategoryIconWidget(),
                 ),
-                const SizedBox(height: 10),
-                const SizedBox(height: 30),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Premium/Free",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelMedium
+                        ?.copyWith(fontSize: 14, color: Colors.black),
+                  ),
+                ),
+                const SizedBox(height: 12),
                 _premium(),
-                const SizedBox(height: 10),
+                const SizedBox(height: 30),
                 AppButton(
                   width: 360,
                   text: widget.learningModel != null
-                      ? 'Update Question'
-                      : 'Add New Question',
+                      ? 'Update Lesson'
+                      : 'Add New Lesson',
                   isActive: true,
-                  // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
-                  onTap: () {
-                  },
-                  // onTap: () => done(),
+                  onTap: () => done(),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 AppButton(
                   width: 360,
                   text: 'Back',
@@ -155,95 +179,18 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
     );
   }
 
-  Widget _dropDown(
-    String value,
-    List<String> values,
-    Function(String newValue) onChanged,
-  ) {
-    return DropdownButton(
-      value: value,
-      icon: const Icon(Icons.keyboard_arrow_down),
-      items: values.map((String items) {
-        return DropdownMenuItem(
-          value: items,
-          child: Text(widget.diagnosisRepo.value(items, 'locale')),
-        );
-      }).toList(),
-      onChanged: (e) {
-        if (e != null) {
-          onChanged(e);
-        }
-      },
-    );
+  Future<void> done() async {
+    if (categoryId == '-1') {
+      Toast.show(message: 'Select category');
+      return;
+    }
+
+    if (diagnoseId == '-1') {
+      Toast.show(message: 'Select diagnosis');
+      return;
+    }
   }
 
-  // Widget _image() {
-  //   if (newImage != null) {
-  //     return Image.memory(
-  //       newImage!,
-  //       fit: BoxFit.cover,
-  //     );
-  //   }
-  //   return Container();
-  // }
-  //
-  // Future<void> done() async {
-  //   if (correctAnswer == '-1') {
-  //     Toast.show(message: 'Select diagnosis');
-  //     return;
-  //   }
-  //   if (answerA == '-1' ||
-  //       answerB == '-1' ||
-  //       answerC == '-1' ||
-  //       answerD == '-1') {
-  //     Toast.show(message: 'Select all answers');
-  //     return;
-  //   }
-  //
-  //   if (answerA == answerB ||
-  //       answerA == answerC ||
-  //       answerA == answerD ||
-  //       answerB == answerC ||
-  //       answerB == answerD ||
-  //       answerC == answerD) {
-  //     Toast.show(message: 'Answers do not must repeat');
-  //     return;
-  //   }
-  //
-  //   if (correctAnswer != answerA &&
-  //       correctAnswer != answerB &&
-  //       correctAnswer != answerC &&
-  //       correctAnswer != answerD) {
-  //     Toast.show(message: 'Answers must have correct answer');
-  //     return;
-  //   }
-  //
-  //   if (currentImage == null && newImage == null) {
-  //     Toast.show(message: 'Set Image please');
-  //     return;
-  //   }
-  //
-  //   if (newImage != null) {
-  //     resizeAndCompressImage(newImage!, (image) async {
-  //       String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
-  //       await context.read<AddDiagnoseToStorageRepo>().addDiagnose(
-  //           name: name,
-  //           callBack: (uri) {
-  //             if (uri.isNotEmpty) {
-  //               setModel(uri);
-  //             } else {
-  //               Toast.show(message: 'Image error');
-  //             }
-  //           },
-  //           data: image);
-  //     });
-  //   }
-  //
-  //   if (currentImage != null) {
-  //     setModel(currentImage!);
-  //   }
-  // }
-  //
   // void setModel(String downloadImageUri) async {
   //   var model = EventModel(
   //     id: widget.eventModel?.id ??
@@ -263,7 +210,7 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
   //     await widget.eventRepo.add(model).then((_) => finish());
   //   }
   // }
-  //
+
   // void finish() {
   //   context.backPage();
   //   widget.success();

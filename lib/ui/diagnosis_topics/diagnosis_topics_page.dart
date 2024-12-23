@@ -3,6 +3,7 @@ import 'package:adminecg/common/models/diagnosis/diagnosis_model.dart';
 import 'package:adminecg/common/models/topic/topic_model.dart';
 import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/diagnosis_topics/diagnosis_topics_provider.dart';
+import 'package:adminecg/ui/dialog/enter_dialog.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
@@ -17,9 +18,6 @@ class DiagnosisTopicsPage extends StatefulWidget {
 }
 
 class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
-  final TextEditingController _itemEnController = TextEditingController();
-  final TextEditingController _itemHeController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -83,18 +81,16 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                         highlightColor: Colors.transparent,
                         onTap: () => showDialog(
                           context: context,
-                          builder: (_) => _addNewItemDialogWidget(
-                            title: 'Add New Diagnose',
-                            callBack: () {
-                              value.addNewDiagnose(
-                                context: context,
-                                en: _itemEnController.text,
-                                he: _itemHeController.text,
-                              );
-                              _itemEnController.clear();
-                              _itemHeController.clear();
-                            },
-                          ),
+                          builder: (_) => EnterDialog.show(
+                              context: context,
+                              title: 'Add New Diagnose',
+                              callBack: (en, he) {
+                                value.addNewDiagnose(
+                                  context: context,
+                                  en: en,
+                                  he: he,
+                                );
+                              }),
                         ),
                         child: _addNewItem(item: 'Add New Diagnose'),
                       ),
@@ -116,18 +112,16 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                             edit: () {
                               showDialog(
                                 context: context,
-                                builder: (_) => _addNewItemDialogWidget(
-                                  title: 'Edit Diagnose',
-                                  callBack: () {
-                                    var newModel = DiagnoseModel(
-                                        id: item.id,
-                                        titleEn: _itemEnController.text,
-                                        titleHe: _itemHeController.text);
-                                    value.editDiagnose(context, newModel);
-                                    _itemEnController.clear();
-                                    _itemHeController.clear();
-                                  },
-                                ),
+                                  builder: (_) => EnterDialog.show(
+                                      context: context,
+                                      title: 'Edit Diagnose',
+                                      callBack: (en, he) {
+                                        var newModel = DiagnoseModel(
+                                            id: item.id,
+                                            titleEn: en,
+                                            titleHe: he);
+                                        value.editDiagnose(context, newModel);
+                                      }),
                               );
                             },
                             remove: () {
@@ -188,20 +182,14 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
                         onTap: () => showDialog(
-                          context: context,
-                          builder: (_) => _addNewItemDialogWidget(
-                            title: 'Add New Topic',
-                            callBack: () {
-                              value.addNewTopic(
+                            context: context,
+                            builder: (_) => EnterDialog.show(
                                 context: context,
-                                en: _itemEnController.text,
-                                he: _itemHeController.text,
-                              );
-                              _itemEnController.clear();
-                              _itemHeController.clear();
-                            },
-                          ),
-                        ),
+                                title: 'Add New Topic',
+                                callBack: (en, he) {
+                                  value.addNewTopic(
+                                      context: context, en: en, he: he);
+                                })),
                         child: _addNewItem(item: 'Add New Topic'),
                       ),
                     ],
@@ -221,20 +209,18 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                             index: index,
                             edit: () {
                               showDialog(
-                                context: context,
-                                builder: (_) => _addNewItemDialogWidget(
-                                  title: 'Edit Diagnose',
-                                  callBack: () {
-                                    var newModel = TopicModel(
-                                        id: item.id,
-                                        titleEn: _itemEnController.text,
-                                        titleHe: _itemHeController.text);
-                                    value.editTopic(context, newModel);
-                                    _itemEnController.clear();
-                                    _itemHeController.clear();
-                                  },
-                                ),
-                              );
+                                  context: context,
+                                  builder: (_) => EnterDialog.show(
+                                      context: context,
+                                      title: 'Edit Topic',
+                                      callBack: (en, he) {
+                                        value.editTopic(
+                                            context,
+                                            TopicModel(
+                                                id: item.id,
+                                                titleEn: en,
+                                                titleHe: he));
+                                      }));
                             },
                             remove: () {
                               value.removeTopic(item);
@@ -334,91 +320,6 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
           ),
           const Icon(Icons.add, color: Colors.white)
         ],
-      ),
-    );
-  }
-
-  Widget _addNewItemDialogWidget({
-    required String title,
-    required Function() callBack,
-  }) {
-    return AlertDialog(
-      contentPadding: const EdgeInsets.all(35),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26.0)),
-      content: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(fontSize: 28),
-            ),
-            const SizedBox(height: 16),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "EN version",
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium
-                    ?.copyWith(fontSize: 14, color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 370,
-              child: TextFieldWidget(
-                controllerText: _itemEnController,
-                hintTextField: 'EN',
-                textInputType: TextInputType.text,
-                callBackTextField: (text) {},
-              ),
-            ),
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "HE version",
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium
-                    ?.copyWith(fontSize: 14, color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 370,
-              child: TextFieldWidget(
-                controllerText: _itemHeController,
-                hintTextField: 'HE',
-                textInputType: TextInputType.text,
-                callBackTextField: (text) {},
-              ),
-            ),
-            const SizedBox(height: 25),
-            AppButton(
-              width: 370,
-              text: 'Add new item',
-              isActive: true,
-              onTap: () => callBack(),
-            ),
-            const SizedBox(height: 20),
-            AppButton(
-              width: 370,
-              text: 'No  (Go Back)',
-              isActive: false,
-              onTap: () {
-                _itemEnController.clear();
-                _itemHeController.clear();
-                context.backPage();
-              },
-            ),
-          ],
-        ),
       ),
     );
   }

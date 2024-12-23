@@ -1,62 +1,97 @@
-// import 'package:adminecg/ui/widgets/text_field_widget.dart';
-// import 'package:flutter/material.dart';
-//
-// class EnterDialog {
-//   static Future<void> show(
-//     BuildContext context,
-//     String title,
-//     Function(String en, String he) success, {
-//     String? imagePath,
-//     String? currentValue,
-//   }) async {
-//     TextEditingController controllerEn =
-//         TextEditingController(text: currentValue);
-//     TextEditingController controllerHe =
-//     TextEditingController(text: currentValue);
-//     return showDialog<void>(
-//       context: context,
-//       barrierDismissible: false, // user must tap button!
-//       builder: (BuildContext context) {
-//         return AlertDialog(
-//           title: const Text('Enter Text'),
-//           content: SingleChildScrollView(
-//             child: ListBody(
-//               children: <Widget>[
-//                 Text('Enter EN version'),
-//                 TextFieldWidget(
-//                   controllerText: controllerEn,
-//                   hintTextField: 'EN version',
-//                   textInputType: TextInputType.text,
-//                 ),
-//                 SizedBox(height: 16,),
-//                 Text('Enter HE version'),
-//                 TextFieldWidget(
-//                   controllerText: controllerHe,
-//                   hintTextField: 'HE version',
-//                   textInputType: TextInputType.text,
-//                 ),
-//               ],
-//             ),
-//           ),
-//           actions: <Widget>[
-//             TextButton(
-//               child: const Text('Ok'),
-//               onPressed: () {
-//                 if(controllerEn.text.isNotEmpty || controllerHe.text.isNotEmpty ){
-//                   Navigator.of(context).pop();
-//                   success(controllerEn.text, controllerHe.text);
-//                 }
-//               },
-//             ),
-//             TextButton(
-//               child: const Text('Cancel'),
-//               onPressed: () {
-//                 Navigator.of(context).pop();
-//               },
-//             ),
-//           ],
-//         );
-//       },
-//     );
-//   }
-// }
+import 'package:adminecg/common/extensions/navigation.dart';
+import 'package:adminecg/ui/widgets/app_button.dart';
+import 'package:adminecg/ui/widgets/text_field_widget.dart';
+import 'package:flutter/material.dart';
+
+class EnterDialog {
+  static Widget show({
+    required BuildContext context,
+    required String title,
+    required Function(String en, String he) callBack,
+  }) {
+
+    final TextEditingController itemEnController = TextEditingController();
+    final TextEditingController itemHeController = TextEditingController();
+
+    return AlertDialog(
+      contentPadding: const EdgeInsets.all(35),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26.0)),
+      content: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineMedium
+                  ?.copyWith(fontSize: 28),
+            ),
+            const SizedBox(height: 16),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "EN version",
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium
+                    ?.copyWith(fontSize: 14, color: Colors.black),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: 370,
+              child: TextFieldWidget(
+                controllerText: itemEnController,
+                hintTextField: 'EN',
+                textInputType: TextInputType.text,
+                callBackTextField: (text) {},
+              ),
+            ),
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "HE version",
+                style: Theme.of(context)
+                    .textTheme
+                    .labelMedium
+                    ?.copyWith(fontSize: 14, color: Colors.black),
+              ),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: 370,
+              child: TextFieldWidget(
+                controllerText: itemHeController,
+                hintTextField: 'HE',
+                textInputType: TextInputType.text,
+                callBackTextField: (text) {},
+              ),
+            ),
+            const SizedBox(height: 25),
+            AppButton(
+              width: 370,
+              text: 'Ok',
+              isActive: true,
+              onTap: () {
+                context.backPage();
+                callBack(itemEnController.text, itemHeController.text);
+              }
+            ),
+            const SizedBox(height: 20),
+            AppButton(
+              width: 370,
+              text: 'Cancel',
+              isActive: false,
+              onTap: () {
+                context.backPage();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
