@@ -1,6 +1,7 @@
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/models/learning/learning_model.dart';
+import 'package:adminecg/common/models/topic/topic_model.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
@@ -67,20 +68,33 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
 
   void setLearningOnScreen() {
     listLearning.clear();
-    for (var model in widget.learningRepo.list) {
-      listLearning.add(
-        LearningItemWidget(
-          model: model,
-          edit: () {
-            context.openLearningDialog(() => setLearningOnScreen(), learningModel: model);
-          },
-          remove: () async {
-            await widget.learningRepo
-                .remove(model)
-                .then((_) => setLearningOnScreen());
-          },
-        ),
-      );
+    for (var topic in widget.topicRepo.list) {
+
+      List<LearningModel> list = [];
+      for (var learn in widget.learningRepo.list) {
+        if(learn.categoryId == topic.id){
+          list.add(learn);
+        }
+      }
+      if(list.isNotEmpty){
+        listLearning.add(Row(children: [Text(widget.topicRepo.value(topic.id, 'locale')), Expanded(child: SizedBox.shrink())],));
+        for (var model in list) {
+          listLearning.add(
+            LearningItemWidget(
+              diagnosisRepo: widget.diagnosisRepo,
+              model: model,
+              edit: () {
+                context.openLearningDialog(() => setLearningOnScreen(), learningModel: model);
+              },
+              remove: () async {
+                await widget.learningRepo
+                    .remove(model)
+                    .then((_) => setLearningOnScreen());
+              },
+            ),
+          );
+        }
+      }
     }
     setState(() {});
   }
@@ -268,9 +282,10 @@ class LearningItemWidget extends StatelessWidget {
     super.key,
     required this.model,
     required this.edit,
-    required this.remove,
+    required this.remove, required this.diagnosisRepo,
   });
 
+  final DiagnosisRepo diagnosisRepo;
   final LearningModel model;
   final Function() edit;
   final Function() remove;
@@ -291,7 +306,7 @@ class LearningItemWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(model.id),
+              Text(diagnosisRepo.value(model.diagnoseId, 'locale'), style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 14),),
               const Spacer(),
               InkWell(
                 onTap: edit,

@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
         final botToastBuilder = BotToastInit();
         return MaterialApp(
           title: 'ECG',
+          debugShowCheckedModeBanner: false,
           builder: (context, child) {
             child = botToastBuilder(context, child);
             return child;
