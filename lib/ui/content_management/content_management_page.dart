@@ -11,6 +11,7 @@ import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class ContentManagementPage extends StatefulWidget {
   const ContentManagementPage({
@@ -252,7 +253,7 @@ class EventItemWidget extends StatelessWidget {
             children: [
 
               Text(
-                model.correctAnswer,
+                context.read<DiagnosisRepo>().value(model.correctAnswer, 'locale'),
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 14),
               ),
 
