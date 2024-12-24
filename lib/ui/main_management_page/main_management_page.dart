@@ -106,7 +106,7 @@ class LeftAdminBar extends StatelessWidget {
             context,
             1,
             'Content Management',
-            'assets/images/svg/user.svg',
+            'assets/images/svg/content_management.svg',
           ),
           _itemWidget(
             context,
@@ -114,6 +114,8 @@ class LeftAdminBar extends StatelessWidget {
             'Diagnisis & Topics',
             'assets/images/svg/user.svg',
           ),
+          const Spacer(),
+          SvgPicture.asset('assets/images/svg/illustrations.svg'),
         ],
       ),
     );
@@ -137,7 +139,11 @@ class LeftAdminBar extends StatelessWidget {
         ),
         child: Row(
           children: [
-            SvgPicture.asset(assets),
+            SizedBox(
+              width: 15,
+              height: 15,
+              child: SvgPicture.asset(assets),
+            ),
             const SizedBox(width: 12),
             Text(
               text,
