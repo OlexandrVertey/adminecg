@@ -29,13 +29,13 @@ class DiagnosisTopicsProvider extends ChangeNotifier {
     updatePage();
   }
 
-  Future<void> addNewDiagnose({required BuildContext context, required String en, required String he}) async {
-    await diagnosisRepo.addDiagnose(en: en, he: he);
+  Future<void> addNewDiagnose({required BuildContext context, required String en}) async {
+    await diagnosisRepo.addDiagnose(en: en);
     await getDiagnoseModel();
 }
 
-  Future<void> addNewTopic({required BuildContext context, required String en, required String he}) async {
-    await topicRepo.addTopic(en: en, he: he);
+  Future<void> addNewTopic({required BuildContext context, required String en}) async {
+    await topicRepo.addTopic(en: en);
     await getTopicModel();
   }
 

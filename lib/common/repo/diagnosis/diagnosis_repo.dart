@@ -44,11 +44,11 @@ class DiagnosisRepo {
     return [];
   }
 
-  Future<void> addDiagnose({required String en, required String he}) async {
+  Future<void> addDiagnose({required String en}) async {
     String id = DateTime.now().millisecondsSinceEpoch.toString();
     try {
       await diagnosisCollection.collectionReference.doc(id)
-          .set(DiagnoseModel(id: id, titleEn: en, titleHe: he).toJson());
+          .set(DiagnoseModel(id: id, titleEn: en).toJson());
       await getListDiagnoseModel();
       if (kDebugMode) {
         print('Diagnosis add. Success');

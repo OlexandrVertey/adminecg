@@ -7,11 +7,10 @@ class EnterDialog {
   static Widget show({
     required BuildContext context,
     required String title,
-    required Function(String en, String he) callBack,
+    required Function(String en) callBack,
   }) {
 
     final TextEditingController itemEnController = TextEditingController();
-    final TextEditingController itemHeController = TextEditingController();
 
     return AlertDialog(
       contentPadding: const EdgeInsets.all(35),
@@ -50,26 +49,6 @@ class EnterDialog {
               ),
             ),
             const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "HE version",
-                style: Theme.of(context)
-                    .textTheme
-                    .labelMedium
-                    ?.copyWith(fontSize: 14, color: Colors.black),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              width: 370,
-              child: TextFieldWidget(
-                controllerText: itemHeController,
-                hintTextField: 'HE',
-                textInputType: TextInputType.text,
-                callBackTextField: (text) {},
-              ),
-            ),
             const SizedBox(height: 25),
             AppButton(
               width: 370,
@@ -77,7 +56,7 @@ class EnterDialog {
               isActive: true,
               onTap: () {
                 context.backPage();
-                callBack(itemEnController.text, itemHeController.text);
+                callBack(itemEnController.text);
               }
             ),
             const SizedBox(height: 20),
