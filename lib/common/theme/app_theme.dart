@@ -55,7 +55,7 @@ class AppTheme {
         ),
         labelLarge: TextStyle(
           color: textColorLight,
-          fontFamily: 'assets/fonts/PlusJakartaSans-SemiBold.ttf',
+          fontFamily: 'JakartaBold',
           fontSize: 18,
           letterSpacing: 0.7,
         ),
@@ -133,7 +133,7 @@ class AppTheme {
         ),
         labelLarge: TextStyle(
           color: textColorDark,
-          fontFamily: 'assets/fonts/PlusJakartaSans-Bold.ttf',
+          fontFamily: 'JakartaBold',
           fontSize: 18,
         ),
         labelMedium: TextStyle(

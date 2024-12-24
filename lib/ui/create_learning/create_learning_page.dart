@@ -30,6 +30,7 @@ class CreateLearningPage extends StatefulWidget {
 }
 
 class _CreateLearningPageState extends State<CreateLearningPage> {
+  final ScrollController _scrollController = ScrollController();
   late List<String> idsDiagnose;
   late List<String> idsTopics;
 
@@ -61,146 +62,149 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
       ),
       content: Container(
         constraints: const BoxConstraints(maxWidth: 380),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Card(
-                  child: IconButton(
-                    onPressed: () {
-                      Toast.show(message: 'In progress');
-                      // EnterDialog.show(context: context, title: 'Add Text', callBack: (en, he){
-                      //   setState(() {
-                      //     list.add(ElementModel(he: he, en: en, type: ElementType.text));
-                      //   });
-                      // });
-                    },
-                    icon: const Icon(Icons.add_comment_rounded,
-                        color: Colors.grey),
+        child: Scrollbar(
+          thumbVisibility: true,
+          controller: _scrollController,
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Card(
+                        child: IconButton(
+                          onPressed: () {
+                            Toast.show(message: 'In progress');
+                            // EnterDialog.show(context: context, title: 'Add Text', callBack: (en, he){
+                            //   setState(() {
+                            //     list.add(ElementModel(he: he, en: en, type: ElementType.text));
+                            //   });
+                            // });
+                          },
+                          icon: const Icon(Icons.add_comment_rounded,
+                              color: Colors.grey),
+                        ),
+                      ),
+                      Card(
+                        child: IconButton(
+                          onPressed: () {
+                            Toast.show(message: 'In progress');
+                          },
+                          icon: const Icon(
+                            Icons.add_photo_alternate,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                Card(
-                  child: IconButton(
-                    onPressed: () {
-                      Toast.show(message: 'In progress');
-                    },
-                    icon: const Icon(
-                      Icons.add_photo_alternate,
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
-              ],
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Select Category",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SelectDialogWidget(
+                        title: '',
+                        items: idsTopics,
+                        topicRepo: widget.topicRepo,
+                        onSelect: (item) => categoryId = item,
+                        currentValue: categoryId,
+                      ),
+                      const SizedBox(height: 12),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Select Diagnosis",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      SelectDialogWidget(
+                        title: '',
+                        items: idsDiagnose,
+                        diagnosisRepo: widget.diagnosisRepo,
+                        onSelect: (item) => diagnoseId = item,
+                        currentValue: diagnoseId,
+                      ),
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Select Icon",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: CategoryIconWidget( onChange: (e){selectedIcon = e;}, currentIcon: selectedIcon,),
+                      ),
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Premium/Free",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _premium(),
+                      const SizedBox(height: 16),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Content",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(fontSize: 14, color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      contentWidget(),
+                      const SizedBox(height: 30),
+                      AppButton(
+                        width: 360,
+                        text: widget.learningModel != null
+                            ? 'Update Lesson'
+                            : 'Add New Lesson',
+                        isActive: true,
+                        onTap: () => done(),
+                      ),
+                      const SizedBox(height: 20),
+                      AppButton(
+                        width: 360,
+                        text: 'Back',
+                        isActive: false,
+                        onTap: () => context.backPage(),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
-            ScrollConfiguration(
-              behavior:
-                  ScrollConfiguration.of(context).copyWith(scrollbars: false),
-              child: SingleChildScrollView(
-                  child: Container(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Select Category",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SelectDialogWidget(
-                      title: '',
-                      items: idsTopics,
-                      topicRepo: widget.topicRepo,
-                      onSelect: (item) => categoryId = item,
-                      currentValue: categoryId,
-                    ),
-                    const SizedBox(height: 12),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Select Diagnosis",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    SelectDialogWidget(
-                      title: '',
-                      items: idsDiagnose,
-                      diagnosisRepo: widget.diagnosisRepo,
-                      onSelect: (item) => diagnoseId = item,
-                      currentValue: diagnoseId,
-                    ),
-                    const SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Select Icon",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: CategoryIconWidget( onChange: (e){selectedIcon = e;}, currentIcon: selectedIcon,),
-                    ),
-                    const SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Premium/Free",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _premium(),
-                    const SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Content",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    contentWidget(),
-                    const SizedBox(height: 30),
-                    AppButton(
-                      width: 360,
-                      text: widget.learningModel != null
-                          ? 'Update Lesson'
-                          : 'Add New Lesson',
-                      isActive: true,
-                      onTap: () => done(),
-                    ),
-                    const SizedBox(height: 20),
-                    AppButton(
-                      width: 360,
-                      text: 'Back',
-                      isActive: false,
-                      onTap: () => context.backPage(),
-                    ),
-                  ],
-                ),
-              )),
-            )
-          ],
+          ),
         ),
       ),
     );

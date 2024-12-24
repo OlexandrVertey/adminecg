@@ -19,6 +19,9 @@ class DiagnosisTopicsPage extends StatefulWidget {
 }
 
 class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
+  final ScrollController _scrollControllerDiagnose = ScrollController();
+  final ScrollController _scrollControllerTopic = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -32,236 +35,258 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
   Widget build(BuildContext context) {
     return Consumer<DiagnosisTopicsProvider>(
       builder: (context, value, child) {
-        return Wrap(
-          children: [
-            Container(
-              width: 460,
-              padding: const EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(26.0)),
-                border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Add New Diagnosis',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
-                                ?.copyWith(fontSize: 22),
+        return SingleChildScrollView(
+          child: Wrap(
+            children: [
+              Container(
+                width: 460,
+                padding: const EdgeInsets.all(25),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+                  border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Add New Diagnosis',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium
+                                  ?.copyWith(fontSize: 22),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Diagnosis  List',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(color: AppTheme.textColorLight),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        AppButtonAdd(
+                          text: 'Add New Diagnose',
+                          onTap: () => showDialog(
+                            context: context,
+                            builder: (_) => EnterDialog.show(
+                                context: context,
+                                title: 'Add New Diagnose',
+                                callBack: (en) {
+                                  value.addNewDiagnose(
+                                    context: context,
+                                    en: en,
+                                  );
+                                },
+                            ),
                           ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Diagnosis  List',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(color: AppTheme.textColorLight),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      AppButtonAdd(
-                        text: 'Add New Diagnose',
-                        onTap: () => showDialog(
-                          context: context,
-                          builder: (_) => EnterDialog.show(
-                              context: context,
-                              title: 'Add New Diagnose',
-                              callBack: (en) {
-                                value.addNewDiagnose(
-                                  context: context,
-                                  en: en,
+                        ),
+                        // InkWell(
+                        //   hoverColor: Colors.transparent,
+                        //   splashColor: Colors.transparent,
+                        //   highlightColor: Colors.transparent,
+                        //   onTap: () => showDialog(
+                        //     context: context,
+                        //     builder: (_) => EnterDialog.show(
+                        //         context: context,
+                        //         title: 'Add New Diagnose',
+                        //         callBack: (en, he) {
+                        //           value.addNewDiagnose(
+                        //             context: context,
+                        //             en: en,
+                        //             he: he,
+                        //           );
+                        //         }),
+                        //   ),
+                        //   child: _addNewItem(item: 'Add New Diagnose'),
+                        // ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    if (value.state.diagnoseListModel.isNotEmpty)
+                      Scrollbar(
+                        thumbVisibility: true,
+                        controller: _scrollControllerDiagnose,
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 20),
+                          width: 460,
+                          height: MediaQuery.of(context).size.height * 0.8,
+                          child: ScrollConfiguration(
+                            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                            child: ListView.builder(
+                              controller: _scrollControllerDiagnose,
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: value.state.diagnoseListModel.length,
+                              itemBuilder: (context, index) {
+                                var item = value.state.diagnoseListModel[index];
+                                return _itemWidget(
+                                  item: item.titleEn,
+                                  index: index,
+                                  edit: () {
+                                    showDialog(
+                                      context: context,
+                                        builder: (_) => EnterDialog.show(
+                                            context: context,
+                                            title: 'Edit Diagnose',
+                                            callBack: (en) {
+                                              var newModel = DiagnoseModel(
+                                                  id: item.id,
+                                                  titleEn: en);
+                                              value.editDiagnose(context, newModel);
+                                            }),
+                                    );
+                                  },
+                                  remove: () {
+                                    value.removeDiagnose(item);
+                                  },
                                 );
                               },
+                            ),
                           ),
                         ),
                       ),
-                      // InkWell(
-                      //   hoverColor: Colors.transparent,
-                      //   splashColor: Colors.transparent,
-                      //   highlightColor: Colors.transparent,
-                      //   onTap: () => showDialog(
-                      //     context: context,
-                      //     builder: (_) => EnterDialog.show(
-                      //         context: context,
-                      //         title: 'Add New Diagnose',
-                      //         callBack: (en, he) {
-                      //           value.addNewDiagnose(
-                      //             context: context,
-                      //             en: en,
-                      //             he: he,
-                      //           );
-                      //         }),
-                      //   ),
-                      //   child: _addNewItem(item: 'Add New Diagnose'),
-                      // ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  if (value.state.diagnoseListModel.isNotEmpty)
-                    SizedBox(
-                      width: 460,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: value.state.diagnoseListModel.length,
-                        itemBuilder: (context, index) {
-                          var item = value.state.diagnoseListModel[index];
-                          return _itemWidget(
-                            item: item.titleEn,
-                            index: index,
-                            edit: () {
-                              showDialog(
-                                context: context,
-                                  builder: (_) => EnterDialog.show(
-                                      context: context,
-                                      title: 'Edit Diagnose',
-                                      callBack: (en) {
-                                        var newModel = DiagnoseModel(
-                                            id: item.id,
-                                            titleEn: en);
-                                        value.editDiagnose(context, newModel);
-                                      }),
-                              );
-                            },
-                            remove: () {
-                              value.removeDiagnose(item);
-                            },
-                          );
-                        },
-                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 20),
+              Container(
+                width: 460,
+                padding: const EdgeInsets.all(25),
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+                  border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3),
                     ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 20),
-            Container(
-              width: 460,
-              padding: const EdgeInsets.all(25),
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(26.0)),
-                border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Add New Topic',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
-                                ?.copyWith(fontSize: 22),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Topic  List',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall
-                                ?.copyWith(color: AppTheme.textColorLight),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      AppButtonAdd(
-                        text: 'Add New Topic',
-                        onTap: () => showDialog(
-                          context: context,
-                          builder: (_) => EnterDialog.show(
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Add New Topic',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headlineMedium
+                                  ?.copyWith(fontSize: 22),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Topic  List',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(color: AppTheme.textColorLight),
+                            ),
+                          ],
+                        ),
+                        const Spacer(),
+                        AppButtonAdd(
+                          text: 'Add New Topic',
+                          onTap: () => showDialog(
                             context: context,
-                            title: 'Add New Topic',
-                            callBack: (en) {
-                              value.addNewTopic(context: context, en: en);
-                            },
+                            builder: (_) => EnterDialog.show(
+                              context: context,
+                              title: 'Add New Topic',
+                              callBack: (en) {
+                                value.addNewTopic(context: context, en: en);
+                              },
+                            ),
+                          ),
+                        ),
+                        // InkWell(
+                        //   hoverColor: Colors.transparent,
+                        //   splashColor: Colors.transparent,
+                        //   highlightColor: Colors.transparent,
+                        //   onTap: () => showDialog(
+                        //       context: context,
+                        //       builder: (_) => EnterDialog.show(
+                        //           context: context,
+                        //           title: 'Add New Topic',
+                        //           callBack: (en, he) {
+                        //             value.addNewTopic(
+                        //                 context: context, en: en, he: he);
+                        //           })),
+                        //   child: _addNewItem(item: 'Add New Topic'),
+                        // ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    if (value.state.topicListModel.isNotEmpty)
+                      Scrollbar(
+                        thumbVisibility: true,
+                        controller: _scrollControllerTopic,
+                        child: Container(
+                          margin: const EdgeInsets.only(right: 20),
+                          width: 460,
+                          height: MediaQuery.of(context).size.height * 0.8,
+                          child: ScrollConfiguration(
+                            behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                            child: ListView.builder(
+                              controller: _scrollControllerTopic,
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: value.state.topicListModel.length,
+                              itemBuilder: (context, index) {
+                                var item = value.state.topicListModel[index];
+                                return _itemWidget(
+                                  item: item.titleEn,
+                                  index: index,
+                                  edit: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) => EnterDialog.show(
+                                            context: context,
+                                            title: 'Edit Topic',
+                                            callBack: (en) {
+                                              value.editTopic(
+                                                  context,
+                                                  TopicModel(
+                                                      id: item.id,
+                                                      titleEn: en));
+                                            }));
+                                  },
+                                  remove: () {
+                                    value.removeTopic(item);
+                                  },
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
-                      // InkWell(
-                      //   hoverColor: Colors.transparent,
-                      //   splashColor: Colors.transparent,
-                      //   highlightColor: Colors.transparent,
-                      //   onTap: () => showDialog(
-                      //       context: context,
-                      //       builder: (_) => EnterDialog.show(
-                      //           context: context,
-                      //           title: 'Add New Topic',
-                      //           callBack: (en, he) {
-                      //             value.addNewTopic(
-                      //                 context: context, en: en, he: he);
-                      //           })),
-                      //   child: _addNewItem(item: 'Add New Topic'),
-                      // ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  if (value.state.topicListModel.isNotEmpty)
-                    SizedBox(
-                      width: 460,
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: value.state.topicListModel.length,
-                        itemBuilder: (context, index) {
-                          var item = value.state.topicListModel[index];
-                          return _itemWidget(
-                            item: item.titleEn,
-                            index: index,
-                            edit: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (_) => EnterDialog.show(
-                                      context: context,
-                                      title: 'Edit Topic',
-                                      callBack: (en) {
-                                        value.editTopic(
-                                            context,
-                                            TopicModel(
-                                                id: item.id,
-                                                titleEn: en));
-                                      }));
-                            },
-                            remove: () {
-                              value.removeTopic(item);
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  // _topicList(),
-                ],
+                    // _topicList(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

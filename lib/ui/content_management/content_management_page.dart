@@ -250,7 +250,12 @@ class EventItemWidget extends StatelessWidget {
           const SizedBox(height: 13),
           Row(
             children: [
-              const Text('data'),
+
+              Text(
+                model.correctAnswer,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 14),
+              ),
+
               const Spacer(),
               InkWell(
                 onTap: edit,

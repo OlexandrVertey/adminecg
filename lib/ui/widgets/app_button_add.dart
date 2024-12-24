@@ -4,7 +4,7 @@ class AppButtonAdd extends StatelessWidget {
   const AppButtonAdd({
     super.key,
     required this.text,
-    this.width = 170,
+    this.width = 172,
     required this.onTap,
   });
 

@@ -34,6 +34,7 @@ class CreateEventPage extends StatefulWidget {
 }
 
 class _CreateEventPageState extends State<CreateEventPage> {
+  final ScrollController _scrollController = ScrollController();
   late List<String> ids;
 
   String? currentImage;
@@ -71,173 +72,178 @@ class _CreateEventPageState extends State<CreateEventPage> {
       ),
       content: Container(
         constraints: const BoxConstraints(maxWidth: 380),
-        child: ScrollConfiguration(
-          behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+        child: Scrollbar(
+          thumbVisibility: true,
+          controller: _scrollController,
           child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Organization",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(fontSize: 14, color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SelectDialogWidget(
-                    title: '',
-                    items: ids,
-                    diagnosisRepo: widget.diagnosisRepo,
-                    onSelect: (item) => correctAnswer = item,
-                    currentValue: correctAnswer,
-                  ),
-                  const SizedBox(height: 16),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "ECG image",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(fontSize: 14, color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Stack(
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(15.0)),
-                          border: Border.all(
-                              color: Colors.black.withOpacity(0.1), width: 1.3),
-                        ),
-                        width: 360,
-                        height: 150,
-                        child: _image(),
+              controller: _scrollController,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Correct Diagnosis",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
                       ),
-                      Positioned(
-                        bottom: 15,
-                        right: 15,
-                        child: InkWell(
-                          hoverColor: Colors.transparent,
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onTap: () async {
-                            var a = await AppImagePicker.getImage();
-                            if (a != null) {
-                              setState(() {
-                                newImage = a;
-                              });
-                            }
-                          },
-                          child: SvgPicture.asset("assets/images/svg/plus.svg"),
-                        ),
+                    ),
+                    const SizedBox(height: 12),
+                    SelectDialogWidget(
+                      title: '',
+                      items: ids,
+                      diagnosisRepo: widget.diagnosisRepo,
+                      onSelect: (item) => correctAnswer = item,
+                      currentValue: correctAnswer,
+                    ),
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "ECG image",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "4 Answers",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(fontSize: 14, color: Colors.black),
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  SelectDialogWidget(
-                    title: 'A.',
-                    items: ids,
-                    diagnosisRepo: widget.diagnosisRepo,
-                    onSelect: (item) => answerA = item,
-                    currentValue: answerA,
-                  ),
-                  const SizedBox(height: 12),
-                  SelectDialogWidget(
-                    title: 'B.',
-                    items: ids,
-                    diagnosisRepo: widget.diagnosisRepo,
-                    onSelect: (item) => answerB = item,
-                    currentValue: answerB,
-                  ),
-                  const SizedBox(height: 12),
-                  SelectDialogWidget(
-                    title: 'C.',
-                    items: ids,
-                    diagnosisRepo: widget.diagnosisRepo,
-                    onSelect: (item) => answerC = item,
-                    currentValue: answerC,
-                  ),
-                  const SizedBox(height: 12),
-                  SelectDialogWidget(
-                    title: 'D.',
-                    items: ids,
-                    diagnosisRepo: widget.diagnosisRepo,
-                    onSelect: (item) => answerD = item,
-                    currentValue: answerD,
-                  ),
-                  const SizedBox(height: 36),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Explain Text",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(fontSize: 14, color: Colors.black),
+                    const SizedBox(height: 12),
+                    Stack(
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(15.0)),
+                            border: Border.all(
+                                color: Colors.black.withOpacity(0.1), width: 1.3),
+                          ),
+                          width: 360,
+                          height: 150,
+                          child: _image(),
+                        ),
+                        Positioned(
+                          bottom: 15,
+                          right: 15,
+                          child: InkWell(
+                            hoverColor: Colors.transparent,
+                            splashColor: Colors.transparent,
+                            highlightColor: Colors.transparent,
+                            onTap: () async {
+                              var a = await AppImagePicker.getImage();
+                              if (a != null) {
+                                setState(() {
+                                  newImage = a;
+                                });
+                              }
+                            },
+                            child: SvgPicture.asset("assets/images/svg/plus.svg"),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: 370,
-                    height: 150,
-                    child: TextFieldWidget(
-                      controllerText: textController,
-                      hintTextField: '',
-                      textInputType: TextInputType.text,
-                      maxLines: 20,
-                      callBackTextField: (text) {},
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "4 Answers",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Choose the type of question",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(fontSize: 14, color: Colors.black),
+                    const SizedBox(height: 10),
+                    SelectDialogWidget(
+                      title: 'A.',
+                      items: ids,
+                      diagnosisRepo: widget.diagnosisRepo,
+                      onSelect: (item) => answerA = item,
+                      currentValue: answerA,
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  _premium(),
-                  const SizedBox(height: 30),
-                  AppButton(
-                    width: 360,
-                    text: widget.eventModel != null
-                        ? 'Update Question'
-                        : 'Add New Question',
-                    isActive: true,
-                    // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
-                    onTap: () => done(),
-                  ),
-                  const SizedBox(height: 20),
-                  AppButton(
-                    width: 360,
-                    text: 'Back',
-                    isActive: false,
-                    onTap: () => context.backPage(),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    SelectDialogWidget(
+                      title: 'B.',
+                      items: ids,
+                      diagnosisRepo: widget.diagnosisRepo,
+                      onSelect: (item) => answerB = item,
+                      currentValue: answerB,
+                    ),
+                    const SizedBox(height: 12),
+                    SelectDialogWidget(
+                      title: 'C.',
+                      items: ids,
+                      diagnosisRepo: widget.diagnosisRepo,
+                      onSelect: (item) => answerC = item,
+                      currentValue: answerC,
+                    ),
+                    const SizedBox(height: 12),
+                    SelectDialogWidget(
+                      title: 'D.',
+                      items: ids,
+                      diagnosisRepo: widget.diagnosisRepo,
+                      onSelect: (item) => answerD = item,
+                      currentValue: answerD,
+                    ),
+                    const SizedBox(height: 36),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Explain Text",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: 370,
+                      height: 150,
+                      child: TextFieldWidget(
+                        controllerText: textController,
+                        hintTextField: '',
+                        textInputType: TextInputType.text,
+                        maxLines: 20,
+                        callBackTextField: (text) {},
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Choose the type of question",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    _premium(),
+                    const SizedBox(height: 30),
+                    AppButton(
+                      width: 360,
+                      text: widget.eventModel != null
+                          ? 'Update Question'
+                          : 'Add New Question',
+                      isActive: true,
+                      // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
+                      onTap: () => done(),
+                    ),
+                    const SizedBox(height: 20),
+                    AppButton(
+                      width: 360,
+                      text: 'Back',
+                      isActive: false,
+                      onTap: () => context.backPage(),
+                    ),
+                  ],
+                ),
               )),
         ),
       ),
@@ -351,7 +357,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
     if (widget.eventModel != null) {
       await widget.eventRepo.edit(model).then((_) => finish());
     } else {
+
       await widget.eventRepo.add(model).then((_) => finish());
+
     }
   }
 
