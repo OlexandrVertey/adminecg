@@ -44,11 +44,11 @@ class TopicRepo {
     return [];
   }
 
-  Future addTopic({required String en, required String he}) async {
+  Future addTopic({required String en}) async {
     String id = DateTime.now().millisecondsSinceEpoch.toString();
     try {
       await topicCollection.collectionReference.doc(id)
-          .set(TopicModel(id: id, titleEn: en, titleHe: he).toJson());
+          .set(TopicModel(id: id, titleEn: en).toJson());
       await getListTopicModel();
       if (kDebugMode) {
         print('Topics add. Success');

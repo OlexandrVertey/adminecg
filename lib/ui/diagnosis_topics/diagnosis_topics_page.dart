@@ -83,11 +83,10 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                           builder: (_) => EnterDialog.show(
                               context: context,
                               title: 'Add New Diagnose',
-                              callBack: (en, he) {
+                              callBack: (en) {
                                 value.addNewDiagnose(
                                   context: context,
                                   en: en,
-                                  he: he,
                                 );
                               },
                           ),
@@ -133,11 +132,10 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                                   builder: (_) => EnterDialog.show(
                                       context: context,
                                       title: 'Edit Diagnose',
-                                      callBack: (en, he) {
+                                      callBack: (en) {
                                         var newModel = DiagnoseModel(
                                             id: item.id,
-                                            titleEn: en,
-                                            titleHe: he);
+                                            titleEn: en);
                                         value.editDiagnose(context, newModel);
                                       }),
                               );
@@ -202,8 +200,8 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                           builder: (_) => EnterDialog.show(
                             context: context,
                             title: 'Add New Topic',
-                            callBack: (en, he) {
-                              value.addNewTopic(context: context, en: en, he: he);
+                            callBack: (en) {
+                              value.addNewTopic(context: context, en: en);
                             },
                           ),
                         ),
@@ -244,13 +242,12 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                                   builder: (_) => EnterDialog.show(
                                       context: context,
                                       title: 'Edit Topic',
-                                      callBack: (en, he) {
+                                      callBack: (en) {
                                         value.editTopic(
                                             context,
                                             TopicModel(
                                                 id: item.id,
-                                                titleEn: en,
-                                                titleHe: he));
+                                                titleEn: en));
                                       }));
                             },
                             remove: () {
