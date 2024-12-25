@@ -321,19 +321,19 @@ class _CreateEventPageState extends State<CreateEventPage> {
     }
 
     if (newImage != null) {
-      resizeAndCompressImage(newImage!, (image) async {
-        String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
-        await context.read<AddDiagnoseToStorageRepo>().addDiagnose(
-            name: name,
-            callBack: (uri) {
-              if (uri.isNotEmpty) {
-                setModel(uri);
-              } else {
-                Toast.show(message: 'Image error');
-              }
-            },
-            data: image);
-      });
+      String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
+      await context.read<AddDiagnoseToStorageRepo>().addDiagnose(
+        name: name,
+        callBack: (uri) {
+          if (uri.isNotEmpty) {
+            setModel(uri);
+          } else {
+            Toast.show(message: 'Image error');
+          }
+        },
+        data: newImage!,
+      );
+      // resizeAndCompressImage(newImage!, (image) async {});
     }
 
     if (currentImage != null) {
