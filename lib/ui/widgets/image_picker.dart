@@ -7,10 +7,11 @@ class AppImagePicker {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     Uint8List? bytes = await image?.readAsBytes();
+    Uint8List bytesres = await resizeAndCompressImage(bytes!, 50);
     return bytes;
   }
 
-  Future<Uint8List> resizeAndCompressImage(Uint8List data, int targetSizeKb) async {
+  static Future<Uint8List> resizeAndCompressImage(Uint8List data, int targetSizeKb) async {
     // Декодуємо зображення з Uint8List.
     img.Image image = img.decodeImage(data)!;
 
