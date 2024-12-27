@@ -1,3 +1,6 @@
+
+import 'dart:typed_data';
+
 class LearningModel {
   final String id;
   final String categoryId;
@@ -16,53 +19,52 @@ class LearningModel {
   });
 
   factory LearningModel.fromJson(Map<String, dynamic> json) => LearningModel(
-    id: json["id"],
-    categoryId: json["categoryId"],
-    diagnoseId: json["diagnoseId"],
-    selectedIcon: json["selectedIcon"],
-    isPremium: json["isPremium"],
-    list: json["list"] != null
-        ? List<ElementModel>.from(json["list"].map((x) => ElementModel.fromJson(x)))
-        : null,
-  );
+        id: json["id"],
+        categoryId: json["categoryId"],
+        diagnoseId: json["diagnoseId"],
+        selectedIcon: json["selectedIcon"],
+        isPremium: json["isPremium"],
+        list: json["list"] != null
+            ? List<ElementModel>.from(
+                json["list"].map((x) => ElementModel.fromJson(x)))
+            : null,
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "categoryId": categoryId,
-    "diagnoseId": diagnoseId,
-    "selectedIcon": selectedIcon,
-    "isPremium": isPremium,
-    "list": list != null
-        ? List<dynamic>.from(list!.map((x) => x.toJson()))
-        : null,
-  };
+        "id": id,
+        "categoryId": categoryId,
+        "diagnoseId": diagnoseId,
+        "selectedIcon": selectedIcon,
+        "isPremium": isPremium,
+        "list": list != null
+            ? List<dynamic>.from(list!.map((x) => x.toJson()))
+            : null,
+      };
 }
 
 class ElementModel {
-  final String en;
-  final String he;
   final ElementType type;
+  String? text;
+  Uint8List? uint8list;
 
   ElementModel({
-    required this.en,
-    required this.he,
     required this.type,
+    this.text,
+    this.uint8list,
   });
 
   factory ElementModel.fromJson(Map<String, dynamic> json) => ElementModel(
-    en: json["en"],
-    he: json["he"],
-    type: ElementTypeExtension.fromString(json["type"]),
-  );
+        text: json["text"],
+        type: ElementTypeExtension.fromString(json["type"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "en": en,
-    "he": he,
-    "type": type.toShortString(),
-  };
+        "text": text,
+        "type": type.toShortString(),
+      };
 }
 
-enum ElementType { image, text }
+enum ElementType { image, text, local }
 
 extension ElementTypeExtension on ElementType {
   static ElementType fromString(String type) {
@@ -71,6 +73,8 @@ extension ElementTypeExtension on ElementType {
         return ElementType.image;
       case 'text':
         return ElementType.text;
+      case 'local':
+        return ElementType.local;
       default:
         throw Exception('Unknown ElementType: $type');
     }

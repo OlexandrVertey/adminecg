@@ -196,54 +196,6 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget>
                 ),
               ),
             ),
-            // Column(
-            //   children: [
-            //     InkWell(
-            //       hoverColor: Colors.transparent,
-            //       splashColor: Colors.transparent,
-            //       highlightColor: Colors.transparent,
-            //       onTap: () {
-            //         _isExpanded ? _controller.reverse() : _controller.forward();
-            //         setState(() {
-            //           _isExpanded = !_isExpanded;
-            //           _selectedText = widget.firstItem;
-            //         });
-            //       },
-            //       child: Padding(
-            //         padding: const EdgeInsets.symmetric(
-            //           horizontal: 15,
-            //           vertical: 11,
-            //         ),
-            //         child: Text(
-            //           widget.firstItem,
-            //           style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
-            //         ),
-            //       ),
-            //     ),
-            //     InkWell(
-            //       hoverColor: Colors.transparent,
-            //       splashColor: Colors.transparent,
-            //       highlightColor: Colors.transparent,
-            //       onTap: () {
-            //         _isExpanded ? _controller.reverse() : _controller.forward();
-            //         setState(() {
-            //           _isExpanded = !_isExpanded;
-            //           _selectedText = widget.secondItem;
-            //         });
-            //       },
-            //       child: Padding(
-            //         padding: const EdgeInsets.symmetric(
-            //           horizontal: 15,
-            //           vertical: 11,
-            //         ),
-            //         child: Text(
-            //           widget.secondItem,
-            //           style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 14),
-            //         ),
-            //       ),
-            //     ),
-            //   ],
-            // ),
           ),
         ),
       ],

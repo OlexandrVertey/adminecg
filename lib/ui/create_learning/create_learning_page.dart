@@ -3,8 +3,10 @@ import 'package:adminecg/common/models/learning/learning_model.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
+import 'package:adminecg/ui/create_learning/content_widget.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/category_icon_widget.dart';
+import 'package:adminecg/ui/widgets/image_picker.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:adminecg/ui/widgets/toast.dart';
 import 'package:flutter/material.dart';
@@ -31,6 +33,7 @@ class CreateLearningPage extends StatefulWidget {
 
 class _CreateLearningPageState extends State<CreateLearningPage> {
   final ScrollController _scrollController = ScrollController();
+  late final TextEditingController textController = TextEditingController();
   late List<String> idsDiagnose;
   late List<String> idsTopics;
 
@@ -53,58 +56,77 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
     super.initState();
   }
 
+  double _getSize() {
+    if (list.isNotEmpty) {
+      return _isEnterTextOpen ? (maxColumnWidth * 3) : (maxColumnWidth * 2);
+    } else {
+      return _isEnterTextOpen ? (maxColumnWidth * 2) : (maxColumnWidth * 1);
+    }
+  }
+
+  bool _isEnterTextOpen = false;
+  double maxColumnWidth = 360;
+
+  final yourScrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      contentPadding: const EdgeInsets.all(35),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(26.0),
-      ),
-      content: Container(
-        constraints: const BoxConstraints(maxWidth: 380),
-        child: Scrollbar(
-          thumbVisibility: true,
-          controller: _scrollController,
-          child: SingleChildScrollView(
+    return Scaffold(
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 32,
+          ),
+          Scrollbar(
+            thumbVisibility: true,
             controller: _scrollController,
-            child: Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Card(
-                        child: IconButton(
-                          onPressed: () {
-                            Toast.show(message: 'In progress');
-                            // EnterDialog.show(context: context, title: 'Add Text', callBack: (en, he){
-                            //   setState(() {
-                            //     list.add(ElementModel(he: he, en: en, type: ElementType.text));
-                            //   });
-                            // });
-                          },
-                          icon: const Icon(Icons.add_comment_rounded,
-                              color: Colors.grey),
-                        ),
-                      ),
-                      Card(
-                        child: IconButton(
-                          onPressed: () {
-                            Toast.show(message: 'In progress');
-                          },
-                          icon: const Icon(
-                            Icons.add_photo_alternate,
-                            color: Colors.grey,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Column(
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Container(
+                color: Colors.transparent,
+                alignment: Alignment.topCenter,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 380),
+                  margin: const EdgeInsets.only(right: 20),
+                  width: 380,
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Card(
+                            child: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isEnterTextOpen = !_isEnterTextOpen;
+                                });
+                              },
+                              icon: const Icon(Icons.add_comment_rounded,
+                                  color: Colors.grey),
+                            ),
+                          ),
+                          Card(
+                            child: IconButton(
+                              onPressed: () async {
+                                var file = await AppImagePicker.getImage();
+                                if (file != null) {
+                                  setState(() {
+                                    list.add(ElementModel(
+                                        uint8list: file,
+                                        type: ElementType.local));
+                                  });
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.add_photo_alternate,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
@@ -155,7 +177,12 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: CategoryIconWidget( onChange: (e){selectedIcon = e;}, currentIcon: selectedIcon,),
+                        child: CategoryIconWidget(
+                          onChange: (e) {
+                            selectedIcon = e;
+                          },
+                          currentIcon: selectedIcon,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       Align(
@@ -171,19 +198,6 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
                       const SizedBox(height: 12),
                       _premium(),
                       const SizedBox(height: 16),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Content",
-                          style: Theme.of(context)
-                              .textTheme
-                              .labelMedium
-                              ?.copyWith(fontSize: 14, color: Colors.black),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      contentWidget(),
-                      const SizedBox(height: 30),
                       AppButton(
                         width: 360,
                         text: widget.learningModel != null
@@ -200,12 +214,43 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
                         onTap: () => context.backPage(),
                       ),
                     ],
-                  )
-                ],
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+          // Expanded(
+          //   child: Container(
+          //       child: Container(
+          //     color: Colors.red,
+          //     child: Column(
+          //       children: [
+          //         const Text('Content'),
+          //         Expanded(
+          //           child: ReorderableListView(
+          //             // scrollController: scrollController,
+          //             // shrinkWrap: true,
+          //             onReorder: _onReorder,
+          //             children: [
+          //               for (int index = 0; index < list.length; index++)
+          //                 Card(
+          //                   key: Key('value$index'),
+          //                   child: Container(
+          //                     margin: const EdgeInsets.symmetric(
+          //                         horizontal: 32, vertical: 12),
+          //                     key: Key('value$index'),
+          //                     height: 20,
+          //                     child: list[index],
+          //                   ),
+          //                 ),
+          //             ],
+          //           ),
+          //         ),
+          //       ],
+          //     ),
+          //   )),
+          // ),
+        ],
       ),
     );
   }
@@ -234,17 +279,30 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
     );
   }
 
-  Widget contentWidget() {
+  List<Widget> contentWidget() {
     List<Widget> list = [];
-    this.list.forEach((e) {
-      list.add(Text(e.en));
-    });
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: list,
-    );
+    for (int index = 0; index < this.list.length; index++) {
+      var element = this.list[index];
+      if (element.type == ElementType.text) {
+        list.add(
+          Text(element.text ?? ''),
+        );
+      }
+      if (element.type == ElementType.local) {
+        list.add(
+          Image.memory(element.uint8list!),
+        );
+      }
+      if (element.type == ElementType.image) {
+        list.add(
+          Image.network(element.text!),
+        );
+      }
+    }
+    return list;
   }
+
+  // Widget ms(Widget widget){}
 
   Future<void> done() async {
     if (categoryId == '-1') {

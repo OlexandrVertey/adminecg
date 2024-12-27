@@ -49,6 +49,7 @@ dependencies:
   firebase_storage: ^11.6.0
   file_picker: ^8.0.0
   image: ^4.5.2
+  drag_and_drop_lists: ^0.4.2
 
 dev_dependencies:
   flutter_test:

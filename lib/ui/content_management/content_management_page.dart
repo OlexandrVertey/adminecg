@@ -70,22 +70,27 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   void setLearningOnScreen() {
     listLearning.clear();
     for (var topic in widget.topicRepo.list) {
-
       List<LearningModel> list = [];
       for (var learn in widget.learningRepo.list) {
-        if(learn.categoryId == topic.id){
+        if (learn.categoryId == topic.id) {
           list.add(learn);
         }
       }
-      if(list.isNotEmpty){
-        listLearning.add(Row(children: [Text(widget.topicRepo.value(topic.id, 'locale')), Expanded(child: SizedBox.shrink())],));
+      if (list.isNotEmpty) {
+        listLearning.add(Row(
+          children: [
+            Text(widget.topicRepo.value(topic.id, 'locale')),
+            Expanded(child: SizedBox.shrink())
+          ],
+        ));
         for (var model in list) {
           listLearning.add(
             LearningItemWidget(
               diagnosisRepo: widget.diagnosisRepo,
               model: model,
               edit: () {
-                context.openLearningDialog(() => setLearningOnScreen(), learningModel: model);
+                context.openLearningDialog(() => setLearningOnScreen(),
+                    learningModel: model);
               },
               remove: () async {
                 await widget.learningRepo
@@ -137,7 +142,10 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                 left: 0,
                 child: Text(
                   'Practice Mode',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(fontSize: 22),
                 ),
               ),
               Positioned(
@@ -145,7 +153,8 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                 right: 0,
                 child: AppButtonAdd(
                   text: 'Add New Question',
-                  onTap: () => context.openEventDialog(() => setEventOnScreen()),
+                  onTap: () =>
+                      context.openEventDialog(() => setEventOnScreen()),
                 ),
               ),
             ],
@@ -178,7 +187,10 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                 left: 0,
                 child: Text(
                   'Learning Mode',
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(fontSize: 22),
                 ),
               ),
               Positioned(
@@ -186,6 +198,43 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                 right: 0,
                 child: AppButtonAdd(
                   text: 'Add New Topic',
+                  // onTap: () {
+                  //   showDialog(
+                  //     context: context,
+                  //     builder: (BuildContext context) {
+                  //       return Dialog(
+                  //         child: ConstrainedBox(
+                  //           constraints: BoxConstraints(
+                  //             maxHeight: MediaQuery.of(context).size.height * 0.8,  // Максимум 80% висоти екрану
+                  //           ),
+                  //           child: Column(
+                  //             mainAxisSize: MainAxisSize.min,
+                  //             children: <Widget>[
+                  //               Padding(
+                  //                 padding: const EdgeInsets.all(16.0),
+                  //                 child: Text('Your Title Here', style: TextStyle(fontSize: 18)),
+                  //               ),
+                  //               Expanded(
+                  //                 child: ReorderableListView(
+                  //                   onReorder: (int oldIndex, int newIndex) {
+                  //                     // Обробка reorder події
+                  //                   },
+                  //                   children: List.generate(
+                  //                     4,
+                  //                         (index) => ListTile(
+                  //                       key: ValueKey(index),
+                  //                       title: Text('Item $index'),
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       );
+                  //     },
+                  //   );
+                  // },
                   onTap: () => context.openLearningDialog(() => setLearningOnScreen()),
                 ),
               ),
@@ -243,7 +292,8 @@ class EventItemWidget extends StatelessWidget {
                 width: 200,
                 imageUrl: model.image,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => const CircularProgressIndicator(),
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
             ),
@@ -251,12 +301,15 @@ class EventItemWidget extends StatelessWidget {
           const SizedBox(height: 13),
           Row(
             children: [
-
               Text(
-                context.read<DiagnosisRepo>().value(model.correctAnswer, 'locale'),
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 14),
+                context
+                    .read<DiagnosisRepo>()
+                    .value(model.correctAnswer, 'locale'),
+                style: Theme.of(context)
+                    .textTheme
+                    .labelLarge
+                    ?.copyWith(fontSize: 14),
               ),
-
               const Spacer(),
               InkWell(
                 onTap: edit,
@@ -288,7 +341,8 @@ class LearningItemWidget extends StatelessWidget {
     super.key,
     required this.model,
     required this.edit,
-    required this.remove, required this.diagnosisRepo,
+    required this.remove,
+    required this.diagnosisRepo,
   });
 
   final DiagnosisRepo diagnosisRepo;
@@ -312,7 +366,13 @@ class LearningItemWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(diagnosisRepo.value(model.diagnoseId, 'locale'), style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 14),),
+              Text(
+                diagnosisRepo.value(model.diagnoseId, 'locale'),
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineMedium
+                    ?.copyWith(fontSize: 14),
+              ),
               const Spacer(),
               InkWell(
                 onTap: edit,
@@ -336,7 +396,8 @@ class LearningItemWidget extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          const Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,'),
+          const Text(
+              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,'),
         ],
       ),
     );
