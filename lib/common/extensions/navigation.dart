@@ -19,6 +19,7 @@ extension ExtensionString on BuildContext {
   openLearningDialog(Function() success, {LearningModel? learningModel}) => Navigator.push(this, MaterialPageRoute(builder: (context) =>  CreateLearningModule(
     learningModel: learningModel,
     success: success,
+    parentContext: this,
   )));
 
 }

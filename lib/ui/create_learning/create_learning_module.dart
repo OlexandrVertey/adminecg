@@ -11,9 +11,11 @@ class CreateLearningModule extends StatelessWidget {
     super.key,
     required this.success,
     this.learningModel,
+    required this.parentContext,
   });
 
   final Function() success;
+  final BuildContext parentContext;
   final LearningModel? learningModel;
 
   @override
@@ -25,6 +27,7 @@ class CreateLearningModule extends StatelessWidget {
       diagnosisRepo: diagnosisRepo,
       topicRepo: topicRepo,
       learningRepo: learningRepo,
+      parentContext: parentContext,
       success: success,
       learningModel: learningModel,
     );
