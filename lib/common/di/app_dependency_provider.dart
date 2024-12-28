@@ -1,15 +1,19 @@
 import 'package:adminecg/common/firebase_collections/firebase_collections.dart';
 import 'package:adminecg/common/firebase_storage/firebase_storage.dart';
 import 'package:adminecg/common/repo/add_diagnose_to_storage_repo/add_diagnose_to_storage_repo.dart';
+import 'package:adminecg/common/repo/delete_organization_repo/delete_organization_repo.dart';
 import 'package:adminecg/common/repo/delete_user_repo/delete_user_repo.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
+import 'package:adminecg/common/repo/get_all_organizations_repo/get_all_organizations_repo.dart';
 import 'package:adminecg/common/repo/get_all_users_repo/get_all_users_repo.dart';
 import 'package:adminecg/common/repo/get_user_repo/get_user_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
 import 'package:adminecg/common/repo/register_repo/register_repo.dart';
+import 'package:adminecg/common/repo/set_organization_repo/set_organization_repo.dart';
 import 'package:adminecg/common/repo/set_user_repo/set_user_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
+import 'package:adminecg/common/repo/update_organization_repo/update_organization_repo.dart';
 import 'package:adminecg/common/repo/update_user_repo/update_user_repo.dart';
 import 'package:adminecg/common/shared_preference/shared_preference.dart';
 import 'package:adminecg/ui/diagnosis_topics/diagnosis_topics_provider.dart';
@@ -43,6 +47,7 @@ class CollectionsDependenciesProvider extends MultiProvider {
     Provider<SharedPreference>(create: (context) => SharedPreference(sharedPreference)),
     Provider<DiagnoseStorage>(create: (context) => DiagnoseStorage()),
     Provider<UsersCollection>(create: (context) => UsersCollection()),
+    Provider<OrganizationsCollection>(create: (context) => OrganizationsCollection()),
     Provider<TopicCollection>(create: (context) => TopicCollection()),
     Provider<DiagnosisCollection>(create: (context) => DiagnosisCollection()),
     Provider<EventCollection>(create: (context) => EventCollection()),
@@ -72,6 +77,10 @@ class RepoDependenciesProvider extends MultiProvider {
     Provider<EventRepo>(create: (context) => EventRepo(context.read<EventCollection>())),
     Provider<LearningRepo>(create: (context) => LearningRepo(context.read<LearningCollection>())),
     Provider<AddDiagnoseToStorageRepo>(create: (context) => AddDiagnoseToStorageRepo(diagnoseStorage: context.read<DiagnoseStorage>())),
+    Provider<SetOrganizationRepo>(create: (context) => SetOrganizationRepo(organizationsCollection: context.read<OrganizationsCollection>())),
+    Provider<UpdateOrganizationRepo>(create: (context) => UpdateOrganizationRepo(organizationsCollection: context.read<OrganizationsCollection>())),
+    Provider<GetAllOrganizationsRepo>(create: (context) => GetAllOrganizationsRepo(organizationsCollection: context.read<OrganizationsCollection>())),
+    Provider<DeleteOrganizationRepo>(create: (context) => DeleteOrganizationRepo(organizationsCollection: context.read<OrganizationsCollection>())),
   ],
     child: BlocDependenciesProvider(child: child),
   );
@@ -101,6 +110,10 @@ class BlocDependenciesProvider extends StatelessWidget {
             getAllUsersRepo: context.read<GetAllUsersRepo>(),
             deleteUserRepo: context.read<DeleteUserRepo>(),
             registerRepo: context.read<RegisterRepo>(),
+            setOrganizationRepo: context.read<SetOrganizationRepo>(),
+            updateOrganizationRepo: context.read<UpdateOrganizationRepo>(),
+            getAllOrganizationsRepo: context.read<GetAllOrganizationsRepo>(),
+            deleteOrganizationRepo: context.read<DeleteOrganizationRepo>(),
           ),
         ),
       ],

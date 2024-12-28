@@ -9,10 +9,12 @@ class DeleteUserDialog extends StatelessWidget {
   const DeleteUserDialog({super.key,
     required this.title,
     required this.userUid,
+    required this.isUser,
   });
 
   final String title;
   final String userUid;
+  final bool isUser;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +35,8 @@ class DeleteUserDialog extends StatelessWidget {
           AppButton(
             text: 'Yes  (Delete)',
             isActive: true,
-            onTap: () => context.read<UserManagementProvider>().deleteUser(context: context, userUid: userUid),
+            onTap: () => isUser ? context.read<UserManagementProvider>().deleteUser(context: context, userUid: userUid)
+                : context.read<UserManagementProvider>().deleteOrganization(context: context, id: userUid),
           ),
           const  SizedBox(height: 20),
           AppButton(
