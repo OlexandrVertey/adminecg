@@ -84,13 +84,16 @@ class UserManagementProvider extends ChangeNotifier {
     required String fullName,
     required String email,
     required String password,
+    String? organisation,
   }) async {
+    print('organisation $organisation');
     try {
       await updateUserRepo.updateUser(
         userUid: userUid,
         fullName: fullName,
         email: email,
         password: password,
+        organisation: organisation,
       );
       getUserModel();
     } catch (e) {}
@@ -125,6 +128,7 @@ class UserManagementProvider extends ChangeNotifier {
     required String userName,
     required String email,
     required String password,
+    String? organisation,
   }) async {
     try {
       UserCredential? userCredential = await registerRepo.registerUser(
@@ -140,6 +144,8 @@ class UserManagementProvider extends ChangeNotifier {
           fullName: userName,
           email: email,
           password: password,
+          organisation: organisation,
+          registerData: DateTime.now().toString(),
         );
         print('---RegisterProvider register 5 userCredential.user!.uid = ${userCredential.user!.uid}');
         getUserModel();

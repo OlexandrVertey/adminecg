@@ -74,7 +74,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               callBack: ({required String premium}) {
                                 context.read<UserManagementProvider>().registerOrganization(
                                   context: context,
-                                  id: date.toString(),
+                                  id: date.millisecondsSinceEpoch.toString(),
                                   name: _organizationNameController.text,
                                   premium: premium,
                                 );
@@ -172,12 +172,14 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               userNameController: _userNameController,
                               emailController: _emailController,
                               passwordController: _passwordController,
+                              organisations: value.state.listOrganizationModel,
                               nameButton: 'Create & Send Login Details',
-                              callBack: () => value.registerUser(
+                              callBack: (organisation) => value.registerUser(
                                 context: context,
                                 userName: _userNameController.text,
                                 email: _emailController.text,
                                 password: _passwordController.text,
+                                organisation: organisation
                               ),
                             ),
                           ),
@@ -237,6 +239,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                             itemBuilder: (context, index) {
                               UserModel item = value.state.listUserModel[index];
                               return _itemUserWidget(
+                                list: value.state.listOrganizationModel,
                                 item: item,
                                 index: index,
                               );
@@ -257,6 +260,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
   Widget _itemUserWidget({
     required UserModel item,
     required int index,
+    required List<OrganizationModel> list,
   }) {
     return Container(
       height: 30,
@@ -341,11 +345,14 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   userNameController: _userNameController,
                   emailController: _emailController,
                   passwordController: _passwordController,
+                  organisationId: item.organisation,
+                  organisations: list,
                   nameButton: 'Update & Send Login Details',
-                  callBack: () => context.read<UserManagementProvider>().updateUser(
+                  callBack: (organisation) => context.read<UserManagementProvider>().updateUser(
                     context: context,
                     userUid: item.userUid!,
                     fullName: _userNameController.text,
+                    organisation: organisation,
                     email: _emailController.text,
                     password: _passwordController.text,
                   ),

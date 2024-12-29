@@ -10,17 +10,17 @@ class SetUserRepo {
     required String fullName,
     required String email,
     required String password,
+    String? registerData,
+    String? organisation,
   }) async {
     try {
-      print('---SetUserRepo try userUid = ${userUid}');
-      print('---SetUserRepo try fullName = ${fullName}');
-      print('---SetUserRepo try email = ${email}');
-      print('---SetUserRepo try password = ${password}');
       await usersCollection.collectionReference.doc(userUid).set({
         "userUid": userUid,
         'fullName': fullName,
         'email': email,
         'password': password,
+        'organisation': organisation,
+        'registerData': registerData,
       });
       print('---SetUserRepo try finish');
     } catch (e) {

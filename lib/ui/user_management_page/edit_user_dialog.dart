@@ -1,4 +1,5 @@
 import 'package:adminecg/common/extensions/navigation.dart';
+import 'package:adminecg/common/models/organization_model/organization_model.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:adminecg/ui/widgets/text_field_widget.dart';
@@ -13,6 +14,8 @@ class EditUserDialog extends StatefulWidget {
     required this.passwordController,
     required this.callBack,
     required this.nameButton,
+    this.organisationId,
+    this.organisations,
   });
 
   final String title;
@@ -20,8 +23,10 @@ class EditUserDialog extends StatefulWidget {
   final TextEditingController userNameController;
   final TextEditingController emailController;
   final TextEditingController passwordController;
-  final Function() callBack;
+  final Function(String? organisation) callBack;
   final String nameButton;
+  final String? organisationId;
+  final List<OrganizationModel>? organisations;
 
   @override
   State<EditUserDialog> createState() => _EditUserDialogState();
@@ -30,6 +35,19 @@ class EditUserDialog extends StatefulWidget {
 class _EditUserDialogState extends State<EditUserDialog> {
   final ScrollController _scrollController = ScrollController();
   bool _statesButton = true;
+  String? organisation;
+  List<String> listOrg = [];
+  @override
+  void initState() {
+    listOrg.clear();
+    widget.organisations?.forEach((element){
+      listOrg.add(element.name??'no name');
+      if(element.id == widget.organisationId){
+        organisation = element.name;
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,7 +132,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const SelectDialogWidget(title: 'Organization', items: ['School', 'Hospital']),
+                SelectDialogWidget(title: 'Organization', items: listOrg, currentValue: organisation, onSelect: (s)=> organisation = s),
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerLeft,
@@ -165,12 +183,12 @@ class _EditUserDialogState extends State<EditUserDialog> {
                   width: 370,
                   text: widget.nameButton,
                   isActive: true,
-                  onTap: () => widget.callBack(),
+                  onTap: () => widget.callBack(getOrgId()),
                 ),
                 const  SizedBox(height: 20),
                 AppButton(
                   width: 370,
-                  text: 'No  (Go Back)',
+                  text: 'No (Go Back)',
                   isActive: false,
                   onTap: () => context.backPage(),
                 ),
@@ -180,5 +198,19 @@ class _EditUserDialogState extends State<EditUserDialog> {
         ),
       ),
     );
+  }
+
+  String? getOrgId(){
+    if(organisation == null){
+      return null;
+    }
+    OrganizationModel? model;
+    widget.organisations?.forEach((element){
+      if(element.name == organisation){
+        model = element;
+      }
+    });
+    return model?.id;
+
   }
 }
