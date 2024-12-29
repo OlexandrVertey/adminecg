@@ -1,14 +1,17 @@
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/common/models/learning/learning_model.dart';
+import 'package:adminecg/common/repo/add_diagnose_to_storage_repo/add_diagnose_to_storage_repo.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
+import 'package:adminecg/ui/dialog/enter_dialog.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/category_icon_widget.dart';
 import 'package:adminecg/ui/widgets/image_picker.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:adminecg/ui/widgets/toast.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CreateLearningPage extends StatefulWidget {
   const CreateLearningPage({
@@ -17,16 +20,16 @@ class CreateLearningPage extends StatefulWidget {
     required this.topicRepo,
     required this.learningRepo,
     required this.success,
-    required this.parentContext,
+    required this.storageRepo,
     this.learningModel,
   });
 
   final DiagnosisRepo diagnosisRepo;
   final TopicRepo topicRepo;
   final LearningRepo learningRepo;
+  final AddDiagnoseToStorageRepo storageRepo;
   final Function() success;
   final LearningModel? learningModel;
-  final BuildContext parentContext;
 
   @override
   State<CreateLearningPage> createState() => _CreateLearningPageState();
@@ -53,6 +56,7 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
       diagnoseId = widget.learningModel!.diagnoseId;
       isPremium = widget.learningModel!.isPremium;
       selectedIcon = widget.learningModel!.selectedIcon;
+      list = widget.learningModel?.list ?? [];
     }
     super.initState();
   }
@@ -64,6 +68,7 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white.withOpacity(0.7),
       body: Padding(
         padding: const EdgeInsets.all(32.0),
         child: Row(
@@ -279,11 +284,15 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
                           onTap: () async {
                             var file = await AppImagePicker.getImage();
                             if (file != null) {
-                              setState(() {
-                                list.add(ElementModel(
-                                    uint8list: file,
-                                    type: ElementType.local));
-                              });
+                              String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
+                              widget.storageRepo.addLearning(callBack: (url){
+                                setState(() {
+                                  list.add(ElementModel(
+                                      uint8list: file,
+                                      text: url,
+                                      type: ElementType.image));
+                                });
+                              }, data: file, name: name);
                             }
                           },
                         ),
@@ -350,14 +359,18 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
                     onTap: () {
                       if(textController.text.isNotEmpty){
                         setState(() {
-                          list.add(
-                            ElementModel(
-                                text: textController.text,
-                                type: ElementType.text),
-                          );
+                          if(editedIndex != null){
+                            list[editedIndex!].text = textController.text;
+                          } else {
+                            list.add(
+                              ElementModel(
+                                  text: textController.text,
+                                  type: ElementType.text),
+                            );
+                          }
                         });
+                        textController.clear();
                       }
-                      textController.clear();
                     },
                   ),
                   const SizedBox(height: 20),
@@ -414,30 +427,87 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
     List<Widget> list = [];
     for (int index = 0; index < this.list.length; index++) {
       var element = this.list[index];
-      if (element.type == ElementType.text) {
+      if (element.uint8list != null) {
         list.add(
-          item(Text(element.text ?? ''), '$index'),
+          item(Image.memory(element.uint8list!), '$index', ()=>edit(index), ()=>remove(index)),
         );
-      }
-      if (element.type == ElementType.local) {
-        list.add(
-          item(Image.memory(element.uint8list!), '$index'),
-        );
-      }
-      if (element.type == ElementType.image) {
-        list.add(
-          item(Image.network(element.text!), '$index'),
-        );
+      } else {
+        if (element.type == ElementType.image) {
+          list.add(
+            item(Image.network(element.text!), '$index', ()=>edit(index), ()=>remove(index)),
+          );
+        } else {
+          list.add(
+            item(Text(element.text ?? '', style: Theme.of(context).textTheme.bodyLarge,), '$index', ()=>edit(index), ()=>remove(index)),
+          );
+        }
       }
     }
     return list;
   }
 
-  Widget item(Widget widget, String key) {
+  int? editedIndex;
+  void edit(int index) async {
+    ElementModel elementModel = list[index];
+    if(elementModel.type == ElementType.text){
+      textController.text = elementModel.text!;
+      editedIndex = index;
+    } else{
+      var file = await AppImagePicker.getImage();
+      if (file != null) {
+        String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
+        widget.storageRepo.addLearning(callBack: (url){
+          setState(() {
+            list[index].uint8list = file;
+            list[index].text = url;
+          });
+        }, data: file, name: name);
+      }
+    }
+  }
+
+  void remove(int index){
+    setState(() {
+      list.removeAt(index);
+    });
+  }
+
+  Widget item(Widget widget, String key, Function() edit, Function() remove) {
     return Container(
       key: Key(key),
-      margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
-      child: widget,
+      padding: const EdgeInsets.only(left: 16, right: 30, top: 6, bottom: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+        border: Border.all(color: const Color(0xffD9D9D9), width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Expanded(child: widget),
+          const SizedBox(
+            width: 3,
+          ),
+          InkWell(
+            onTap: edit,
+            child: SvgPicture.asset(
+              width: 20,
+              height: 20,
+              "assets/images/svg/edit.svg",
+            ),
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          InkWell(
+            onTap: remove,
+            child: SvgPicture.asset(
+              width: 20,
+              height: 20,
+              "assets/images/svg/delete.svg",
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -456,10 +526,16 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
       Toast.show(message: 'Select Icon');
       return;
     }
+
+    if (list.isEmpty) {
+      Toast.show(message: 'Need Add Content');
+      return;
+    }
     setModel();
   }
 
   void setModel() async {
+
     var model = LearningModel(
       id: widget.learningModel?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),

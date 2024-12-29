@@ -16,10 +16,19 @@ extension ExtensionString on BuildContext {
       success: success,
     ),
   );
-  openLearningDialog(Function() success, {LearningModel? learningModel}) => Navigator.push(this, MaterialPageRoute(builder: (context) =>  CreateLearningModule(
-    learningModel: learningModel,
-    success: success,
-    parentContext: this,
-  )));
+  // openLearningDialog(Function() success, {LearningModel? learningModel}) => Navigator.push(this, MaterialPageRoute(builder: (context) =>  CreateLearningModule(
+  //   learningModel: learningModel,
+  //   success: success,
+  //   parentContext: this,
+  // )));
+
+  openLearningDialog(Function() success, {LearningModel? learningModel}) => Navigator.push(this, PageRouteBuilder(
+    opaque: false, // set to false
+    pageBuilder: (_, __, ___) => CreateLearningModule(
+      learningModel: learningModel,
+      success: success,
+      parentContext: this,
+    ),
+  ),);
 
 }
