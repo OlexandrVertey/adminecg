@@ -50,63 +50,86 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   void setEventOnScreen() {
     listEvent.clear();
     for (var model in widget.eventRepo.list) {
-      listEvent.add(
-        EventItemWidget(
-          model: model,
-          edit: () {
-            context.openEventDialog(() => setEventOnScreen(), event: model);
-          },
-          remove: () async {
-            await widget.eventRepo
-                .remove(model)
-                .then((_) => setEventOnScreen());
-          },
-        ),
-      );
+      if(selectedDiagnose == null){
+        addEvent(model);
+      } else {
+        if(selectedDiagnose == model.correctAnswer){
+          addEvent(model);
+        }
+      }
+
     }
     setState(() {});
+  }
+
+  void addEvent(EventModel model){
+    listEvent.add(
+      EventItemWidget(
+        model: model,
+        edit: () {
+          context.openEventDialog(() => setEventOnScreen(), event: model);
+        },
+        remove: () async {
+          await widget.eventRepo
+              .remove(model)
+              .then((_) => setEventOnScreen());
+        },
+      ),
+    );
   }
 
   void setLearningOnScreen() {
     listLearning.clear();
     for (var topic in widget.topicRepo.list) {
-      List<LearningModel> list = [];
-      for (var learn in widget.learningRepo.list) {
-        if (learn.categoryId == topic.id) {
-          list.add(learn);
-        }
-      }
-      if (list.isNotEmpty) {
-        listLearning.add(Row(
-          children: [
-            Text(widget.topicRepo.value(topic.id, 'locale')),
-            Expanded(child: SizedBox.shrink())
-          ],
-        ));
-        for (var model in list) {
-          listLearning.add(
-            LearningItemWidget(
-              diagnosisRepo: widget.diagnosisRepo,
-              model: model,
-              edit: () {
-                context.openLearningDialog(() => setLearningOnScreen(),
-                    learningModel: model);
-              },
-              remove: () async {
-                await widget.learningRepo
-                    .remove(model)
-                    .then((_) => setLearningOnScreen());
-              },
-            ),
-          );
+      if(selectedTopic == null){
+        addLearning(topic);
+      } else {
+        if(topic.id == selectedTopic){
+          addLearning(topic);
         }
       }
     }
     setState(() {});
   }
 
+  void addLearning(TopicModel topic){
+    List<LearningModel> list = [];
+    for (var learn in widget.learningRepo.list) {
+      if (learn.categoryId == topic.id) {
+        list.add(learn);
+      }
+    }
+    if (list.isNotEmpty) {
+      listLearning.add(Row(
+        children: [
+          Text(widget.topicRepo.value(topic.id, 'locale')),
+          Expanded(child: SizedBox.shrink())
+        ],
+      ));
+      for (var model in list) {
+        listLearning.add(
+          LearningItemWidget(
+            diagnosisRepo: widget.diagnosisRepo,
+            model: model,
+            edit: () {
+              context.openLearningDialog(() => setLearningOnScreen(),
+                  learningModel: model);
+            },
+            remove: () async {
+              await widget.learningRepo
+                  .remove(model)
+                  .then((_) => setLearningOnScreen());
+            },
+          ),
+        );
+      }
+    }
+  }
+
   List<String> _idsTopics = [];
   List<String> _idsDiagnose = [];
+  String? selectedTopic;
+  String? selectedDiagnose;
 
   @override
   void initState() {
@@ -135,6 +158,13 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                   title: 'Select diagnosis',
                   items: _idsDiagnose,
                   diagnosisRepo: widget.diagnosisRepo,
+                  onSelect: (selected){
+                    selectedDiagnose = selected;
+                    if(selected == '-1'){
+                      selectedDiagnose = null;
+                    }
+                    setEventOnScreen();
+                  },
                 ),
               ),
               Positioned(
@@ -160,16 +190,9 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
             ],
           ),
           const SizedBox(height: 20),
-
-          // AddEventWidget(
-          //   title: 'Practice Mode',
-          //   textButton: 'Question',
-          //   onTap: () => context.openEventDialog(() => setEventOnScreen()),
-          // ),
           Wrap(
             children: listEvent,
           ),
-
           const SizedBox(height: 20),
           Stack(
             alignment: AlignmentDirectional.center,
@@ -180,6 +203,13 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                   title: 'Select Topic',
                   items: _idsTopics,
                   topicRepo: widget.topicRepo,
+                  onSelect: (selected){
+                    selectedTopic = selected;
+                    if(selected == '-1'){
+                      selectedTopic = null;
+                    }
+                    setLearningOnScreen();
+                  },
                 ),
               ),
               Positioned(
@@ -198,56 +228,12 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                 right: 0,
                 child: AppButtonAdd(
                   text: 'Add New Topic',
-                  // onTap: () {
-                  //   showDialog(
-                  //     context: context,
-                  //     builder: (BuildContext context) {
-                  //       return Dialog(
-                  //         child: ConstrainedBox(
-                  //           constraints: BoxConstraints(
-                  //             maxHeight: MediaQuery.of(context).size.height * 0.8,  // Максимум 80% висоти екрану
-                  //           ),
-                  //           child: Column(
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             children: <Widget>[
-                  //               Padding(
-                  //                 padding: const EdgeInsets.all(16.0),
-                  //                 child: Text('Your Title Here', style: TextStyle(fontSize: 18)),
-                  //               ),
-                  //               Expanded(
-                  //                 child: ReorderableListView(
-                  //                   onReorder: (int oldIndex, int newIndex) {
-                  //                     // Обробка reorder події
-                  //                   },
-                  //                   children: List.generate(
-                  //                     4,
-                  //                         (index) => ListTile(
-                  //                       key: ValueKey(index),
-                  //                       title: Text('Item $index'),
-                  //                     ),
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //       );
-                  //     },
-                  //   );
-                  // },
                   onTap: () => context.openLearningDialog(() => setLearningOnScreen()),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-
-          // AddEventWidget(
-          //   title: 'Learning mode',
-          //   textButton: 'Topic',
-          //   onTap: () => context.openLearningDialog(() => setLearningOnScreen()),
-          // ),
-
           Wrap(
             children: listLearning,
           ),

@@ -53,11 +53,9 @@ class UserManagementProvider extends ChangeNotifier {
   }
 
   void getUserModel() async {
-    print('---getUserModel 1');
     try {
       state.listUserModel = await getAllUsersRepo.getAllUsers();
       state.listOrganizationModel = await getAllOrganizationsRepo.getAllOrganizations();
-      print('---getUserModel 2 = ${state.listOrganizationModel.length}');
     } catch (e) {}
     notifyListeners();
   }
@@ -163,18 +161,14 @@ class UserManagementProvider extends ChangeNotifier {
     required String premium,
   }) async {
     try {
-      print('---registerOrganization register 1');
-
-        print('---registerOrganization register 2');
         await setOrganizationRepo.setOrganization(
           id: id,
           name: name,
           premium: premium,
         );
-        print('---registerOrganization 3');
         getUserModel();
     } catch (e) {
-      print('---registerOrganization catch = ${e}');
+      print('---register Organization e = ${e}');
     }
     context.backPage();
   }
