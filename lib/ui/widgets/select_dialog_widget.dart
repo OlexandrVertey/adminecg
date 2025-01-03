@@ -31,12 +31,16 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget>
   final ScrollController _scrollController = ScrollController();
 
   bool _isExpanded = false;
+  bool _isSelected = false;
   String _selectedText = '';
 
   @override
   void initState() {
     super.initState();
+    print('---widget.currentValue = ${widget.currentValue}');
+    print('---widget.title = ${widget.title}');
     _selectedText = widget.currentValue ?? widget.title;
+    print('---_selectedText = ${_selectedText}');
     _controller = AnimationController(
       duration: _animationDuration,
       vsync: this,
@@ -50,12 +54,13 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget>
   }
 
   String selectedText() {
+    print('---selectedText 1');
     if (widget.topicRepo != null) {
-      return '${widget.title} ${widget.topicRepo != null ? widget.topicRepo!.value(_selectedText, 'locale') : _selectedText}';
+      return '${_isSelected ? '' : widget.title} ${widget.topicRepo != null ? widget.topicRepo!.value(_selectedText, 'locale') : _selectedText}';
     }
 
     if (widget.diagnosisRepo != null) {
-      return '${widget.title} ${widget.diagnosisRepo != null ? widget.diagnosisRepo!.value(_selectedText, 'locale') : _selectedText}';
+      return '${_isSelected ? '' : widget.title} ${widget.diagnosisRepo != null ? widget.diagnosisRepo!.value(_selectedText, 'locale') : _selectedText}';
     }
     return _selectedText;
   }
@@ -175,6 +180,7 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget>
                           setState(() {
                             _isExpanded = !_isExpanded;
                             _selectedText = item;
+                            _isSelected = true;
                           });
                         },
                         child: Padding(
