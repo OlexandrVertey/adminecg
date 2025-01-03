@@ -34,7 +34,9 @@ class EditUserDialog extends StatefulWidget {
 
 class _EditUserDialogState extends State<EditUserDialog> {
   final ScrollController _scrollController = ScrollController();
-  bool _statesButton = true;
+  bool _statesButtonPremium = false;
+  bool _statesButtonFree = false;
+
   String? organisation;
   List<String> listOrg = [];
   @override
@@ -147,21 +149,23 @@ class _EditUserDialogState extends State<EditUserDialog> {
                   children: [
                     AppButton(
                       text: 'Premium ',
-                      isActive: _statesButton,
+                      isActive: _statesButtonPremium,
                       width: 155,
                       onTap: () {
                         setState(() {
-                          _statesButton = true;
+                          _statesButtonPremium = true;
+                          _statesButtonFree = false;
                         });
                       },
                     ),
                     AppButton(
                       text: 'Free ',
-                      isActive: !_statesButton,
+                      isActive: _statesButtonFree,
                       width: 155,
                       onTap: () {
                         setState(() {
-                          _statesButton = false;
+                          _statesButtonFree = true;
+                          _statesButtonPremium = false;
                         });
                       },
                     ),
@@ -177,7 +181,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 ),
                 const SizedBox(height: 10),
                 // const SelectDialogWidget(title: 'Time Duration', firstItem: '1 Months|', secondItem: '3 Months|'),
-                const SelectDialogWidget(title: 'Time Duration', items: ['1 Months|', '3 Months|']),
+                const SelectDialogWidget(title: 'Time Duration', items: ['1 Months|', '2 Months|', '3 Months|', 'Year']),
                 const SizedBox(height: 25),
                 AppButton(
                   width: 370,

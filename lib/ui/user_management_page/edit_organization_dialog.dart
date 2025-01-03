@@ -23,7 +23,8 @@ class EditOrganizationDialog extends StatefulWidget {
 
 class _EditOrganizationDialogState extends State<EditOrganizationDialog> {
   final ScrollController _scrollController = ScrollController();
-  bool _statesButton = true;
+  bool _statesButtonPremium = false;
+  bool _statesButtonFree = false;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +64,6 @@ class _EditOrganizationDialogState extends State<EditOrganizationDialog> {
                     callBackTextField: (text) {},
                   ),
                 ),
-
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerLeft,
@@ -78,21 +78,23 @@ class _EditOrganizationDialogState extends State<EditOrganizationDialog> {
                   children: [
                     AppButton(
                       text: 'Premium ',
-                      isActive: _statesButton,
+                      isActive: _statesButtonPremium,
                       width: 155,
                       onTap: () {
                         setState(() {
-                          _statesButton = true;
+                          _statesButtonPremium = true;
+                          _statesButtonFree = false;
                         });
                       },
                     ),
                     AppButton(
                       text: 'Free ',
-                      isActive: !_statesButton,
+                      isActive: _statesButtonFree,
                       width: 155,
                       onTap: () {
                         setState(() {
-                          _statesButton = false;
+                          _statesButtonFree = true;
+                          _statesButtonPremium = false;
                         });
                       },
                     ),
@@ -103,7 +105,13 @@ class _EditOrganizationDialogState extends State<EditOrganizationDialog> {
                   width: 370,
                   text: widget.nameButton,
                   isActive: true,
-                  onTap: () => widget.callBack(premium: _statesButton.toString()),
+                  onTap: () => widget.callBack(
+                    premium: _statesButtonPremium
+                      ? 'true'
+                      : _statesButtonFree
+                        ? 'false'
+                        : '',
+                  ),
                 ),
                 const  SizedBox(height: 20),
                 AppButton(

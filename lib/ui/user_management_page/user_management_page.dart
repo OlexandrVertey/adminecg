@@ -23,6 +23,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool _selectedOrg = false;
+  String? _selectedOrgId;
+  int? _selectedOrgIndex;
+
   @override
   void initState() {
     super.initState();
@@ -165,24 +169,29 @@ class _UserManagementPageState extends State<UserManagementPage> {
                         ),
                         AppButtonAdd(
                           text: 'Add New User',
-                          onTap: () => showDialog(
-                            context: context,
-                            builder: (_) => EditUserDialog(
-                              title: 'Add New User',
-                              userNameController: _userNameController,
-                              emailController: _emailController,
-                              passwordController: _passwordController,
-                              organisations: value.state.listOrganizationModel,
-                              nameButton: 'Create & Send Login Details',
-                              callBack: (organisation) => value.registerUser(
-                                context: context,
-                                userName: _userNameController.text,
-                                email: _emailController.text,
-                                password: _passwordController.text,
-                                organisation: organisation
+                          onTap: () {
+                            _userNameController.clear();
+                            _emailController.clear();
+                            _passwordController.clear();
+                            showDialog(
+                              context: context,
+                              builder: (_) => EditUserDialog(
+                                title: 'Add New User',
+                                userNameController: _userNameController,
+                                emailController: _emailController,
+                                passwordController: _passwordController,
+                                organisations: value.state.listOrganizationModel,
+                                nameButton: 'Create & Send Login Details',
+                                callBack: (organisation) => value.registerUser(
+                                    context: context,
+                                    userName: _userNameController.text,
+                                    email: _emailController.text,
+                                    password: _passwordController.text,
+                                    organisation: organisation
+                                ),
                               ),
-                            ),
-                          ),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -237,12 +246,17 @@ class _UserManagementPageState extends State<UserManagementPage> {
                             shrinkWrap: true,
                             itemCount: value.state.listUserModel.length,
                             itemBuilder: (context, index) {
+                              bool showUser = _selectedOrgId == value.state.listUserModel[index].organisation && _selectedOrg;
+                              bool showAllUser = !_selectedOrg;
                               UserModel item = value.state.listUserModel[index];
-                              return _itemUserWidget(
-                                list: value.state.listOrganizationModel,
-                                item: item,
-                                index: index,
-                              );
+                                return _itemUserWidget(
+                                  list: value.state.listOrganizationModel,
+                                  item: item,
+                                  index: index,
+                                  showUser: showUser,
+                                  showAllUser: showAllUser,
+                                );
+                              // }
                             },
                           ),
                         ),
@@ -261,8 +275,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
     required UserModel item,
     required int index,
     required List<OrganizationModel> list,
+    required bool showUser,
+    required bool showAllUser,
   }) {
-    return Container(
+    return showUser || showAllUser ? Container(
       height: 30,
       margin: const EdgeInsets.only(bottom: 10.0),
       child: Row(
@@ -305,7 +321,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           SizedBox(
             width: 80,
             child: Text(
-              'Organization',
+              _getOrganizationName(organizationId: item.organisation ?? '', listOrganizationModel: list),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: const Color(0xff1A1919),
                 fontSize: 12,
@@ -316,7 +332,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           SizedBox(
             width: 50,
             child: Text(
-              'Status',
+              item.plans ?? 'Status',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: const Color(0xff1A1919),
                 fontSize: 12,
@@ -367,92 +383,120 @@ class _UserManagementPageState extends State<UserManagementPage> {
           ),
         ],
       ),
-    );
+    ) : const SizedBox();
   }
 
   Widget _itemOrganizationWidget({
     required OrganizationModel item,
     required int index,
   }) {
-    return Container(
-      height: 30,
-      margin: const EdgeInsets.only(bottom: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 25,
-            child: Text(
-              index < 9 ? "0${index + 1}" : "${index + 1}",
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: const Color(0xff1A1919),
-                fontSize: 12,
-              ),
-            ),
-          ),
-          const SizedBox(width: 37),
-          SizedBox(
-            width: 83,
-            child: Text(
-              item.name!,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: const Color(0xff1A1919),
-                fontSize: 12,
-              ),
-            ),
-          ),
-          const SizedBox(width: 90),
-          InkWell(
-            onTap: () => showDialog(
-              context: context,
-              builder: (_) => DeleteUserDialog(title: 'Delete Organization', userUid: item.id!, isUser: false),
-            ),
-            child: SvgPicture.asset("assets/images/svg/delete.svg"),
-          ),
-          const SizedBox(width: 10),
-          InkWell(
-            onTap: () {
-              _organizationNameController.text = item.name!;
-              print('---updateOrganization onTap ${_organizationNameController.text}');
-              showDialog(
-                context: context,
-                builder: (_) => EditOrganizationDialog(
-                  title: 'Edit Organization',
-                  organizationNameController: _organizationNameController,
-                  nameButton: 'Update & Send Login Details',
-                  callBack: ({required String premium}) =>
-                      context.read<UserManagementProvider>().updateOrganization(
-                    context: context,
-                    id: item.id!,
-                    name: _organizationNameController.text,
-                    premium: premium,
-                  ),
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _selectedOrgId = item.id;
+          if (_selectedOrgIndex != index && !_selectedOrg) {
+            _selectedOrgIndex = index;
+            _selectedOrg = true;
+          } else if (_selectedOrgIndex != index && _selectedOrg) {
+            _selectedOrgIndex = index;
+            _selectedOrg = true;
+          } else if (_selectedOrgIndex == index && _selectedOrg) {
+            _selectedOrgIndex = index;
+            _selectedOrg = false;
+          } else if (_selectedOrgIndex == index && !_selectedOrg) {
+            _selectedOrgIndex = index;
+            _selectedOrg = true;
+          } else {
+            _selectedOrg = false;
+            _selectedOrgIndex = null;
+          }
+        });
+      },
+      child: Container(
+        height: 40,
+        margin: const EdgeInsets.only(bottom: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 25,
+              child: Text(
+                index < 9 ? "0${index + 1}" : "${index + 1}",
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: const Color(0xff1A1919),
+                  fontSize: 12,
                 ),
-                //     EditUserDialog(
-                //   title: 'Edit User',
-                //   userUid: item.userUid!,
-                //   userNameController: _userNameController,
-                //   emailController: _emailController,
-                //   passwordController: _passwordController,
-                //   nameButton: 'Update & Send Login Details',
-                //   callBack: () => context.read<UserManagementProvider>().updateUser(
-                //     context: context,
-                //     userUid: item.userUid!,
-                //     fullName: _userNameController.text,
-                //     email: _emailController.text,
-                //     password: _passwordController.text,
-                //   ),
-                // ),
-              );
-            },
-            child: SvgPicture.asset(
-              width: 20,
-              height: 20,
-              "assets/images/svg/edit.svg",
+              ),
             ),
-          ),
-        ],
+            const SizedBox(width: 37),
+            Container(
+              padding: const EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(14.0)),
+                color: _selectedOrgIndex == index && _selectedOrg ? const Color(0xff0A4E74) : Colors.transparent,
+              ),
+              width: 83,
+              child: Text(
+                item.name!,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: _selectedOrgIndex == index && _selectedOrg ? Colors.white : const Color(0xff1A1919),
+                  fontSize: 12,
+                ),
+              ),
+            ),
+            const SizedBox(width: 90),
+            InkWell(
+              onTap: () => showDialog(
+                context: context,
+                builder: (_) => DeleteUserDialog(title: 'Delete Organization', userUid: item.id!, isUser: false),
+              ),
+              child: SvgPicture.asset("assets/images/svg/delete.svg"),
+            ),
+            const SizedBox(width: 10),
+            InkWell(
+              onTap: () {
+                _organizationNameController.text = item.name!;
+                print('---updateOrganization onTap ${_organizationNameController.text}');
+                showDialog(
+                  context: context,
+                  builder: (_) => EditOrganizationDialog(
+                    title: 'Edit Organization',
+                    organizationNameController: _organizationNameController,
+                    nameButton: 'Update & Send Login Details',
+                    callBack: ({required String premium}) =>
+                        context.read<UserManagementProvider>().updateOrganization(
+                      context: context,
+                      id: item.id!,
+                      name: _organizationNameController.text,
+                      premium: premium,
+                    ),
+                  ),
+                  //     EditUserDialog(
+                  //   title: 'Edit User',
+                  //   userUid: item.userUid!,
+                  //   userNameController: _userNameController,
+                  //   emailController: _emailController,
+                  //   passwordController: _passwordController,
+                  //   nameButton: 'Update & Send Login Details',
+                  //   callBack: () => context.read<UserManagementProvider>().updateUser(
+                  //     context: context,
+                  //     userUid: item.userUid!,
+                  //     fullName: _userNameController.text,
+                  //     email: _emailController.text,
+                  //     password: _passwordController.text,
+                  //   ),
+                  // ),
+                );
+              },
+              child: SvgPicture.asset(
+                width: 20,
+                height: 20,
+                "assets/images/svg/edit.svg",
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -465,4 +509,17 @@ class _UserManagementPageState extends State<UserManagementPage> {
       ),
     );
   }
+
+  String _getOrganizationName({
+    required String organizationId,
+    required List<OrganizationModel> listOrganizationModel,
+  }){
+    for (var element in listOrganizationModel) {
+      if (organizationId == element.id) {
+        return element.name ?? '';
+      }
+    }
+    return '';
+  }
+
 }
