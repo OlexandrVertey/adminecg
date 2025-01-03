@@ -64,7 +64,7 @@ class ElementModel {
       };
 }
 
-enum ElementType { image, text }
+enum ElementType { image, text, title}
 
 extension ElementTypeExtension on ElementType {
   static ElementType fromString(String type) {
@@ -73,6 +73,8 @@ extension ElementTypeExtension on ElementType {
         return ElementType.image;
       case 'text':
         return ElementType.text;
+      case 'title':
+        return ElementType.title;
       default:
         throw Exception('Unknown ElementType: $type');
     }

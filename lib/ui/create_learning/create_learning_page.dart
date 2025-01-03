@@ -38,6 +38,7 @@ class CreateLearningPage extends StatefulWidget {
 class _CreateLearningPageState extends State<CreateLearningPage> {
   final ScrollController _scrollController = ScrollController();
   late final TextEditingController textController = TextEditingController();
+  late final TextEditingController titleController = TextEditingController();
   late List<String> idsDiagnose;
   late List<String> idsTopics;
 
@@ -243,7 +244,7 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(15),
               constraints: const BoxConstraints(maxWidth: 380),
               margin: const EdgeInsets.only(left: 20),
               decoration: BoxDecoration(
@@ -263,122 +264,248 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Add Image Element",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(fontSize: 14, color: Colors.black),
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 8,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: [
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Add Image Element",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(fontSize: 14, color: Colors.black),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: AppButton(
+                                  width: 360,
+                                  text: 'Get Image',
+                                  isActive: false,
+                                  onTap: () async {
+                                    var file = await AppImagePicker.getImage();
+                                    if (file != null) {
+                                      String name =
+                                          '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
+                                      widget.storageRepo.addLearning(
+                                          callBack: (url) {
+                                            setState(() {
+                                              list.add(ElementModel(
+                                                  uint8list: file,
+                                                  text: url,
+                                                  type: ElementType.image));
+                                            });
+                                          },
+                                          data: file,
+                                          name: name);
+                                    }
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              const Expanded(
+                                child: SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppButton(
-                          width: 360,
-                          text: 'Get Image',
-                          isActive: false,
-                          onTap: () async {
-                            var file = await AppImagePicker.getImage();
-                            if (file != null) {
-                              String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
-                              widget.storageRepo.addLearning(callBack: (url){
-                                setState(() {
-                                  list.add(ElementModel(
-                                      uint8list: file,
-                                      text: url,
-                                      type: ElementType.image));
-                                });
-                              }, data: file, name: name);
-                            }
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      const Expanded(
-                        child: SizedBox.shrink(),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Add Text Element",
-                      style: Theme.of(context)
-                          .textTheme
-                          .labelMedium
-                          ?.copyWith(fontSize: 14, color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
                   SizedBox(
-                    width: 370,
-                    height: 150,
-                    child: TextField(
-                      style: Theme.of(context).textTheme.bodyLarge,
-
-                      controller: textController,
-                      maxLines: null,
-                      keyboardType: TextInputType.multiline,
-                        textAlign: TextAlign.justify,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black.withOpacity(0.1),
-                              width: 1.3,
+                    height: 12,
+                  ),
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 8,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Add Text Element",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(fontSize: 14, color: Colors.black),
                             ),
-                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black.withOpacity(0.1),
-                              width: 1.3,
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: 370,
+                            height: 150,
+                            child: TextField(
+                              style: Theme.of(context).textTheme.bodyLarge,
+                              controller: textController,
+                              maxLines: null,
+                              keyboardType: TextInputType.multiline,
+                              textAlign: TextAlign.justify,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.black.withOpacity(0.1),
+                                    width: 1.3,
+                                  ),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.black.withOpacity(0.1),
+                                    width: 1.3,
+                                  ),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                hintText: 'Enter text',
+                                contentPadding: const EdgeInsets.only(
+                                  left: 15,
+                                  right: 15,
+                                  top: 18,
+                                  bottom: 18,
+                                ),
+                                counterText: '',
+                              ),
                             ),
-                            borderRadius: BorderRadius.circular(15.0),
                           ),
-                          hintText: 'Enter text',
-                          contentPadding: const EdgeInsets.only(
-                            left: 15,
-                            right: 15,
-                            top: 18,
-                            bottom: 18,
+                          const SizedBox(height: 16),
+                          AppButton(
+                            width: 360,
+                            text: 'Save and add',
+                            isActive: true,
+                            onTap: () {
+                              if (textController.text.isNotEmpty) {
+                                setState(() {
+                                  if (editedIndex != null) {
+                                    list[editedIndex!].text =
+                                        textController.text;
+                                  } else {
+                                    list.add(
+                                      ElementModel(
+                                          text: textController.text,
+                                          type: ElementType.text),
+                                    );
+                                  }
+                                });
+                                textController.clear();
+                              }
+                            },
                           ),
-                          counterText: '',
-                        ),
+                          const SizedBox(height: 20),
+                          AppButton(
+                            width: 360,
+                            text: 'Clear text',
+                            isActive: false,
+                            onTap: () => textController.clear(),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  AppButton(
-                    width: 360,
-                    text: 'Save and add',
-                    isActive: true,
-                    onTap: () {
-                      if(textController.text.isNotEmpty){
-                        setState(() {
-                          if(editedIndex != null){
-                            list[editedIndex!].text = textController.text;
-                          } else {
-                            list.add(
-                              ElementModel(
-                                  text: textController.text,
-                                  type: ElementType.text),
-                            );
-                          }
-                        });
-                        textController.clear();
-                      }
-                    },
+                  SizedBox(
+                    height: 12,
                   ),
-                  const SizedBox(height: 20),
-                  AppButton(
-                    width: 360,
-                    text: 'clear',
-                    isActive: false,
-                    onTap: () => textController.clear(),
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15.0),
+                    ),
+                    elevation: 8,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Add Title Element",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(fontSize: 14, color: Colors.black),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: 370,
+                            height: 70,
+                            child: TextField(
+                              style: Theme.of(context).textTheme.bodyLarge,
+                              controller: titleController,
+                              maxLines: null,
+                              keyboardType: TextInputType.multiline,
+                              textAlign: TextAlign.justify,
+                              decoration: InputDecoration(
+                                enabledBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.black.withOpacity(0.1),
+                                    width: 1.3,
+                                  ),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.black.withOpacity(0.1),
+                                    width: 1.3,
+                                  ),
+                                  borderRadius: BorderRadius.circular(15.0),
+                                ),
+                                hintText: 'Enter title',
+                                contentPadding: const EdgeInsets.only(
+                                  left: 15,
+                                  right: 15,
+                                  top: 18,
+                                  bottom: 18,
+                                ),
+                                counterText: '',
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          AppButton(
+                            width: 360,
+                            text: 'Save and add',
+                            isActive: true,
+                            onTap: () {
+                              if (titleController.text.isNotEmpty) {
+                                setState(() {
+                                  if (editedIndex != null) {
+                                    list[editedIndex!].text =
+                                        titleController.text;
+                                  } else {
+                                    list.add(
+                                      ElementModel(
+                                          text: titleController.text,
+                                          type: ElementType.title),
+                                    );
+                                  }
+                                });
+                                titleController.clear();
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 20),
+                          AppButton(
+                            width: 360,
+                            text: 'Clear title',
+                            isActive: false,
+                            onTap: () => titleController.clear(),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -429,16 +556,27 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
       var element = this.list[index];
       if (element.uint8list != null) {
         list.add(
-          item(Image.memory(element.uint8list!), '$index', ()=>edit(index), ()=>remove(index)),
+          item(Image.memory(element.uint8list!), '$index', () => edit(index),
+              () => remove(index)),
         );
       } else {
         if (element.type == ElementType.image) {
           list.add(
-            item(Image.network(element.text!), '$index', ()=>edit(index), ()=>remove(index)),
+            item(Image.network(element.text!), '$index', () => edit(index),
+                () => remove(index)),
           );
         } else {
           list.add(
-            item(Text(element.text ?? '', style: Theme.of(context).textTheme.bodyLarge,), '$index', ()=>edit(index), ()=>remove(index)),
+            item(
+                Text(
+                  element.text ?? '',
+                  style: element.type == ElementType.title
+                      ? Theme.of(context).textTheme.labelMedium
+                      : Theme.of(context).textTheme.bodyLarge,
+                ),
+                '$index',
+                () => edit(index),
+                () => remove(index)),
           );
         }
       }
@@ -447,26 +585,35 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
   }
 
   int? editedIndex;
+
   void edit(int index) async {
     ElementModel elementModel = list[index];
-    if(elementModel.type == ElementType.text){
-      textController.text = elementModel.text!;
-      editedIndex = index;
-    } else{
+
+    if (elementModel.type == ElementType.image) {
       var file = await AppImagePicker.getImage();
       if (file != null) {
         String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
-        widget.storageRepo.addLearning(callBack: (url){
-          setState(() {
-            list[index].uint8list = file;
-            list[index].text = url;
-          });
-        }, data: file, name: name);
+        widget.storageRepo.addLearning(
+            callBack: (url) {
+              setState(() {
+                list[index].uint8list = file;
+                list[index].text = url;
+              });
+            },
+            data: file,
+            name: name);
       }
+    } else {
+      if(elementModel.type == ElementType.text){
+        textController.text = elementModel.text!;
+      } else {
+        titleController.text = elementModel.text!;
+      }
+      editedIndex = index;
     }
   }
 
-  void remove(int index){
+  void remove(int index) {
     setState(() {
       list.removeAt(index);
     });
@@ -535,7 +682,6 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
   }
 
   void setModel() async {
-
     var model = LearningModel(
       id: widget.learningModel?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
