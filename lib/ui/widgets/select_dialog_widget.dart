@@ -35,6 +35,17 @@ class _SelectDialogWidgetState extends State<SelectDialogWidget>
   String _selectedText = '';
 
   @override
+  void didUpdateWidget(covariant SelectDialogWidget oldWidget) {
+    // TODO: implement didUpdateWidget
+    super.didUpdateWidget(oldWidget);
+    if (_selectedText != widget.currentValue) {
+      setState(() {
+        _selectedText = widget.currentValue ?? widget.title;
+      });
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     print('---widget.currentValue = ${widget.currentValue}');

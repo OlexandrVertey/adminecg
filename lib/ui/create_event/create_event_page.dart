@@ -4,6 +4,7 @@ import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/repo/add_diagnose_to_storage_repo/add_diagnose_to_storage_repo.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
+import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/image_compressor.dart';
 import 'package:adminecg/ui/widgets/image_picker.dart';
@@ -147,15 +148,44 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "4 Answers",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          "4 Answers",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(fontSize: 14, color: Colors.black),
+                        ),
+                        Spacer(),
+                        TextButton(
+                          onPressed: (){
+                            if(correctAnswer == '-1'){
+                              Toast.show(message: 'Select diagnosis');
+                            } else {
+                              List<String> copy = List.of(ids);
+                              copy.remove(correctAnswer);
+                              copy.shuffle();
+                              List<String> result =  copy.take(3).toList();
+                              result.add(correctAnswer);
+                              result.shuffle();
+                              setState(() {
+                                answerA = result[0];
+                                answerB = result[1];
+                                answerC = result[2];
+                                answerD = result[3];
+                              });
+                            }
+                          },
+                          child: Text(
+                            "Random",
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(fontSize: 14, color: AppTheme.actionColor),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 10),
                     SelectDialogWidget(
