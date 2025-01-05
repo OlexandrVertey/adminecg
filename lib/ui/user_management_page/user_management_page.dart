@@ -332,7 +332,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           SizedBox(
             width: 50,
             child: Text(
-              item.plans ?? 'Status',
+              item.plans ?? '',
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: const Color(0xff1A1919),
                 fontSize: 12,

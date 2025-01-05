@@ -64,42 +64,42 @@ class _EditOrganizationDialogState extends State<EditOrganizationDialog> {
                     callBackTextField: (text) {},
                   ),
                 ),
-                const SizedBox(height: 12),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'States',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AppButton(
-                      text: 'Premium ',
-                      isActive: _statesButtonPremium,
-                      width: 155,
-                      onTap: () {
-                        setState(() {
-                          _statesButtonPremium = true;
-                          _statesButtonFree = false;
-                        });
-                      },
-                    ),
-                    AppButton(
-                      text: 'Free ',
-                      isActive: _statesButtonFree,
-                      width: 155,
-                      onTap: () {
-                        setState(() {
-                          _statesButtonFree = true;
-                          _statesButtonPremium = false;
-                        });
-                      },
-                    ),
-                  ],
-                ),
+                // const SizedBox(height: 12),
+                // Align(
+                //   alignment: Alignment.centerLeft,
+                //   child: Text(
+                //     'States',
+                //     style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
+                //   ),
+                // ),
+                // const SizedBox(height: 10),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     AppButton(
+                //       text: 'Premium ',
+                //       isActive: _statesButtonPremium,
+                //       width: 155,
+                //       onTap: () {
+                //         setState(() {
+                //           _statesButtonPremium = true;
+                //           _statesButtonFree = false;
+                //         });
+                //       },
+                //     ),
+                //     AppButton(
+                //       text: 'Free ',
+                //       isActive: _statesButtonFree,
+                //       width: 155,
+                //       onTap: () {
+                //         setState(() {
+                //           _statesButtonFree = true;
+                //           _statesButtonPremium = false;
+                //         });
+                //       },
+                //     ),
+                //   ],
+                // ),
                 const SizedBox(height: 25),
                 AppButton(
                   width: 370,
