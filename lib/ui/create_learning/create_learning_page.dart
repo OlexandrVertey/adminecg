@@ -261,253 +261,255 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
                 ],
               ),
               width: 380,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    elevation: 8,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        children: [
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Add Image Element",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium
-                                  ?.copyWith(fontSize: 14, color: Colors.black),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      elevation: 8,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Add Image Element",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(fontSize: 14, color: Colors.black),
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: AppButton(
-                                  width: 360,
-                                  text: 'Get Image',
-                                  isActive: false,
-                                  onTap: () async {
-                                    var file = await AppImagePicker.getImage();
-                                    if (file != null) {
-                                      String name =
-                                          '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
-                                      widget.storageRepo.addLearning(
-                                          callBack: (url) {
-                                            setState(() {
-                                              list.add(ElementModel(
-                                                  uint8list: file,
-                                                  text: url,
-                                                  type: ElementType.image));
-                                            });
-                                          },
-                                          data: file,
-                                          name: name);
+                            const SizedBox(height: 12),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: AppButton(
+                                    width: 360,
+                                    text: 'Get Image',
+                                    isActive: false,
+                                    onTap: () async {
+                                      var file = await AppImagePicker.getImage();
+                                      if (file != null) {
+                                        String name =
+                                            '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
+                                        widget.storageRepo.addLearning(
+                                            callBack: (url) {
+                                              setState(() {
+                                                list.add(ElementModel(
+                                                    uint8list: file,
+                                                    text: url,
+                                                    type: ElementType.image));
+                                              });
+                                            },
+                                            data: file,
+                                            name: name);
+                                      }
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                const Expanded(
+                                  child: SizedBox.shrink(),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 12,
+                    ),
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      elevation: 8,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Add Text Element",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(fontSize: 14, color: Colors.black),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: 370,
+                              height: 150,
+                              child: TextField(
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                controller: textController,
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                textAlign: TextAlign.justify,
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.black.withOpacity(0.1),
+                                      width: 1.3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.black.withOpacity(0.1),
+                                      width: 1.3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  hintText: 'Enter text',
+                                  contentPadding: const EdgeInsets.only(
+                                    left: 15,
+                                    right: 15,
+                                    top: 18,
+                                    bottom: 18,
+                                  ),
+                                  counterText: '',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            AppButton(
+                              width: 360,
+                              text: 'Save and add',
+                              isActive: true,
+                              onTap: () {
+                                if (textController.text.isNotEmpty) {
+                                  setState(() {
+                                    if (editedIndex != null) {
+                                      list[editedIndex!].text =
+                                          textController.text;
+                                    } else {
+                                      list.add(
+                                        ElementModel(
+                                            text: textController.text,
+                                            type: ElementType.text),
+                                      );
                                     }
-                                  },
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              const Expanded(
-                                child: SizedBox.shrink(),
-                              ),
-                            ],
-                          ),
-                        ],
+                                  });
+                                  textController.clear();
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            AppButton(
+                              width: 360,
+                              text: 'Clear text',
+                              isActive: false,
+                              onTap: () => textController.clear(),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
+                    SizedBox(
+                      height: 12,
                     ),
-                    elevation: 8,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 12),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Add Text Element",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium
-                                  ?.copyWith(fontSize: 14, color: Colors.black),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            width: 370,
-                            height: 150,
-                            child: TextField(
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              controller: textController,
-                              maxLines: null,
-                              keyboardType: TextInputType.multiline,
-                              textAlign: TextAlign.justify,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.black.withOpacity(0.1),
-                                    width: 1.3,
-                                  ),
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.black.withOpacity(0.1),
-                                    width: 1.3,
-                                  ),
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                hintText: 'Enter text',
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15,
-                                  right: 15,
-                                  top: 18,
-                                  bottom: 18,
-                                ),
-                                counterText: '',
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      elevation: 8,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Add Title Element",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(fontSize: 14, color: Colors.black),
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          AppButton(
-                            width: 360,
-                            text: 'Save and add',
-                            isActive: true,
-                            onTap: () {
-                              if (textController.text.isNotEmpty) {
-                                setState(() {
-                                  if (editedIndex != null) {
-                                    list[editedIndex!].text =
-                                        textController.text;
-                                  } else {
-                                    list.add(
-                                      ElementModel(
-                                          text: textController.text,
-                                          type: ElementType.text),
-                                    );
-                                  }
-                                });
-                                textController.clear();
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          AppButton(
-                            width: 360,
-                            text: 'Clear text',
-                            isActive: false,
-                            onTap: () => textController.clear(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                    elevation: 8,
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 12),
-                          Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              "Add Title Element",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium
-                                  ?.copyWith(fontSize: 14, color: Colors.black),
-                            ),
-                          ),
-                          const SizedBox(height: 12),
-                          SizedBox(
-                            width: 370,
-                            height: 70,
-                            child: TextField(
-                              style: Theme.of(context).textTheme.bodyLarge,
-                              controller: titleController,
-                              maxLines: null,
-                              keyboardType: TextInputType.multiline,
-                              textAlign: TextAlign.justify,
-                              decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.black.withOpacity(0.1),
-                                    width: 1.3,
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: 370,
+                              height: 70,
+                              child: TextField(
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                controller: titleController,
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                textAlign: TextAlign.justify,
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.black.withOpacity(0.1),
+                                      width: 1.3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0),
                                   ),
-                                  borderRadius: BorderRadius.circular(15.0),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.black.withOpacity(0.1),
-                                    width: 1.3,
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.black.withOpacity(0.1),
+                                      width: 1.3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0),
                                   ),
-                                  borderRadius: BorderRadius.circular(15.0),
+                                  hintText: 'Enter title',
+                                  contentPadding: const EdgeInsets.only(
+                                    left: 15,
+                                    right: 15,
+                                    top: 18,
+                                    bottom: 18,
+                                  ),
+                                  counterText: '',
                                 ),
-                                hintText: 'Enter title',
-                                contentPadding: const EdgeInsets.only(
-                                  left: 15,
-                                  right: 15,
-                                  top: 18,
-                                  bottom: 18,
-                                ),
-                                counterText: '',
                               ),
                             ),
-                          ),
-                          const SizedBox(height: 16),
-                          AppButton(
-                            width: 360,
-                            text: 'Save and add',
-                            isActive: true,
-                            onTap: () {
-                              if (titleController.text.isNotEmpty) {
-                                setState(() {
-                                  if (editedIndex != null) {
-                                    list[editedIndex!].text =
-                                        titleController.text;
-                                  } else {
-                                    list.add(
-                                      ElementModel(
-                                          text: titleController.text,
-                                          type: ElementType.title),
-                                    );
-                                  }
-                                });
-                                titleController.clear();
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          AppButton(
-                            width: 360,
-                            text: 'Clear title',
-                            isActive: false,
-                            onTap: () => titleController.clear(),
-                          ),
-                        ],
+                            const SizedBox(height: 16),
+                            AppButton(
+                              width: 360,
+                              text: 'Save and add',
+                              isActive: true,
+                              onTap: () {
+                                if (titleController.text.isNotEmpty) {
+                                  setState(() {
+                                    if (editedIndex != null) {
+                                      list[editedIndex!].text =
+                                          titleController.text;
+                                    } else {
+                                      list.add(
+                                        ElementModel(
+                                            text: titleController.text,
+                                            type: ElementType.title),
+                                      );
+                                    }
+                                  });
+                                  titleController.clear();
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            AppButton(
+                              width: 360,
+                              text: 'Clear title',
+                              isActive: false,
+                              onTap: () => titleController.clear(),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
