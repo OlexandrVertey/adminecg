@@ -9,6 +9,7 @@ import 'package:adminecg/common/repo/topic/topic_repo.dart';
 import 'package:adminecg/ui/widgets/app_button_add.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -50,19 +51,18 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   void setEventOnScreen() {
     listEvent.clear();
     for (var model in widget.eventRepo.list) {
-      if(selectedDiagnose == null){
+      if (selectedDiagnose == null) {
         addEvent(model);
       } else {
-        if(selectedDiagnose == model.correctAnswer){
+        if (selectedDiagnose == model.correctAnswer) {
           addEvent(model);
         }
       }
-
     }
     setState(() {});
   }
 
-  void addEvent(EventModel model){
+  void addEvent(EventModel model) {
     listEvent.add(
       EventItemWidget(
         model: model,
@@ -70,9 +70,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
           context.openEventDialog(() => setEventOnScreen(), event: model);
         },
         remove: () async {
-          await widget.eventRepo
-              .remove(model)
-              .then((_) => setEventOnScreen());
+          await widget.eventRepo.remove(model).then((_) => setEventOnScreen());
         },
       ),
     );
@@ -80,11 +78,13 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
 
   void setLearningOnScreen() {
     listLearning.clear();
-    for (var topic in widget.topicRepo.list) {
-      if(selectedTopic == null){
+    List<TopicModel> copy = List.of(widget.topicRepo.list);
+    List<TopicModel> firstThree = copy.length >= 3 ? copy.sublist(0, 3) : copy;
+    for (var topic in firstThree) {
+      if (selectedTopic == null) {
         addLearning(topic);
       } else {
-        if(topic.id == selectedTopic){
+        if (topic.id == selectedTopic) {
           addLearning(topic);
         }
       }
@@ -92,7 +92,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
     setState(() {});
   }
 
-  void addLearning(TopicModel topic){
+  void addLearning(TopicModel topic) {
     List<LearningModel> list = [];
     for (var learn in widget.learningRepo.list) {
       if (learn.categoryId == topic.id) {
@@ -106,23 +106,26 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
           Expanded(child: SizedBox.shrink())
         ],
       ));
+      List<Widget> exList = [];
       for (var model in list) {
-        listLearning.add(
-          LearningItemWidget(
-            diagnosisRepo: widget.diagnosisRepo,
-            model: model,
-            edit: () {
-              context.openLearningDialog(() => setLearningOnScreen(),
-                  learningModel: model);
-            },
-            remove: () async {
-              await widget.learningRepo
-                  .remove(model)
-                  .then((_) => setLearningOnScreen());
-            },
-          ),
-        );
+        exList.add(LearningItemWidget(
+          diagnosisRepo: widget.diagnosisRepo,
+          model: model,
+          edit: () {
+            context.openLearningDialog(() => setLearningOnScreen(),
+                learningModel: model);
+          },
+          remove: () async {
+            await widget.learningRepo
+                .remove(model)
+                .then((_) => setLearningOnScreen());
+          },
+        ));
       }
+      listLearning.add(ExtendedWrap(
+        maxLines: 1,
+        children: exList,
+      ));
     }
   }
 
@@ -158,9 +161,9 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                   title: 'Select diagnosis',
                   items: _idsDiagnose,
                   diagnosisRepo: widget.diagnosisRepo,
-                  onSelect: (selected){
+                  onSelect: (selected) {
                     selectedDiagnose = selected;
-                    if(selected == '-1'){
+                    if (selected == '-1') {
                       selectedDiagnose = null;
                     }
                     setEventOnScreen();
@@ -190,8 +193,25 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
             ],
           ),
           const SizedBox(height: 20),
-          Wrap(
-            children: listEvent,
+          Row(
+            children: [
+              Expanded(
+                child: ExtendedWrap(
+                  maxLines: 1,
+                  children: listEvent,
+                ),
+              ),
+              if (listEvent.isNotEmpty)
+                InkWell(
+                  onTap: () =>
+                      context.openEventListPage(() => setEventOnScreen()),
+                  child: Container(
+                    color: Colors.red,
+                    width: 20,
+                    height: 130,
+                  ),
+                ),
+            ],
           ),
           const SizedBox(height: 20),
           Stack(
@@ -203,9 +223,9 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                   title: 'Select Topic',
                   items: _idsTopics,
                   topicRepo: widget.topicRepo,
-                  onSelect: (selected){
+                  onSelect: (selected) {
                     selectedTopic = selected;
-                    if(selected == '-1'){
+                    if (selected == '-1') {
                       selectedTopic = null;
                     }
                     setLearningOnScreen();
@@ -228,14 +248,32 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                 right: 0,
                 child: AppButtonAdd(
                   text: 'Add New Topic',
-                  onTap: () => context.openLearningDialog(() => setLearningOnScreen()),
+                  onTap: () =>
+                      context.openLearningDialog(() => setLearningOnScreen()),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          Wrap(
-            children: listLearning,
+          Row(
+            children: [
+              Expanded(
+                child: ExtendedWrap(
+                  maxLines: 6,
+                  children: listLearning,
+                ),
+              ),
+              if (listLearning.isNotEmpty)
+                InkWell(
+                  onTap: () =>
+                      context.openLearningListPage(() => setLearningOnScreen()),
+                  child: Container(
+                    color: Colors.red,
+                    width: 20,
+                    height: 130,
+                  ),
+                )
+            ],
           ),
         ],
       ),

@@ -50,6 +50,7 @@ dependencies:
   file_picker: ^8.0.0
   image: ^4.5.2
   drag_and_drop_lists: ^0.4.2
+  extended_wrap: ^0.1.5
 
 dev_dependencies:
   flutter_test:
