@@ -51,7 +51,7 @@ class _MainManagementPageState extends State<MainManagementPage> {
                 });
               },
             ),
-            const SizedBox(width: 100),
+            const SizedBox(width: 20),
             Expanded(
               child: IndexedStack(
                 index: index,

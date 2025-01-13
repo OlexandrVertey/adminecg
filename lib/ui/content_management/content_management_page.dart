@@ -36,8 +36,8 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   List<Widget> listEvent = [];
   List<Widget> listLearning = [];
 
-  bool isShowEvent = false;
-  bool isShowLearning = false;
+  bool isShowEventOnly = false;
+  bool isShowLearningOnly = false;
 
   Future<void> fetchEvent() async {
     widget.eventRepo.getList().then((_) {
@@ -82,8 +82,13 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   void setLearningOnScreen() {
     listLearning.clear();
     List<TopicModel> copy = List.of(widget.topicRepo.list);
-    List<TopicModel> firstThree = copy.length >= 3 ? copy.sublist(0, 3) : copy;
-    for (var topic in firstThree) {
+    // List<TopicModel> firstThree = [];
+    // if(isShowLearningOnly == true ){
+    //   firstThree = copy;
+    // } else {
+    //   firstThree = copy.length >= 3 ? copy.sublist(0, 3) : copy;
+    // }
+    for (var topic in copy) {
       if (selectedTopic == null) {
         addLearning(topic);
       } else {
@@ -96,17 +101,21 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   }
 
   void addLearning(TopicModel topic) {
+    print('topict start = ${topic.titleEn}');
     List<LearningModel> list = [];
     for (var learn in widget.learningRepo.list) {
+      print('topict for  ${learn.categoryId} == ${topic.id}');
       if (learn.categoryId == topic.id) {
+        print('topict ADD ${learn.categoryId} == ${topic.id}\n---');
         list.add(learn);
       }
     }
     if (list.isNotEmpty) {
+      print('topict not Empty List = ${topic.titleEn}\n---');
       listLearning.add(Row(
         children: [
           Text(widget.topicRepo.value(topic.id, 'locale')),
-          Expanded(child: SizedBox.shrink())
+          const Expanded(child: SizedBox.shrink())
         ],
       ));
       List<Widget> exList = [];
@@ -150,141 +159,199 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   Widget build(BuildContext context) {
     _idsTopics = widget.topicRepo.ids();
     _idsDiagnose = widget.diagnosisRepo.ids();
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Stack(
-            alignment: AlignmentDirectional.center,
+    return Expanded(
+      child: Container(
+        height: double.maxFinite,
+        padding: const EdgeInsets.all(25),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+          border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              spreadRadius: 5,
+              blurRadius: 7,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 200),
-                child: SelectDialogWidget(
-                  title: 'Select diagnosis',
-                  items: _idsDiagnose,
-                  diagnosisRepo: widget.diagnosisRepo,
-                  onSelect: (selected) {
-                    selectedDiagnose = selected;
-                    if (selected == '-1') {
-                      selectedDiagnose = null;
-                    }
-                    setEventOnScreen();
-                  },
-                ),
-              ),
-              Positioned(
-                top: 10,
-                left: 0,
-                child: Text(
-                  'Practice Mode',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium
-                      ?.copyWith(fontSize: 22),
-                ),
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: AppButtonAdd(
-                  text: 'Add New Question',
-                  onTap: () =>
-                      context.openEventDialog(() => setEventOnScreen()),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: ExtendedWrap(
-                  maxLines: 1,
-                  children: listEvent,
-                ),
-              ),
-              if (listEvent.isNotEmpty)
-                InkWell(
-                  onTap: () {
-                    setState(() {
-                      isShowEvent = !isShowEvent;
-                    });
-                  },
-                  child: Container(
-                    color: Colors.red,
-                    width: 20,
-                    height: 130,
+              if(isShowLearningOnly == false)Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 200),
+                    child: SelectDialogWidget(
+                      title: 'Select diagnosis',
+                      items: _idsDiagnose,
+                      diagnosisRepo: widget.diagnosisRepo,
+                      onSelect: (selected) {
+                        selectedDiagnose = selected;
+                        if (selected == '-1') {
+                          selectedDiagnose = null;
+                        }
+                        setEventOnScreen();
+                      },
+                    ),
                   ),
-                ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Stack(
-            alignment: AlignmentDirectional.center,
-            children: [
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 200),
-                child: SelectDialogWidget(
-                  title: 'Select Topic',
-                  items: _idsTopics,
-                  topicRepo: widget.topicRepo,
-                  onSelect: (selected) {
-                    selectedTopic = selected;
-                    if (selected == '-1') {
-                      selectedTopic = null;
-                    }
-                    setLearningOnScreen();
-                  },
-                ),
-              ),
-              Positioned(
-                top: 10,
-                left: 0,
-                child: Text(
-                  'Learning Mode',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium
-                      ?.copyWith(fontSize: 22),
-                ),
-              ),
-              Positioned(
-                top: 0,
-                right: 0,
-                child: AppButtonAdd(
-                  text: 'Add New Topic',
-                  onTap: () =>
-                      context.openLearningDialog(() => setLearningOnScreen()),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 20),
-          Row(
-            children: [
-              Expanded(
-                child: ExtendedWrap(
-                  maxLines: 6,
-                  children: listLearning,
-                ),
-              ),
-              if (listLearning.isNotEmpty)
-                InkWell(
-                  onTap: () {
-                    setState(() {
-
-                    });
-                  },
-                  child: Container(
-                    color: Colors.red,
-                    width: 20,
-                    height: 130,
+                  Positioned(
+                    top: 10,
+                    left: 0,
+                    child: Text(
+                      'Practice Mode',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.copyWith(fontSize: 22),
+                    ),
                   ),
-                )
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Row(
+                      children: [
+                        AppButtonAdd(
+                          text: 'Add New Question',
+                          onTap: () =>
+                              context.openEventDialog(() => setEventOnScreen()),
+                        ),
+                        if(isShowEventOnly == true)const SizedBox(width: 16,),
+                        if(isShowEventOnly == true)AppButtonAdd(
+                          text: '+',
+                          onTap: () {
+                            setState(() {
+                              isShowEventOnly = !isShowEventOnly;
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              if(isShowLearningOnly == false)const SizedBox(height: 20),
+              if(isShowLearningOnly == false)Row(
+                children: [
+                  Expanded(
+                    child: ExtendedWrap(
+                      maxLines: isShowEventOnly ? listEvent.length : 1,
+                      children: listEvent,
+                    ),
+                  ),
+                  if (listEvent.isNotEmpty && isShowEventOnly == false && isShowLearningOnly == false)
+                    InkWell(
+                      onTap: () {
+                        isShowEventOnly = !isShowEventOnly;
+                        setEventOnScreen();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xff99ABC6).withOpacity(0.1),
+                          borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                          border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+                        ),
+                        width: 40,
+                        height: 130,
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey,),
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              if(isShowEventOnly == false)Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 200),
+                    child: SelectDialogWidget(
+                      title: 'Select Topic',
+                      items: _idsTopics,
+                      topicRepo: widget.topicRepo,
+                      onSelect: (selected) {
+                        selectedTopic = selected;
+                        if (selected == '-1') {
+                          selectedTopic = null;
+                        }
+                        setLearningOnScreen();
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    top: 10,
+                    left: 0,
+                    child: Text(
+                      'Learning Mode',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.copyWith(fontSize: 22),
+                    ),
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        AppButtonAdd(
+                          text: 'Add New Topic',
+                          onTap: () =>
+                              context.openLearningDialog(() => setLearningOnScreen()),
+                        ),
+                        if(isShowLearningOnly == true)const SizedBox(width: 16,),
+                        if(isShowLearningOnly == true)AppButtonAdd(
+                          text: '+',
+                          onTap: () {
+                            setState(() {
+                              isShowLearningOnly = !isShowLearningOnly;
+                            });
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              if(isShowEventOnly == false)const SizedBox(height: 20),
+              if(isShowEventOnly == false)Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ExtendedWrap(
+                      maxLines: isShowLearningOnly ? listLearning.length : 6,
+                      children: listLearning,
+                    ),
+                  ),
+                  if (listLearning.isNotEmpty && isShowEventOnly == false && isShowLearningOnly == false)
+                    InkWell(
+                      onTap: () {
+                        isShowLearningOnly = !isShowLearningOnly;
+                        setLearningOnScreen();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xff99ABC6).withOpacity(0.1),
+                          borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                          border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+                        ),
+                        width: 40,
+                        height: 130,
+                        alignment: Alignment.center,
+                        child: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey,),
+                      ),
+                    )
+                ],
+              ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
