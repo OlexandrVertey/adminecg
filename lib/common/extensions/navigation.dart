@@ -2,8 +2,6 @@ import 'package:adminecg/common/models/event/event_model.dart';
 import 'package:adminecg/common/models/learning/learning_model.dart';
 import 'package:adminecg/ui/create_event/create_event_module.dart';
 import 'package:adminecg/ui/create_learning/create_learning_module.dart';
-import 'package:adminecg/ui/event_list/event_list_module.dart';
-import 'package:adminecg/ui/learning_list/learning_list_module.dart';
 import 'package:adminecg/ui/main_management_page/main_management_page.dart';
 import 'package:flutter/material.dart';
 
@@ -39,12 +37,4 @@ extension ExtensionString on BuildContext {
           ),
         ),
       );
-
-  openEventListPage(Function() fetch) => Navigator.push(this,
-      MaterialPageRoute(builder: (context) => EventListModule(fetch: fetch)));
-
-  openLearningListPage(Function() fetch) => Navigator.push(
-      this,
-      MaterialPageRoute(
-          builder: (context) => LearningListModule(fetch: fetch)));
 }

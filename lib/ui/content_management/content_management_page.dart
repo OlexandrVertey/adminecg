@@ -36,6 +36,9 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   List<Widget> listEvent = [];
   List<Widget> listLearning = [];
 
+  bool isShowEvent = false;
+  bool isShowLearning = false;
+
   Future<void> fetchEvent() async {
     widget.eventRepo.getList().then((_) {
       setEventOnScreen();
@@ -203,8 +206,11 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
               ),
               if (listEvent.isNotEmpty)
                 InkWell(
-                  onTap: () =>
-                      context.openEventListPage(() => setEventOnScreen()),
+                  onTap: () {
+                    setState(() {
+                      isShowEvent = !isShowEvent;
+                    });
+                  },
                   child: Container(
                     color: Colors.red,
                     width: 20,
@@ -265,8 +271,11 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
               ),
               if (listLearning.isNotEmpty)
                 InkWell(
-                  onTap: () =>
-                      context.openLearningListPage(() => setLearningOnScreen()),
+                  onTap: () {
+                    setState(() {
+
+                    });
+                  },
                   child: Container(
                     color: Colors.red,
                     width: 20,
