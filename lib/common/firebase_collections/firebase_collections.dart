@@ -15,6 +15,12 @@ class UsersCollection extends Collection {
   }
 }
 
+class RemovedUsersCollection extends Collection {
+  RemovedUsersCollection() {
+    _ref = cloud_firestore.FirebaseFirestore.instance.collection('RemovedUsers');
+  }
+}
+
 class OrganizationsCollection extends Collection {
   OrganizationsCollection() {
     _ref = cloud_firestore.FirebaseFirestore.instance.collection('Organizations');

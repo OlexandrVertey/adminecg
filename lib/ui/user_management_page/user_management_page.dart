@@ -149,7 +149,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
               Column(
                 children: [
                   SizedBox(
-                    width: 743,
+                    width: 860,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -198,7 +198,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   ),
                   const SizedBox(height: 20),
                   Container(
-                    width: 743,
+                    width: 860,
                     padding: const EdgeInsets.all(25),
                     decoration: BoxDecoration(
                       borderRadius: const BorderRadius.all(Radius.circular(26.0)),
@@ -228,19 +228,21 @@ class _UserManagementPageState extends State<UserManagementPage> {
                             _titleItemWidget(title: 'Organization'),
                             const SizedBox(width: 60),
                             _titleItemWidget(title: 'Status'),
-                            const SizedBox(width: 70),
+                            const SizedBox(width: 50),
+                            _titleItemWidget(title: 'Terms of Use'),
+                            const SizedBox(width: 50),
                             _titleItemWidget(title: 'Edit'),
                           ],
                         ),
                         Container(
                           margin: const EdgeInsets.symmetric(vertical: 10),
-                          width: 690,
+                          width: 840,
                           height: 1,
                           color: Colors.grey.withOpacity(0.5),
                         ),
                         if (value.state.listUserModel.isNotEmpty)
                         SizedBox(
-                          width: 690,
+                          width: 840,
                           child: ListView.builder(
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
@@ -278,7 +280,8 @@ class _UserManagementPageState extends State<UserManagementPage> {
     required bool showUser,
     required bool showAllUser,
   }) {
-    return showUser || showAllUser ? Container(
+    if (showUser || showAllUser) {
+      return Container(
       height: 30,
       margin: const EdgeInsets.only(bottom: 10.0),
       child: Row(
@@ -339,12 +342,29 @@ class _UserManagementPageState extends State<UserManagementPage> {
               ),
             ),
           ),
-          const SizedBox(width: 36),
+          const SizedBox(width: 40),
+          SizedBox(
+            width: 90,
+            child: Text(
+              item.userRegisterDate?.substring(0, item.userRegisterDate!.length - 7) ?? '',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                color: const Color(0xff1A1919),
+                fontSize: 12,
+              ),
+            ),
+          ),
+          const SizedBox(width: 20),
           InkWell(
             onTap: () => showDialog(
                 context: context,
-                builder: (_) => DeleteUserDialog(title: 'Delete User', userUid: item.userUid!, isUser: true),
-            ),
+                builder: (_) => DeleteUserDialog(
+                  title: 'Delete User',
+                  userUid: item.userUid!,
+                  isUser: true,
+                  userEmail: item.email!,
+                  userName: item.fullName!,
+                ),
+              ),
             child: SvgPicture.asset("assets/images/svg/delete.svg"),
           ),
           const SizedBox(width: 10),
@@ -383,7 +403,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
           ),
         ],
       ),
-    ) : const SizedBox();
+    );
+    } else {
+      return const SizedBox();
+    }
   }
 
   Widget _itemOrganizationWidget({
@@ -449,7 +472,13 @@ class _UserManagementPageState extends State<UserManagementPage> {
             InkWell(
               onTap: () => showDialog(
                 context: context,
-                builder: (_) => DeleteUserDialog(title: 'Delete Organization', userUid: item.id!, isUser: false),
+                builder: (_) => DeleteUserDialog(
+                  title: 'Delete Organization',
+                  userUid: item.id!,
+                  isUser: false,
+                  userEmail: '',
+                  userName: '',
+                ),
               ),
               child: SvgPicture.asset("assets/images/svg/delete.svg"),
             ),

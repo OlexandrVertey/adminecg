@@ -10,6 +10,7 @@ import 'package:adminecg/common/repo/get_all_users_repo/get_all_users_repo.dart'
 import 'package:adminecg/common/repo/get_user_repo/get_user_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
 import 'package:adminecg/common/repo/register_repo/register_repo.dart';
+import 'package:adminecg/common/repo/removed_users_repo/removed_users_repo.dart';
 import 'package:adminecg/common/repo/set_organization_repo/set_organization_repo.dart';
 import 'package:adminecg/common/repo/set_user_repo/set_user_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
@@ -47,6 +48,7 @@ class CollectionsDependenciesProvider extends MultiProvider {
     Provider<SharedPreference>(create: (context) => SharedPreference(sharedPreference)),
     Provider<DiagnoseStorage>(create: (context) => DiagnoseStorage()),
     Provider<UsersCollection>(create: (context) => UsersCollection()),
+    Provider<RemovedUsersCollection>(create: (context) => RemovedUsersCollection()),
     Provider<OrganizationsCollection>(create: (context) => OrganizationsCollection()),
     Provider<TopicCollection>(create: (context) => TopicCollection()),
     Provider<DiagnosisCollection>(create: (context) => DiagnosisCollection()),
@@ -68,6 +70,7 @@ class RepoDependenciesProvider extends MultiProvider {
   }) : super(providers: [
     Provider<RegisterRepo>(create: (context) => RegisterRepo(auth: auth)),
     Provider<SetUserRepo>(create: (context) => SetUserRepo(usersCollection: context.read<UsersCollection>())),
+    Provider<RemovedUsersRepo>(create: (context) => RemovedUsersRepo(removedUsersCollection: context.read<RemovedUsersCollection>())),
     Provider<GetUserRepo>(create: (context) => GetUserRepo(usersCollection: context.read<UsersCollection>())),
     Provider<UpdateUserRepo>(create: (context) => UpdateUserRepo(usersCollection: context.read<UsersCollection>())),
     Provider<GetAllUsersRepo>(create: (context) => GetAllUsersRepo(usersCollection: context.read<UsersCollection>())),
@@ -105,6 +108,7 @@ class BlocDependenciesProvider extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserManagementProvider(
             sharedPreference: context.read<SharedPreference>(),
             setUserRepo: context.read<SetUserRepo>(),
+            removedUsersRepo: context.read<RemovedUsersRepo>(),
             getUserRepo: context.read<GetUserRepo>(),
             updateUserRepo: context.read<UpdateUserRepo>(),
             getAllUsersRepo: context.read<GetAllUsersRepo>(),
