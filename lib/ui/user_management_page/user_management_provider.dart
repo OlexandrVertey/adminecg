@@ -7,11 +7,13 @@ import 'package:adminecg/common/repo/get_all_organizations_repo/get_all_organiza
 import 'package:adminecg/common/repo/get_all_users_repo/get_all_users_repo.dart';
 import 'package:adminecg/common/repo/get_user_repo/get_user_repo.dart';
 import 'package:adminecg/common/repo/register_repo/register_repo.dart';
+import 'package:adminecg/common/repo/removed_users_repo/removed_users_repo.dart';
 import 'package:adminecg/common/repo/set_organization_repo/set_organization_repo.dart';
 import 'package:adminecg/common/repo/set_user_repo/set_user_repo.dart';
 import 'package:adminecg/common/repo/update_organization_repo/update_organization_repo.dart';
 import 'package:adminecg/common/repo/update_user_repo/update_user_repo.dart';
 import 'package:adminecg/common/shared_preference/shared_preference.dart';
+import 'package:adminecg/ui/widgets/toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,7 @@ class UserManagementProvider extends ChangeNotifier {
     required this.deleteUserRepo,
     required this.deleteOrganizationRepo,
     required this.registerRepo,
+    required this.removedUsersRepo,
   }){
     getUserModel();
   }
@@ -44,9 +47,13 @@ class UserManagementProvider extends ChangeNotifier {
   final DeleteUserRepo deleteUserRepo;
   final DeleteOrganizationRepo deleteOrganizationRepo;
   final RegisterRepo registerRepo;
+  final RemovedUsersRepo removedUsersRepo;
 
 
   UserManagementState state = UserManagementState();
+
+  RegExp passwordValid = RegExp(r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$');
+  RegExp emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   void updatePage() {
     notifyListeners();
@@ -60,9 +67,21 @@ class UserManagementProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void deleteUser({required BuildContext context, required String userUid}) async {
+  void deleteUser({
+    required BuildContext context,
+    required String userUid,
+    required String userEmail,
+    required String userName,
+  }) async {
     try {
       await deleteUserRepo.deleteUser(userUid: userUid);
+
+      await removedUsersRepo.setRemovedUser(
+        userUid: userUid,
+        userName: userName,
+        email: userEmail,
+      );
+
       getUserModel();
     } catch (e) {}
     context.backPage();
@@ -129,30 +148,79 @@ class UserManagementProvider extends ChangeNotifier {
     String? organisation,
   }) async {
     try {
-      UserCredential? userCredential = await registerRepo.registerUser(
-        userName: userName,
-        email: email,
-        password: password,
-      );
-      print('---RegisterProvider register 3 userCredential = ${userCredential}');
-      if (userCredential != null) {
-        print('---RegisterProvider register 4');
-        await setUserRepo.setUser(
-          userUid: userCredential.user!.uid,
-          fullName: userName,
+      if (!emailValid.hasMatch(email)) {
+        Toast.show(message: 'Invalid email');
+      }
+      if (!passwordValid.hasMatch(password)) {
+        Toast.show(message: 'Invalid password');
+      }
+      if (userName.length < 3) {
+        Toast.show(message: 'Invalid user Name');
+      }
+
+
+      if (emailValid.hasMatch(email) && passwordValid.hasMatch(password) && userName.length > 3) {
+        print('---emailValid.hasMatch(email) && passwordValid.hasMatch(password) && userName.length > 3');
+        UserCredential? userCredential = await registerRepo.registerUser(
+          userName: userName,
           email: email,
           password: password,
-          organisation: organisation,
-          registerData: DateTime.now().toString(),
         );
-        print('---RegisterProvider register 5 userCredential.user!.uid = ${userCredential.user!.uid}');
-        getUserModel();
+        // sendEmail(email);
+        // final emailUri = Uri.parse('mailto:$email?subject=test test test');
+        // await launchUrl(emailUri);
+
+        print('---RegisterProvider register 3 userCredential = ${userCredential}');
+        if (userCredential != null) {
+          print('---RegisterProvider register 4');
+          await setUserRepo.setUser(
+            userUid: userCredential.user!.uid,
+            fullName: userName,
+            email: email,
+            password: password,
+            organisation: organisation,
+            registerData: DateTime.now().toString(),
+          );
+          print('---RegisterProvider register 5 userCredential.user!.uid = ${userCredential.user!.uid}');
+          getUserModel();
+        }
+        // launchEmail(toEmail: email, subject: 'subject', message: 'message');
+        context.backPage();
       }
     } catch (e) {
       print('---MainManagementProvider registerUser catch = ${e}');
     }
-    context.backPage();
   }
+
+  ///Send Grid
+  // Future launchEmail({
+  //   required String toEmail,
+  //   required String subject,
+  //   required String message,
+  // }) async {
+  //   print('---launchEmail 1');
+  //   final url =
+  //       'mailto:$toEmail?subject=${Uri.encodeFull(subject)}&body=${Uri.encodeFull(message)}';
+  //   if (await canLaunch(url)) {
+  //     print('---launchEmail 2');
+  //     await launch(url);
+  //   }
+  //   print('---launchEmail 3');
+  // }
+  //
+  // void sendEmail(String emailAddress) async {
+  //   print('--- sendEmail 1');
+  //   final Email email = Email(
+  //     body: 'Hello World',
+  //     subject: 'Testing email on flutter',
+  //     recipients: [emailAddress],
+  //     //cc: ['cc@example.com'],
+  //     //bcc: ['bcc@example.com'],
+  //     //attachmentPaths: ['/path/to/attachment.zip'],
+  //     isHTML: false,
+  //   );
+  // }
+
 
   Future<void> registerOrganization({
     required BuildContext context,
