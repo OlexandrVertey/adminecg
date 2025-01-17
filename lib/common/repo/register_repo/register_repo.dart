@@ -6,7 +6,6 @@ class RegisterRepo {
   final FirebaseAuth auth;
 
   Future<UserCredential?> registerUser({
-    required String userName,
     required String email,
     required String password,
   }) async {

@@ -10,7 +10,9 @@ class SetUserRepo {
     required String fullName,
     required String email,
     required String password,
-    String? registerData,
+    required String states,
+    required String registerData,
+    required String endPlans,
     String? organisation,
   }) async {
     try {
@@ -19,8 +21,12 @@ class SetUserRepo {
         'fullName': fullName,
         'email': email,
         'password': password,
+        'states': states,
         'organisation': organisation,
         'registerData': registerData,
+        'plans': "7 days",
+        'startPlans': registerData,
+        'endPlans': endPlans,
       });
       print('---SetUserRepo try finish');
     } catch (e) {

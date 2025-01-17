@@ -101,6 +101,8 @@ class UserManagementProvider extends ChangeNotifier {
     required String fullName,
     required String email,
     required String password,
+    required String states,
+    required String duration,
     String? organisation,
   }) async {
     print('organisation $organisation');
@@ -111,6 +113,8 @@ class UserManagementProvider extends ChangeNotifier {
         email: email,
         password: password,
         organisation: organisation,
+        states: states,
+        duration: duration,
       );
       getUserModel();
     } catch (e) {}
@@ -145,6 +149,8 @@ class UserManagementProvider extends ChangeNotifier {
     required String userName,
     required String email,
     required String password,
+    required String states,
+    required String duration,//endPlans
     String? organisation,
   }) async {
     try {
@@ -162,10 +168,11 @@ class UserManagementProvider extends ChangeNotifier {
       if (emailValid.hasMatch(email) && passwordValid.hasMatch(password) && userName.length > 3) {
         print('---emailValid.hasMatch(email) && passwordValid.hasMatch(password) && userName.length > 3');
         UserCredential? userCredential = await registerRepo.registerUser(
-          userName: userName,
           email: email,
           password: password,
         );
+
+
         // sendEmail(email);
         // final emailUri = Uri.parse('mailto:$email?subject=test test test');
         // await launchUrl(emailUri);
@@ -173,13 +180,16 @@ class UserManagementProvider extends ChangeNotifier {
         print('---RegisterProvider register 3 userCredential = ${userCredential}');
         if (userCredential != null) {
           print('---RegisterProvider register 4');
+          DateTime now = DateTime.now();
           await setUserRepo.setUser(
             userUid: userCredential.user!.uid,
             fullName: userName,
             email: email,
             password: password,
             organisation: organisation,
-            registerData: DateTime.now().toString(),
+            registerData: now.toString(),
+            states: states,
+            endPlans: duration.isNotEmpty ? duration : DateTime(now.year, now.month, now.day + 7, now.minute, now.second).toString(),
           );
           print('---RegisterProvider register 5 userCredential.user!.uid = ${userCredential.user!.uid}');
           getUserModel();

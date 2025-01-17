@@ -8,6 +8,8 @@ class UserModel {
   String? endPlans;
   String? plans;
   String? userRegisterDate;
+  String? states;
+  String? duration;
 
   UserModel({
     this.userUid,
@@ -19,6 +21,8 @@ class UserModel {
     this.endPlans,
     this.plans,
     this.userRegisterDate,
+    this.states,
+    this.duration,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
@@ -31,6 +35,8 @@ class UserModel {
     endPlans: json["endPlans"],
     plans: json["plans"],
     userRegisterDate: json["userRegisterDate"],
+    states: json["states"],
+    duration: json["duration"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -43,5 +49,7 @@ class UserModel {
     "endPlans": endPlans,
     "plans": plans,
     "userRegisterDate": userRegisterDate,
+    "states": states,
+    "duration": duration,
   };
 }

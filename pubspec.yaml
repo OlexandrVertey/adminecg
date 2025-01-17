@@ -51,6 +51,7 @@ dependencies:
   image: ^4.5.2
   drag_and_drop_lists: ^0.4.2
   extended_wrap: ^0.1.5
+  flutter_rounded_date_picker: ^3.0.4
 
 dev_dependencies:
   flutter_test:

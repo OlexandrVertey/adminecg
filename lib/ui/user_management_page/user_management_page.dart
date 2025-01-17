@@ -175,6 +175,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                             _passwordController.clear();
                             showDialog(
                               context: context,
+
                               builder: (_) => EditUserDialog(
                                 title: 'Add New User',
                                 userNameController: _userNameController,
@@ -182,12 +183,15 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                 passwordController: _passwordController,
                                 organisations: value.state.listOrganizationModel,
                                 nameButton: 'Create & Send Login Details',
-                                callBack: (organisation) => value.registerUser(
+                                selectedOrgId: _selectedOrgId,
+                                callBack: (organisation, states, duration) => value.registerUser(
                                     context: context,
                                     userName: _userNameController.text,
                                     email: _emailController.text,
                                     password: _passwordController.text,
-                                    organisation: organisation
+                                    organisation: organisation,
+                                    states: states,
+                                    duration: duration,//endPlans
                                 ),
                               ),
                             );
@@ -335,7 +339,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
           SizedBox(
             width: 50,
             child: Text(
-              item.plans ?? '',
+              // item.plans ?? '',
+                _getStatusUser(item: item),
+
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: const Color(0xff1A1919),
                 fontSize: 12,
@@ -375,6 +381,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
               _passwordController.text = item.password!;
               showDialog(
                 context: context,
+
                 builder: (_) => EditUserDialog(
                   title: 'Edit User',
                   userUid: item.userUid!,
@@ -384,13 +391,16 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   organisationId: item.organisation,
                   organisations: list,
                   nameButton: 'Update & Send Login Details',
-                  callBack: (organisation) => context.read<UserManagementProvider>().updateUser(
+                  selectedOrgId: _selectedOrgId,
+                  callBack: (organisation, states, duration) => context.read<UserManagementProvider>().updateUser(
                     context: context,
                     userUid: item.userUid!,
                     fullName: _userNameController.text,
                     organisation: organisation,
                     email: _emailController.text,
                     password: _passwordController.text,
+                    states: states,
+                    duration: duration,
                   ),
                 ),
               );
@@ -549,6 +559,19 @@ class _UserManagementPageState extends State<UserManagementPage> {
       }
     }
     return '';
+  }
+
+  String _getStatusUser({required UserModel item}) {
+    if (item.startPlans != null && item.startPlans!.isNotEmpty && item.endPlans != null && item.endPlans!.isNotEmpty) {
+      DateTime now = DateTime.now();
+      DateTime startPlan = DateTime.parse(item.startPlans!);
+      DateTime endPlan = DateTime.parse(item.endPlans!);
+      Duration difference = endPlan.difference(startPlan);
+      if (difference.inDays < 8 && now.isBefore(DateTime.parse(item.endPlans!))) {return 'Trial';}
+      if (now.isAfter(DateTime.parse(item.endPlans!))) {return 'Free';}
+      if (now.isBefore(DateTime.parse(item.endPlans!))) {return 'Premium';}
+    }
+    return 'Free';
   }
 
 }

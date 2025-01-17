@@ -10,6 +10,8 @@ class UpdateUserRepo {
     required String fullName,
     required String email,
     required String password,
+    required String states,
+    required String duration,
     String? organisation,
   }) async {
     try {
@@ -19,6 +21,8 @@ class UpdateUserRepo {
         'email': email,
         'password': password,
         'organisation': organisation,
+        'states': states,
+        'endPlans': duration,
       });
     } catch (e) {
       print('---UpdateUserRepo e = ${e}');
