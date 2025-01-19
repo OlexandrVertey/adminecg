@@ -36,10 +36,8 @@ class MyApp extends StatelessWidget {
           ],
           navigatorObservers: [BotToastNavigatorObserver()],
           theme: AppTheme.light(),
-          home: LoginPage(),
+          home: const LoginPage(),
           // home: const MainManagementPage(),
-
-          // home: const MainManagementPage(),///TODO: need change
         );
       },
     );
