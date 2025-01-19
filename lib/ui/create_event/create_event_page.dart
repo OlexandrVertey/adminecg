@@ -231,16 +231,39 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    SizedBox(
+                    Container(
                       width: 370,
-                      height: 150,
-                      child: TextFieldWidget(
-                        controllerText: textController,
-                        hintTextField: '',
-                        textInputType: TextInputType.text,
-                        maxLines: 20,
-                        callBackTextField: (text) {},
-                      ),
+                      constraints: BoxConstraints(maxHeight: 150),
+                      child: TextField(
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        controller: textController,
+                        keyboardType: TextInputType.multiline,
+                        textAlign: TextAlign.justify,
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black.withOpacity(0.1),
+                              width: 1.3,
+                            ),
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.black.withOpacity(0.1),
+                              width: 1.3,
+                            ),
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                          hintText: 'Enter text',
+                          contentPadding: const EdgeInsets.only(
+                            left: 15,
+                            right: 15,
+                            top: 18,
+                            bottom: 18,
+                          ),
+                          counterText: '',
+                        ),
+                      )
                     ),
                     const SizedBox(height: 20),
                     Align(

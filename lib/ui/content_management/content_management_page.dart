@@ -402,14 +402,18 @@ class EventItemWidget extends StatelessWidget {
           const SizedBox(height: 13),
           Row(
             children: [
-              Text(
-                context
-                    .read<DiagnosisRepo>()
-                    .value(model.correctAnswer, 'locale'),
-                style: Theme.of(context)
-                    .textTheme
-                    .labelLarge
-                    ?.copyWith(fontSize: 14),
+              Expanded(
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  context
+                      .read<DiagnosisRepo>()
+                      .value(model.correctAnswer, 'locale'),
+                  style: Theme.of(context)
+                      .textTheme
+                      .labelLarge
+                      ?.copyWith(fontSize: 14),
+                ),
               ),
               const Spacer(),
               InkWell(
@@ -471,12 +475,16 @@ class LearningItemWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                diagnosisRepo.value(model.diagnoseId, 'locale'),
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineMedium
-                    ?.copyWith(fontSize: 14),
+              Expanded(
+                child: Text(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  diagnosisRepo.value(model.diagnoseId, 'locale'),
+                  style: Theme.of(context)
+                      .textTheme
+                      .headlineMedium
+                      ?.copyWith(fontSize: 14),
+                ),
               ),
               const Spacer(),
               InkWell(
