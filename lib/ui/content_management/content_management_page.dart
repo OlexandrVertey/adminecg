@@ -6,6 +6,7 @@ import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
+import 'package:adminecg/ui/dialog/delete_dialog.dart';
 import 'package:adminecg/ui/widgets/app_button_add.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -421,7 +422,11 @@ class EventItemWidget extends StatelessWidget {
               ),
               const SizedBox(width: 16),
               InkWell(
-                onTap: remove,
+                onTap: (){
+                  DeleteDialog.show(context, 'Question', (){
+                    remove();
+                  });
+                },
                 child: SvgPicture.asset(
                   width: 20,
                   height: 20,
@@ -486,7 +491,11 @@ class LearningItemWidget extends StatelessWidget {
                 width: 16,
               ),
               InkWell(
-                onTap: remove,
+                onTap: (){
+                  DeleteDialog.show(context, 'Topic', (){
+                    remove();
+                  });
+                },
                 child: SvgPicture.asset(
                   width: 20,
                   height: 20,

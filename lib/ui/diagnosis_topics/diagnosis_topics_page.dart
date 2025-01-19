@@ -3,6 +3,7 @@ import 'package:adminecg/common/models/diagnosis/diagnosis_model.dart';
 import 'package:adminecg/common/models/topic/topic_model.dart';
 import 'package:adminecg/common/theme/app_theme.dart';
 import 'package:adminecg/ui/diagnosis_topics/diagnosis_topics_provider.dart';
+import 'package:adminecg/ui/dialog/delete_dialog.dart';
 import 'package:adminecg/ui/dialog/enter_dialog.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/app_button_add.dart';
@@ -153,7 +154,9 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                                     );
                                   },
                                   remove: () {
-                                    value.removeDiagnose(item);
+                                    DeleteDialog.show(context, 'Diagnose', (){
+                                      value.removeDiagnose(item);
+                                    });
                                   },
                                 );
                               },
@@ -273,7 +276,10 @@ class _DiagnosisTopicsPageState extends State<DiagnosisTopicsPage> {
                                             }));
                                   },
                                   remove: () {
-                                    value.removeTopic(item);
+                                    DeleteDialog.show(context, 'Topic', (){
+                                      value.removeTopic(item);
+                                    });
+
                                   },
                                 );
                               },

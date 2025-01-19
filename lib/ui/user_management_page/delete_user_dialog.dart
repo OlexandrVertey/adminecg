@@ -37,7 +37,7 @@ class DeleteUserDialog extends StatelessWidget {
           SvgPicture.asset("assets/images/svg/delete_user.svg"),
           const  SizedBox(height: 30),
           AppButton(
-            text: 'Yes  (Delete)',
+            text: 'Yes (Delete)',
             isActive: true,
             onTap: () => isUser
                 ? context.read<UserManagementProvider>().deleteUser(
@@ -50,7 +50,7 @@ class DeleteUserDialog extends StatelessWidget {
           ),
           const  SizedBox(height: 20),
           AppButton(
-            text: 'No  (Go Back)',
+            text: 'No (Go Back)',
             isActive: false,
             onTap: () => context.backPage(),
           ),

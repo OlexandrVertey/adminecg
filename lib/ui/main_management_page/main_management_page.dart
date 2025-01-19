@@ -112,7 +112,7 @@ class LeftAdminBar extends StatelessWidget {
             context,
             2,
             'Diagnisis & Topics',
-            'assets/images/svg/user.svg',
+            'assets/images/svg/content_management.svg',
           ),
           const Spacer(),
           SvgPicture.asset('assets/images/svg/illustrations.svg'),
@@ -142,7 +142,7 @@ class LeftAdminBar extends StatelessWidget {
             SizedBox(
               width: 15,
               height: 15,
-              child: SvgPicture.asset(assets),
+              child: SvgPicture.asset(assets, color: !isSelected ? AppTheme.accessColor : Colors.white,),
             ),
             const SizedBox(width: 12),
             Text(

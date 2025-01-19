@@ -23,6 +23,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  final ScrollController _scrollControllerUser = ScrollController();
+  final ScrollController _scrollControllerOrg = ScrollController();
+  final ScrollController _scrollControllerAll = ScrollController();
+
   bool _selectedOrg = false;
   String? _selectedOrgId;
   int? _selectedOrgIndex;
@@ -41,237 +45,262 @@ class _UserManagementPageState extends State<UserManagementPage> {
     DateTime date = DateTime(now.year, now.month, now.day, now.hour, now.minute, now.second);
     return Consumer<UserManagementProvider>(
         builder: (context, value, child) {
-          return Wrap(
-            children: [
-              Container(
-                margin: const EdgeInsets.only(right: 10, bottom: 10),
-                child: Column(
+          return Scrollbar(
+            controller: _scrollControllerAll,
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              controller: _scrollControllerAll,
+              child: Wrap(
                 children: [
-                  SizedBox(
-                    width: 340,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'User Management',
-                              style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Organizations  List',
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
-                            ),
-                          ],
-                        ),
-                        AppButtonAdd(
-                          text: '',
-                          width: 45,
-                          onTap: () => showDialog(
-                            context: context,
-                            builder: (_) => EditOrganizationDialog(
-                              title: 'Add New Organization',
-                              organizationNameController: _organizationNameController,
-                              nameButton: 'Update & Send Login Details',
-                              callBack: ({required String premium}) {
-                                context.read<UserManagementProvider>().registerOrganization(
-                                  context: context,
-                                  id: date.millisecondsSinceEpoch.toString(),
-                                  name: _organizationNameController.text,
-                                  premium: premium,
-                                );
-                                _organizationNameController.clear();
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
                   Container(
-                    width: 340,
-                    padding: const EdgeInsets.all(25),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(26.0)),
-                      border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
+                    margin: const EdgeInsets.only(right: 10, bottom: 10),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 340,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _titleItemWidget(title: 'No.'),
-                            const SizedBox(width: 37),
-                            _titleItemWidget(title: 'Organization Name'),
-                          ],
-                        ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          width: 300,
-                          height: 1,
-                          color: Colors.grey.withOpacity(0.5),
-                        ),
-                        if (value.state.listUserModel.isNotEmpty)
-                          SizedBox(
-                            width: 300,
-                            child: ListView.builder(
-                              padding: EdgeInsets.zero,
-                              shrinkWrap: true,
-                              itemCount: value.state.listOrganizationModel.length,
-                              itemBuilder: (context, index) {
-                                OrganizationModel item = value.state.listOrganizationModel[index];
-                                return _itemOrganizationWidget(
-                                  item: item,
-                                  index: index,
-                                );
-                              },
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'User Management',
+                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Organizations  List',
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
+                                ),
+                              ],
                             ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-                            ),
-              ),
-              Column(
-                children: [
-                  SizedBox(
-                    width: 860,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Add New User',
-                              style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Users  List',
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
-                            ),
-                          ],
-                        ),
-                        AppButtonAdd(
-                          text: 'Add New User',
-                          onTap: () {
-                            _userNameController.clear();
-                            _emailController.clear();
-                            _passwordController.clear();
-                            showDialog(
-                              context: context,
-
-                              builder: (_) => EditUserDialog(
-                                title: 'Add New User',
-                                userNameController: _userNameController,
-                                emailController: _emailController,
-                                passwordController: _passwordController,
-                                organisations: value.state.listOrganizationModel,
-                                nameButton: 'Create & Send Login Details',
-                                selectedOrgId: _selectedOrgId,
-                                callBack: (organisation, states, duration) => value.registerUser(
-                                    context: context,
-                                    userName: _userNameController.text,
-                                    email: _emailController.text,
-                                    password: _passwordController.text,
-                                    organisation: organisation,
-                                    states: states,
-                                    duration: duration,//endPlans
+                            AppButtonAdd(
+                              text: '',
+                              width: 45,
+                              onTap: () => showDialog(
+                                context: context,
+                                builder: (_) => EditOrganizationDialog(
+                                  title: 'Add New Organization',
+                                  organizationNameController: _organizationNameController,
+                                  nameButton: 'Update & Send Login Details',
+                                  callBack: ({required String premium}) {
+                                    context.read<UserManagementProvider>().registerOrganization(
+                                      context: context,
+                                      id: date.millisecondsSinceEpoch.toString(),
+                                      name: _organizationNameController.text,
+                                      premium: premium,
+                                    );
+                                    _organizationNameController.clear();
+                                  },
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    width: 860,
-                    padding: const EdgeInsets.all(25),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(26.0)),
-                      border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          spreadRadius: 5,
-                          blurRadius: 7,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            _titleItemWidget(title: 'No.'),
-                            const SizedBox(width: 37),
-                            _titleItemWidget(title: 'Name'),
-                            const SizedBox(width: 100),
-                            _titleItemWidget(title: 'Email'),
-                            const SizedBox(width: 180),
-                            _titleItemWidget(title: 'Organization'),
-                            const SizedBox(width: 60),
-                            _titleItemWidget(title: 'Status'),
-                            const SizedBox(width: 50),
-                            _titleItemWidget(title: 'Terms of Use'),
-                            const SizedBox(width: 50),
-                            _titleItemWidget(title: 'Edit'),
+                            ),
                           ],
                         ),
-                        Container(
-                          margin: const EdgeInsets.symmetric(vertical: 10),
-                          width: 840,
-                          height: 1,
-                          color: Colors.grey.withOpacity(0.5),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        width: 340,
+                        padding: const EdgeInsets.all(25),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+                          border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
-                        if (value.state.listUserModel.isNotEmpty)
-                        SizedBox(
-                          width: 840,
-                          child: ListView.builder(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            itemCount: value.state.listUserModel.length,
-                            itemBuilder: (context, index) {
-                              bool showUser = _selectedOrgId == value.state.listUserModel[index].organisation && _selectedOrg;
-                              bool showAllUser = !_selectedOrg;
-                              UserModel item = value.state.listUserModel[index];
-                                return _itemUserWidget(
-                                  list: value.state.listOrganizationModel,
-                                  item: item,
-                                  index: index,
-                                  showUser: showUser,
-                                  showAllUser: showAllUser,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                _titleItemWidget(title: 'No.'),
+                                const SizedBox(width: 37),
+                                _titleItemWidget(title: 'Organization Name'),
+                              ],
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              width: 300,
+                              height: 1,
+                              color: Colors.grey.withOpacity(0.5),
+                            ),
+                            if (value.state.listUserModel.isNotEmpty)
+                              Scrollbar(
+                              controller: _scrollControllerOrg,
+                              thumbVisibility: true,
+                                child: SizedBox(
+                                  width: 300,
+                                  height: MediaQuery.of(context).size.height * 0.8,
+                                  child: ScrollConfiguration(
+                                    behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                                    child: ListView.builder(
+                                      controller: _scrollControllerOrg,
+                                      padding: EdgeInsets.zero,
+                                      shrinkWrap: true,
+                                      itemCount: value.state.listOrganizationModel.length,
+                                      itemBuilder: (context, index) {
+                                        OrganizationModel item = value.state.listOrganizationModel[index];
+                                        return _itemOrganizationWidget(
+                                          item: item,
+                                          index: index,
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                                ),
+                  ),
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: 860,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Add New User',
+                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Users  List',
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
+                                ),
+                              ],
+                            ),
+                            AppButtonAdd(
+                              text: 'Add New User',
+                              onTap: () {
+                                _userNameController.clear();
+                                _emailController.clear();
+                                _passwordController.clear();
+                                showDialog(
+                                  context: context,
+
+                                  builder: (_) => EditUserDialog(
+                                    title: 'Add New User',
+                                    userNameController: _userNameController,
+                                    emailController: _emailController,
+                                    passwordController: _passwordController,
+                                    organisations: value.state.listOrganizationModel,
+                                    nameButton: 'Create & Send Login Details',
+                                    selectedOrgId: _selectedOrgId,
+                                    callBack: (organisation, states, duration) => value.registerUser(
+                                        context: context,
+                                        userName: _userNameController.text,
+                                        email: _emailController.text,
+                                        password: _passwordController.text,
+                                        organisation: organisation,
+                                        states: states,
+                                        duration: duration,//endPlans
+                                    ),
+                                  ),
                                 );
-                              // }
-                            },
-                          ),
+                              },
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      const SizedBox(height: 20),
+                      Container(
+                        width: 860,
+                        padding: const EdgeInsets.all(25),
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+                          border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.2),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                _titleItemWidget(title: 'No.'),
+                                const SizedBox(width: 37),
+                                _titleItemWidget(title: 'Name'),
+                                const SizedBox(width: 100),
+                                _titleItemWidget(title: 'Email'),
+                                const SizedBox(width: 180),
+                                _titleItemWidget(title: 'Organization'),
+                                const SizedBox(width: 60),
+                                _titleItemWidget(title: 'Status'),
+                                const SizedBox(width: 50),
+                                _titleItemWidget(title: 'Terms of Use'),
+                                const SizedBox(width: 50),
+                                _titleItemWidget(title: 'Edit'),
+                              ],
+                            ),
+                            Container(
+                              margin: const EdgeInsets.symmetric(vertical: 10),
+                              width: 840,
+                              height: 1,
+                              color: Colors.grey.withOpacity(0.5),
+                            ),
+                            if (value.state.listUserModel.isNotEmpty)
+                            Scrollbar(
+                              controller: _scrollControllerUser,
+                              thumbVisibility: true, // Додайте цей параметр
+                              child: SizedBox(
+                                width: 840,
+                                height: MediaQuery.of(context).size.height * 0.8,
+                                child: ScrollConfiguration(
+                                  behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                                  child: ListView.builder(
+                                    controller: _scrollControllerUser,
+                                    padding: EdgeInsets.zero,
+                                    shrinkWrap: true,
+                                    itemCount: value.state.listUserModel.length,
+                                    itemBuilder: (context, index) {
+                                      bool showUser = _selectedOrgId == value.state.listUserModel[index].organisation && _selectedOrg;
+                                      bool showAllUser = !_selectedOrg;
+                                      UserModel item = value.state.listUserModel[index];
+                                        return _itemUserWidget(
+                                          list: value.state.listOrganizationModel,
+                                          item: item,
+                                          index: index,
+                                          showUser: showUser,
+                                          showAllUser: showAllUser,
+                                        );
+                                      // }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           );
         },
     );
