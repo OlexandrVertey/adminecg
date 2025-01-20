@@ -160,198 +160,196 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
   Widget build(BuildContext context) {
     _idsTopics = widget.topicRepo.ids();
     _idsDiagnose = widget.diagnosisRepo.ids();
-    return Expanded(
-      child: Container(
-        height: double.maxFinite,
-        padding: const EdgeInsets.all(25),
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(26.0)),
-          border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: const Offset(0, 3),
+    return Container(
+      height: double.maxFinite,
+      padding: const EdgeInsets.all(25),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+        border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            if(isShowLearningOnly == false)Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 200),
+                  child: SelectDialogWidget(
+                    title: 'Select diagnosis',
+                    items: _idsDiagnose,
+                    diagnosisRepo: widget.diagnosisRepo,
+                    onSelect: (selected) {
+                      selectedDiagnose = selected;
+                      if (selected == '-1') {
+                        selectedDiagnose = null;
+                      }
+                      setEventOnScreen();
+                    },
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  child: Text(
+                    'Practice Mode',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontSize: 22),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Row(
+                    children: [
+                      AppButtonAdd(
+                        text: 'Add New Question',
+                        onTap: () =>
+                            context.openEventDialog(() => setEventOnScreen()),
+                      ),
+                      if(isShowEventOnly == true)const SizedBox(width: 16,),
+                      if(isShowEventOnly == true)AppButtonAdd(
+                        text: '+',
+                        onTap: () {
+                          setState(() {
+                            isShowEventOnly = !isShowEventOnly;
+                          });
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if(isShowLearningOnly == false)const SizedBox(height: 20),
+            if(isShowLearningOnly == false)Row(
+              children: [
+                Expanded(
+                  child: ExtendedWrap(
+                    maxLines: isShowEventOnly ? listEvent.length : 1,
+                    children: listEvent,
+                  ),
+                ),
+                if (listEvent.isNotEmpty && isShowEventOnly == false && isShowLearningOnly == false)
+                  InkWell(
+                    onTap: () {
+                      isShowEventOnly = !isShowEventOnly;
+                      setEventOnScreen();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xff99ABC6).withOpacity(0.1),
+                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                        border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+                      ),
+                      width: 40,
+                      height: 130,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey,),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            if(isShowEventOnly == false)Stack(
+              alignment: AlignmentDirectional.center,
+              children: [
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 200),
+                  child: SelectDialogWidget(
+                    title: 'Select Topic',
+                    items: _idsTopics,
+                    topicRepo: widget.topicRepo,
+                    onSelect: (selected) {
+                      selectedTopic = selected;
+                      if (selected == '-1') {
+                        selectedTopic = null;
+                      }
+                      setLearningOnScreen();
+                    },
+                  ),
+                ),
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  child: Text(
+                    'Learning Mode',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineMedium
+                        ?.copyWith(fontSize: 22),
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AppButtonAdd(
+                        text: 'Add New Topic',
+                        onTap: () =>
+                            context.openLearningDialog(() => setLearningOnScreen()),
+                      ),
+                      if(isShowLearningOnly == true)const SizedBox(width: 16,),
+                      if(isShowLearningOnly == true)AppButtonAdd(
+                        text: '+',
+                        onTap: () {
+                          setState(() {
+                            isShowLearningOnly = !isShowLearningOnly;
+                          });
+                        },
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            if(isShowEventOnly == false)const SizedBox(height: 20),
+            if(isShowEventOnly == false)Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: ExtendedWrap(
+                    maxLines: isShowLearningOnly ? listLearning.length : 6,
+                    children: listLearning,
+                  ),
+                ),
+                if (listLearning.isNotEmpty && isShowEventOnly == false && isShowLearningOnly == false)
+                  InkWell(
+                    onTap: () {
+                      isShowLearningOnly = !isShowLearningOnly;
+                      setLearningOnScreen();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xff99ABC6).withOpacity(0.1),
+                        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+                        border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
+                      ),
+                      width: 40,
+                      height: 130,
+                      alignment: Alignment.center,
+                      child: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey,),
+                    ),
+                  )
+              ],
             ),
           ],
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              if(isShowLearningOnly == false)Stack(
-                alignment: AlignmentDirectional.center,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 200),
-                    child: SelectDialogWidget(
-                      title: 'Select diagnosis',
-                      items: _idsDiagnose,
-                      diagnosisRepo: widget.diagnosisRepo,
-                      onSelect: (selected) {
-                        selectedDiagnose = selected;
-                        if (selected == '-1') {
-                          selectedDiagnose = null;
-                        }
-                        setEventOnScreen();
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 0,
-                    child: Text(
-                      'Practice Mode',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium
-                          ?.copyWith(fontSize: 22),
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Row(
-                      children: [
-                        AppButtonAdd(
-                          text: 'Add New Question',
-                          onTap: () =>
-                              context.openEventDialog(() => setEventOnScreen()),
-                        ),
-                        if(isShowEventOnly == true)const SizedBox(width: 16,),
-                        if(isShowEventOnly == true)AppButtonAdd(
-                          text: '+',
-                          onTap: () {
-                            setState(() {
-                              isShowEventOnly = !isShowEventOnly;
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if(isShowLearningOnly == false)const SizedBox(height: 20),
-              if(isShowLearningOnly == false)Row(
-                children: [
-                  Expanded(
-                    child: ExtendedWrap(
-                      maxLines: isShowEventOnly ? listEvent.length : 1,
-                      children: listEvent,
-                    ),
-                  ),
-                  if (listEvent.isNotEmpty && isShowEventOnly == false && isShowLearningOnly == false)
-                    InkWell(
-                      onTap: () {
-                        isShowEventOnly = !isShowEventOnly;
-                        setEventOnScreen();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xff99ABC6).withOpacity(0.1),
-                          borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                          border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
-                        ),
-                        width: 40,
-                        height: 130,
-                        alignment: Alignment.center,
-                        child: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey,),
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              if(isShowEventOnly == false)Stack(
-                alignment: AlignmentDirectional.center,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 200),
-                    child: SelectDialogWidget(
-                      title: 'Select Topic',
-                      items: _idsTopics,
-                      topicRepo: widget.topicRepo,
-                      onSelect: (selected) {
-                        selectedTopic = selected;
-                        if (selected == '-1') {
-                          selectedTopic = null;
-                        }
-                        setLearningOnScreen();
-                      },
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 0,
-                    child: Text(
-                      'Learning Mode',
-                      style: Theme.of(context)
-                          .textTheme
-                          .headlineMedium
-                          ?.copyWith(fontSize: 22),
-                    ),
-                  ),
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        AppButtonAdd(
-                          text: 'Add New Topic',
-                          onTap: () =>
-                              context.openLearningDialog(() => setLearningOnScreen()),
-                        ),
-                        if(isShowLearningOnly == true)const SizedBox(width: 16,),
-                        if(isShowLearningOnly == true)AppButtonAdd(
-                          text: '+',
-                          onTap: () {
-                            setState(() {
-                              isShowLearningOnly = !isShowLearningOnly;
-                            });
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if(isShowEventOnly == false)const SizedBox(height: 20),
-              if(isShowEventOnly == false)Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: ExtendedWrap(
-                      maxLines: isShowLearningOnly ? listLearning.length : 6,
-                      children: listLearning,
-                    ),
-                  ),
-                  if (listLearning.isNotEmpty && isShowEventOnly == false && isShowLearningOnly == false)
-                    InkWell(
-                      onTap: () {
-                        isShowLearningOnly = !isShowLearningOnly;
-                        setLearningOnScreen();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xff99ABC6).withOpacity(0.1),
-                          borderRadius: const BorderRadius.all(Radius.circular(15.0)),
-                          border: Border.all(color: Colors.black.withOpacity(0.1), width: 1),
-                        ),
-                        width: 40,
-                        height: 130,
-                        alignment: Alignment.center,
-                        child: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey,),
-                      ),
-                    )
-                ],
-              ),
-            ],
-          ),
         ),
       ),
     );

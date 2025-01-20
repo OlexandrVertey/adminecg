@@ -70,11 +70,17 @@ class TextFieldWidget extends StatelessWidget {
           ? Positioned(
               top: 14,
               right: 15,
-              child: InkWell(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onTap: () => callBackHidePassword!(),
-                child: SvgPicture.asset("assets/images/svg/eye.svg"),
+              child: SizedBox(
+                width: 22,
+                height: 22,
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onTap: () => callBackHidePassword!(),
+                  child: obscureText
+                      ? SvgPicture.asset("assets/images/svg/eye.svg")
+                      : SvgPicture.asset("assets/images/svg/eye_open.svg"),
+                ),
               ),
             )
           : const SizedBox(),

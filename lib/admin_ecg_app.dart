@@ -1,5 +1,6 @@
 import 'package:adminecg/common/extensions/lang_extension/app_localizations.dart';
 import 'package:adminecg/common/theme/app_theme.dart';
+import 'package:adminecg/ui/login_page/login_page.dart';
 import 'package:adminecg/ui/main_app/locale_provider.dart';
 import 'package:adminecg/ui/main_management_page/main_management_page.dart';
 import 'package:bot_toast/bot_toast.dart';
@@ -35,9 +36,8 @@ class MyApp extends StatelessWidget {
           ],
           navigatorObservers: [BotToastNavigatorObserver()],
           theme: AppTheme.light(),
-          home: const MainManagementPage(),
-
-          // home: const MainManagementPage(),///TODO: need change
+          home: const LoginPage(),
+          // home: const MainManagementPage(),
         );
       },
     );
