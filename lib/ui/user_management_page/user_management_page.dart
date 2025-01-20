@@ -124,7 +124,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               children: [
                                 _titleItemWidget(title: 'No.'),
                                 const SizedBox(width: 37),
-                                _titleItemWidget(title: 'Organization Name'),
+                                InkWell(child: _titleItemWidget(title: 'Organization Name'), onTap: (){
+                                  context.read<UserManagementProvider>().sortOrg(sort: OrgSort.name);
+                                },),
                               ],
                             ),
                             Container(
@@ -243,15 +245,19 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               children: [
                                 _titleItemWidget(title: 'No.'),
                                 const SizedBox(width: 37),
-                                _titleItemWidget(title: 'Name'),
+                                InkWell(child: _titleItemWidget(title: 'Name'), onTap: (){
+                                  context.read<UserManagementProvider>().sortUser(sort: UserSort.name);
+                                },),
                                 const SizedBox(width: 100),
-                                _titleItemWidget(title: 'Email'),
+                                InkWell(child: _titleItemWidget(title: 'Email'), onTap: (){
+                                  context.read<UserManagementProvider>().sortUser(sort: UserSort.email);
+                                },),
                                 const SizedBox(width: 180),
-                                _titleItemWidget(title: 'Organization'),
+                                InkWell(child: _titleItemWidget(title: 'Organization')),
                                 const SizedBox(width: 60),
-                                _titleItemWidget(title: 'Status'),
+                                InkWell(child: _titleItemWidget(title: 'Status')),
                                 const SizedBox(width: 50),
-                                _titleItemWidget(title: 'Terms of Use'),
+                                InkWell(child: _titleItemWidget(title: 'Terms of Use')),
                                 const SizedBox(width: 50),
                                 _titleItemWidget(title: 'Edit'),
                               ],

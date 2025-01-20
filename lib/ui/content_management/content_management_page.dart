@@ -222,8 +222,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                             context.openEventDialog(() => setEventOnScreen()),
                       ),
                       if(isShowEventOnly == true)const SizedBox(width: 16,),
-                      if(isShowEventOnly == true)AppButtonAdd(
-                        text: '+',
+                      if(isShowEventOnly == true)AppButtonClose(
                         onTap: () {
                           setState(() {
                             isShowEventOnly = !isShowEventOnly;
@@ -306,8 +305,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
                             context.openLearningDialog(() => setLearningOnScreen()),
                       ),
                       if(isShowLearningOnly == true)const SizedBox(width: 16,),
-                      if(isShowLearningOnly == true)AppButtonAdd(
-                        text: '+',
+                      if(isShowLearningOnly == true)AppButtonClose(
                         onTap: () {
                           setState(() {
                             isShowLearningOnly = !isShowLearningOnly;

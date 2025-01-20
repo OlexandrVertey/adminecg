@@ -42,3 +42,31 @@ class AppButtonAdd extends StatelessWidget {
     );
   }
 }
+
+class AppButtonClose extends StatelessWidget {
+  const AppButtonClose({
+    super.key,
+    required this.onTap,
+  });
+
+  final Function() onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          color:  Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(15.0)),
+          border: Border.all(color: Colors.grey, width: 1.3),
+        ),
+        child:  const Icon(Icons.arrow_back_ios_new, color: Colors.grey, size: 18,),
+      ),
+    );
+  }
+}

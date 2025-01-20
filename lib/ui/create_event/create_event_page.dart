@@ -237,8 +237,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       child: TextField(
                         style: Theme.of(context).textTheme.bodyLarge,
                         controller: textController,
+                        maxLines: null,
                         keyboardType: TextInputType.multiline,
-                        textAlign: TextAlign.justify,
+                        // textAlign: TextAlign.justify,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(

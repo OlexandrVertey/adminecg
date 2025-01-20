@@ -250,9 +250,118 @@ class UserManagementProvider extends ChangeNotifier {
     }
     context.backPage();
   }
+
+  Future<void> sortUser({
+    required UserSort sort,
+  }) async {
+    try {
+      switch (sort) {
+        case UserSort.name:
+          if(state.userSort == UserSort.name){
+            state.isUserRec = !state.isUserRec;
+          } else {
+            state.userSort = UserSort.name;
+            state.isUserRec = false;
+          }
+          state.listUserModel.sort((a, b) {
+            int comparison = a.fullName!.compareTo(b.fullName!);
+            return state.isUserRec ? comparison : -comparison;
+          });
+          break;
+        case UserSort.email:
+          if(state.userSort == UserSort.email){
+            state.isUserRec = !state.isUserRec;
+          } else {
+            state.userSort = UserSort.email;
+            state.isUserRec = false;
+          }
+          state.listUserModel.sort((a, b) {
+            int comparison = a.email!.compareTo(b.email!);
+            return state.isUserRec ? comparison : -comparison;
+          });
+          break;
+        case UserSort.organisation:
+          if(state.userSort == UserSort.organisation){
+            state.isUserRec = !state.isUserRec;
+          } else {
+            state.userSort = UserSort.organisation;
+            state.isUserRec = false;
+          }
+          state.listUserModel.sort((a, b) {
+            int comparison = a.organisation!.compareTo(b.organisation!);
+            return state.isUserRec ? comparison : -comparison;
+          });
+          break;
+        case UserSort.status:
+          if(state.userSort == UserSort.status){
+            state.isUserRec = !state.isUserRec;
+          } else {
+            state.userSort = UserSort.status;
+            state.isUserRec = false;
+          }
+          state.listUserModel.sort((a, b) {
+            int comparison = a.fullName!.compareTo(b.fullName!);
+            return state.isUserRec ? comparison : -comparison;
+          });
+          break;
+        case UserSort.terms:
+          if(state.userSort == UserSort.terms){
+            state.isUserRec = !state.isUserRec;
+          } else {
+            state.userSort = UserSort.terms;
+            state.isUserRec = false;
+          }
+          state.listUserModel.sort((a, b) {
+            int comparison = a.userRegisterDate!.compareTo(b.userRegisterDate!);
+            return state.isUserRec ? comparison : -comparison;
+          });
+          break;
+        default:
+          break;
+      }
+    } catch (e) {}
+    notifyListeners();
+  }
+
+  Future<void> sortOrg({
+    required OrgSort sort,
+  }) async {
+    try {
+      switch (sort) {
+        case OrgSort.name:
+          if(state.orgSort == OrgSort.name){
+            state.isOrgRec = !state.isOrgRec;
+          } else {
+            state.orgSort = OrgSort.name;
+            state.isOrgRec = false;
+          }
+          state.listOrganizationModel.sort((a, b) {
+            int comparison = a.name!.compareTo(b.name!);
+            return state.isOrgRec ? comparison : -comparison;
+          });
+          break;
+        default:
+          break;
+      }
+    } catch (e) {}
+    notifyListeners();
+  }
+
 }
 
 class UserManagementState {
   List<UserModel> listUserModel = [];
   List<OrganizationModel> listOrganizationModel = [];
+  UserSort userSort = UserSort.all;
+  bool isUserRec = false;
+  OrgSort orgSort = OrgSort.all;
+  bool isOrgRec = false;
+}
+
+enum UserSort{
+  all, number, name, email, organisation, status, terms
+}
+
+enum OrgSort{
+  all, number, name
 }
