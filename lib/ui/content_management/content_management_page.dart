@@ -8,6 +8,7 @@ import 'package:adminecg/common/repo/learning/learning_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
 import 'package:adminecg/ui/dialog/delete_dialog.dart';
 import 'package:adminecg/ui/widgets/app_button_add.dart';
+import 'package:adminecg/ui/widgets/select_dialog_content_widget.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:extended_wrap/extended_wrap.dart';
@@ -186,7 +187,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
               children: [
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 200),
-                  child: SelectDialogWidget(
+                  child: SelectDialogContentWidget(
                     title: 'Select diagnosis',
                     items: _idsDiagnose,
                     diagnosisRepo: widget.diagnosisRepo,
@@ -269,7 +270,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
               children: [
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 200),
-                  child: SelectDialogWidget(
+                  child: SelectDialogContentWidget(
                     title: 'Select Topic',
                     items: _idsTopics,
                     topicRepo: widget.topicRepo,
