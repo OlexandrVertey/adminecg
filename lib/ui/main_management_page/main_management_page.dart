@@ -120,7 +120,7 @@ class LeftAdminBar extends StatelessWidget {
             'assets/images/svg/content_management.svg',
           ),
           const Spacer(),
-          SvgPicture.asset('assets/images/svg/illustrations.svg'),
+          if(!isSmallMenu)SvgPicture.asset('assets/images/svg/illustrations.svg'),
         ],
       ),
     );
