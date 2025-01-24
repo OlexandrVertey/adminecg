@@ -4,7 +4,6 @@ import 'package:adminecg/common/repo/add_diagnose_to_storage_repo/add_diagnose_t
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/learning/learning_repo.dart';
 import 'package:adminecg/common/repo/topic/topic_repo.dart';
-import 'package:adminecg/ui/dialog/enter_dialog.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/category_icon_widget.dart';
 import 'package:adminecg/ui/widgets/image_picker.dart';
