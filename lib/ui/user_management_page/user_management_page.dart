@@ -10,6 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+
+double userTable = 860;
+double organisation = 340;
+
 class UserManagementPage extends StatefulWidget {
   const UserManagementPage({super.key});
 
@@ -45,63 +49,60 @@ class _UserManagementPageState extends State<UserManagementPage> {
     DateTime date = DateTime(now.year, now.month, now.day, now.hour, now.minute, now.second);
     return Consumer<UserManagementProvider>(
         builder: (context, value, child) {
-          return Scrollbar(
-            controller: _scrollControllerAll,
-            thumbVisibility: true,
-            child: SingleChildScrollView(
-              controller: _scrollControllerAll,
-              child: Wrap(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.only(right: 10, bottom: 10),
-                    child: Column(
-                    children: [
-                      SizedBox(
-                        width: 340,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'User Management',
-                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Organizations  List',
-                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
-                                ),
-                              ],
-                            ),
-                            AppButtonAdd(
-                              text: '',
-                              width: 45,
-                              onTap: () => showDialog(
-                                context: context,
-                                builder: (_) => EditOrganizationDialog(
-                                  title: 'Add New Organization',
-                                  organizationNameController: _organizationNameController,
-                                  nameButton: 'Update & Send Login Details',
-                                  callBack: ({required String premium}) {
-                                    context.read<UserManagementProvider>().registerOrganization(
-                                      context: context,
-                                      id: date.millisecondsSinceEpoch.toString(),
-                                      name: _organizationNameController.text,
-                                      premium: premium,
-                                    );
-                                    _organizationNameController.clear();
-                                  },
-                                ),
+          return Container(
+            child: Row(children: [
+              Container(
+                width: organisation,
+                margin: const EdgeInsets.only(right: 10, bottom: 10),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: organisation,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'User Management',
+                                style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Organizations  List',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
+                              ),
+                            ],
+                          ),
+                          AppButtonAdd(
+                            text: '',
+                            width: 45,
+                            onTap: () => showDialog(
+                              context: context,
+                              builder: (_) => EditOrganizationDialog(
+                                title: 'Add New Organization',
+                                organizationNameController: _organizationNameController,
+                                nameButton: 'Update & Send Login Details',
+                                callBack: ({required String premium}) {
+                                  context.read<UserManagementProvider>().registerOrganization(
+                                    context: context,
+                                    id: date.millisecondsSinceEpoch.toString(),
+                                    name: _organizationNameController.text,
+                                    premium: premium,
+                                  );
+                                  _organizationNameController.clear();
+                                },
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                      Container(
-                        width: 340,
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: Container(
+                        width: organisation,
                         padding: const EdgeInsets.all(25),
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(26.0)),
@@ -136,26 +137,28 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               color: Colors.grey.withOpacity(0.5),
                             ),
                             if (value.state.listUserModel.isNotEmpty)
-                              Scrollbar(
-                              controller: _scrollControllerOrg,
-                              thumbVisibility: true,
-                                child: SizedBox(
-                                  width: 300,
-                                  height: MediaQuery.of(context).size.height * 0.8,
-                                  child: ScrollConfiguration(
-                                    behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                                    child: ListView.builder(
-                                      controller: _scrollControllerOrg,
-                                      padding: EdgeInsets.zero,
-                                      shrinkWrap: true,
-                                      itemCount: value.state.listOrganizationModel.length,
-                                      itemBuilder: (context, index) {
-                                        OrganizationModel item = value.state.listOrganizationModel[index];
-                                        return _itemOrganizationWidget(
-                                          item: item,
-                                          index: index,
-                                        );
-                                      },
+                              Expanded(
+                                child: Scrollbar(
+                                  controller: _scrollControllerOrg,
+                                  thumbVisibility: true,
+                                  child: SizedBox(
+                                    width: 300,
+                                    height: MediaQuery.of(context).size.height * 0.8,
+                                    child: ScrollConfiguration(
+                                      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                                      child: ListView.builder(
+                                        controller: _scrollControllerOrg,
+                                        padding: EdgeInsets.zero,
+                                        shrinkWrap: true,
+                                        itemCount: value.state.listOrganizationModel.length,
+                                        itemBuilder: (context, index) {
+                                          OrganizationModel item = value.state.listOrganizationModel[index];
+                                          return _itemOrganizationWidget(
+                                            item: item,
+                                            index: index,
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -163,66 +166,70 @@ class _UserManagementPageState extends State<UserManagementPage> {
                           ],
                         ),
                       ),
-                    ],
-                                ),
-                  ),
-                  Column(
-                    children: [
-                      SizedBox(
-                        width: 860,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Add New User',
-                                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Users  List',
-                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
-                                ),
-                              ],
-                            ),
-                            AppButtonAdd(
-                              text: 'Add New User',
-                              onTap: () {
-                                _userNameController.clear();
-                                _emailController.clear();
-                                _passwordController.clear();
-                                showDialog(
-                                  context: context,
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                width: userTable,
+                child: Column(
+                  children: [
+                    SizedBox(
+                      width: userTable,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Add New User',
+                                style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 22),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Users  List',
+                                style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
+                              ),
+                            ],
+                          ),
+                          AppButtonAdd(
+                            text: 'Add New User',
+                            onTap: () {
+                              _userNameController.clear();
+                              _emailController.clear();
+                              _passwordController.clear();
+                              showDialog(
+                                context: context,
 
-                                  builder: (_) => EditUserDialog(
-                                    title: 'Add New User',
-                                    userNameController: _userNameController,
-                                    emailController: _emailController,
-                                    passwordController: _passwordController,
-                                    organisations: value.state.listOrganizationModel,
-                                    nameButton: 'Create & Send Login Details',
-                                    selectedOrgId: _selectedOrgId,
-                                    callBack: (organisation, states, duration) => value.registerUser(
-                                        context: context,
-                                        userName: _userNameController.text,
-                                        email: _emailController.text,
-                                        password: _passwordController.text,
-                                        organisation: organisation,
-                                        states: states,
-                                        duration: duration,//endPlans
-                                    ),
+                                builder: (_) => EditUserDialog(
+                                  title: 'Add New User',
+                                  userNameController: _userNameController,
+                                  emailController: _emailController,
+                                  passwordController: _passwordController,
+                                  organisations: value.state.listOrganizationModel,
+                                  nameButton: 'Create & Send Login Details',
+                                  selectedOrgId: _selectedOrgId,
+                                  callBack: (organisation, states, duration) => value.registerUser(
+                                    context: context,
+                                    userName: _userNameController.text,
+                                    email: _emailController.text,
+                                    password: _passwordController.text,
+                                    organisation: organisation,
+                                    states: states,
+                                    duration: duration,//endPlans
                                   ),
-                                );
-                              },
-                            ),
-                          ],
-                        ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 20),
-                      Container(
-                        width: 860,
+                    ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: Container(
+                        width: userTable,
                         padding: const EdgeInsets.all(25),
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(26.0)),
@@ -269,44 +276,46 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               color: Colors.grey.withOpacity(0.5),
                             ),
                             if (value.state.listUserModel.isNotEmpty)
-                            Scrollbar(
-                              controller: _scrollControllerUser,
-                              thumbVisibility: true, // Додайте цей параметр
-                              child: SizedBox(
-                                width: 840,
-                                height: MediaQuery.of(context).size.height * 0.8,
-                                child: ScrollConfiguration(
-                                  behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                                  child: ListView.builder(
-                                    controller: _scrollControllerUser,
-                                    padding: EdgeInsets.zero,
-                                    shrinkWrap: true,
-                                    itemCount: value.state.listUserModel.length,
-                                    itemBuilder: (context, index) {
-                                      bool showUser = _selectedOrgId == value.state.listUserModel[index].organisation && _selectedOrg;
-                                      bool showAllUser = !_selectedOrg;
-                                      UserModel item = value.state.listUserModel[index];
-                                        return _itemUserWidget(
-                                          list: value.state.listOrganizationModel,
-                                          item: item,
-                                          index: index,
-                                          showUser: showUser,
-                                          showAllUser: showAllUser,
-                                        );
-                                      // }
-                                    },
+                              Expanded(
+                                child: Scrollbar(
+                                  controller: _scrollControllerUser,
+                                  thumbVisibility: true, // Додайте цей параметр
+                                  child: SizedBox(
+                                    width: 840,
+                                    height: MediaQuery.of(context).size.height * 0.8,
+                                    child: ScrollConfiguration(
+                                      behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                                      child: ListView.builder(
+                                        controller: _scrollControllerUser,
+                                        padding: EdgeInsets.zero,
+                                        shrinkWrap: true,
+                                        itemCount: value.state.listUserModel.length,
+                                        itemBuilder: (context, index) {
+                                          bool showUser = _selectedOrgId == value.state.listUserModel[index].organisation && _selectedOrg;
+                                          bool showAllUser = !_selectedOrg;
+                                          UserModel item = value.state.listUserModel[index];
+                                          return _itemUserWidget(
+                                            list: value.state.listOrganizationModel,
+                                            item: item,
+                                            index: index,
+                                            showUser: showUser,
+                                            showAllUser: showAllUser,
+                                          );
+                                          // }
+                                        },
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],),
           );
         },
     );

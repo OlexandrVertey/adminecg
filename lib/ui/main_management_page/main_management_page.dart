@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+double leftBar = 260;
+
 class MainManagementPage extends StatefulWidget {
   const MainManagementPage({super.key});
 
@@ -77,10 +79,13 @@ class LeftAdminBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    bool isSmallMenu = (organisation + userTable + leftBar + 50) > width;
     return Container(
-      padding: const EdgeInsets.all(25),
+      width: isSmallMenu ? 100 : leftBar,
+      padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+        borderRadius: const BorderRadius.all(Radius.circular(15.0)),
         border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
         color: Colors.white,
         boxShadow: [
@@ -128,24 +133,27 @@ class LeftAdminBar extends StatelessWidget {
     String assets,
   ) {
     bool isSelected = index == currentIndex;
+    double width = MediaQuery.of(context).size.width;
+    bool isSmallMenu = (organisation + userTable + leftBar + 50) > width;
     return InkWell(
       onTap: () => onChange(index),
       child: Container(
-        width: 260,
+        width: isSmallMenu ? 50 : leftBar,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
         decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(8.0)),
           color: isSelected ? AppTheme.accessColor : Colors.white,
         ),
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
               width: 15,
               height: 15,
               child: SvgPicture.asset(assets, color: !isSelected ? AppTheme.accessColor : Colors.white,),
             ),
-            const SizedBox(width: 12),
-            Text(
+            if(!isSmallMenu)const SizedBox(width: 12),
+            if(!isSmallMenu)Text(
               text,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     // color: AppTheme.textColorLight,
