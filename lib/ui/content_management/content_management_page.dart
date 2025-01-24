@@ -137,7 +137,7 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
         ));
       }
       listLearning.add(ExtendedWrap(
-        maxLines: 1,
+        maxLines: isShowLearningOnly ? exList.length : 1,
         children: exList,
       ));
     }
