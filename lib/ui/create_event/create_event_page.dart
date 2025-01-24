@@ -9,6 +9,7 @@ import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/image_picker.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:adminecg/ui/widgets/toast.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -57,6 +58,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       answerC = widget.eventModel!.answerC;
       answerD = widget.eventModel!.answerD;
       isPremium = widget.eventModel!.isPremium;
+      currentImage = widget.eventModel!.image;
       _downloadImage(widget.eventModel!.image);
     }
     super.initState();
@@ -333,6 +335,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
         fit: BoxFit.cover,
       );
     }
+    if(currentImage != null){
+      return CachedNetworkImage(
+        imageUrl: currentImage!,
+        fit: BoxFit.cover,
+        placeholder: (context, url) =>
+        const CircularProgressIndicator(),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
+      );
+    }
     return SvgPicture.asset("assets/images/svg/image.svg");
   }
 
@@ -388,7 +399,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       // resizeAndCompressImage(newImage!, (image) async {});
     }
 
-    if (currentImage != null) {
+    if (newImage == null && currentImage != null) {
       setModel(currentImage!);
     }
   }
