@@ -153,12 +153,30 @@ class UserManagementProvider extends ChangeNotifier {
     required String duration,//endPlans
     String? organisation,
   }) async {
+    bool hasUppercase = RegExp(r'[A-Z]').hasMatch(password);
+    bool hasLowercase = RegExp(r'[a-z]').hasMatch(password);
+    bool hasDigit = RegExp(r'\d').hasMatch(password);
+    bool hasSpecialChar = RegExp(r'[!@#\$&*~]').hasMatch(password);
     try {
       if (!emailValid.hasMatch(email)) {
         Toast.show(message: 'Invalid email');
       }
       if (!passwordValid.hasMatch(password)) {
-        Toast.show(message: 'Invalid password');
+        if (!hasUppercase) {
+          Toast.show(context: context, message: 'Missing a capital letter.');
+        }
+        if (!hasLowercase) {
+          Toast.show(context: context, message: 'A small letter is missing.');
+        }
+        if (!hasDigit) {
+          Toast.show(context: context, message: 'The number is missing.');
+        }
+        if (!hasSpecialChar) {
+          Toast.show(context: context, message: 'A special character is missing.');
+        }
+        if (password.length < 8) {
+          Toast.show(context: context, message: 'The password is too short.');
+        }
       }
       if (userName.length < 3) {
         Toast.show(message: 'Invalid user Name');
@@ -196,8 +214,10 @@ class UserManagementProvider extends ChangeNotifier {
         }
         // launchEmail(toEmail: email, subject: 'subject', message: 'message');
         context.backPage();
+        Toast.show(message: 'User added');
       }
     } catch (e) {
+      Toast.show(message: 'User not added');
       print('---MainManagementProvider registerUser catch = ${e}');
     }
   }
