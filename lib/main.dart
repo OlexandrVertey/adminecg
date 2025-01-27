@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:adminecg/admin_ecg_app.dart';
 import 'package:adminecg/common/di/app_dependency_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,5 +21,14 @@ void main() async {
     ),
   );
   }
+  HttpOverrides.global = MyHttpOverrides();
   runAppWithInjectedDependencies(app: const MyApp());
+}
+
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
 }
