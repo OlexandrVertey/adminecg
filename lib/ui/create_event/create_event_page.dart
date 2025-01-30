@@ -135,7 +135,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
                             onTap: () async {
-                              var a = await AppImagePicker.getImage(size: 100);
+                              var a = await AppImagePicker.getImage(compress: true);
                               if (a != null) {
                                 setState(() {
                                   newImage = a;

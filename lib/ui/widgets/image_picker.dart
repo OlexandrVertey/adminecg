@@ -3,12 +3,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 
 class AppImagePicker {
-  static Future<Uint8List?> getImage({int? size}) async {
+  static Future<Uint8List?> getImage({bool? compress}) async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-    Uint8List? bytes = await image?.readAsBytes();
-    Uint8List bytesres = await resizeAndCompressImage(bytes!, size ?? 50);
-    return bytesres;
+    Uint8List?  bytes = await image?.readAsBytes();
+    if(compress == true){
+      Uint8List bytesres = await resizeAndCompressImage(bytes!, 50);
+      bytes = bytesres;
+    }
+    return bytes;
   }
 
   static Future<Uint8List> resizeAndCompressImage(Uint8List data, int targetSizeKb) async {

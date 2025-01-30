@@ -292,7 +292,7 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
                                     text: 'Get Image',
                                     isActive: false,
                                     onTap: () async {
-                                      var file = await AppImagePicker.getImage(size: 100);
+                                      var file = await AppImagePicker.getImage();
                                       if (file != null) {
                                         String name =
                                             '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
@@ -591,7 +591,7 @@ class _CreateLearningPageState extends State<CreateLearningPage> {
     ElementModel elementModel = list[index];
 
     if (elementModel.type == ElementType.image) {
-      var file = await AppImagePicker.getImage(size: 100);
+      var file = await AppImagePicker.getImage();
       if (file != null) {
         String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
         widget.storageRepo.addLearning(
