@@ -1,3 +1,4 @@
+import 'package:adminecg/ui/widgets/toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterRepo {
@@ -21,6 +22,7 @@ class RegisterRepo {
           break;
         case 'email-already-in-use':
           print('signUp The account already exists for that email.');
+          Toast.show(message: 'Email already in use');
           break;
         default:
           print('signUp Error');
