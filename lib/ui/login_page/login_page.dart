@@ -102,8 +102,8 @@ class _LoginPageState extends State<LoginPage> {
                           text: 'Login',
                           isActive: value.state.loginButtonIsActive,
                           onTap: () {
-                            if (value.state.userNameController.text == 'admin'
-                                && value.state.passwordController.text == 'admin') {
+                            if (value.state.userNameController.text == 'nadav7415@gmail.com'
+                                && value.state.passwordController.text == 'A!dmin74150603') {
                               context.openMainManagementPage();
                             }
                             // if (value.state.loginButtonIsActive

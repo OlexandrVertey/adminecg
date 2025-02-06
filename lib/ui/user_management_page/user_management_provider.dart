@@ -185,11 +185,11 @@ class UserManagementProvider extends ChangeNotifier {
 
       if (emailValid.hasMatch(email) && passwordValid.hasMatch(password) && userName.length > 3) {
         print('---emailValid.hasMatch(email) && passwordValid.hasMatch(password) && userName.length > 3');
-        UserCredential? userCredential = await registerRepo.registerUser(
-          email: email,
-          password: password,
-        );
-
+        try {
+          UserCredential? userCredential = await registerRepo.registerUser(
+            email: email,
+            password: password,
+          );
 
         // sendEmail(email);
         // final emailUri = Uri.parse('mailto:$email?subject=test test test');
@@ -211,10 +211,23 @@ class UserManagementProvider extends ChangeNotifier {
           );
           print('---RegisterProvider register 5 userCredential.user!.uid = ${userCredential.user!.uid}');
           getUserModel();
+          Toast.show(message: 'User added');
+        }
+        } on FirebaseAuthException catch (e) {
+          switch (e.code) {
+            case 'weak-password':
+              print('signUp The password provided is too weak.');
+              break;
+            case 'email-already-in-use':
+              print('signUp The account already exists for that email.');
+              Toast.show(message: 'Email already in use');
+              break;
+            default:
+              print('signUp Error');
+          }
         }
         // launchEmail(toEmail: email, subject: 'subject', message: 'message');
         context.backPage();
-        Toast.show(message: 'User added');
       }
     } catch (e) {
       Toast.show(message: 'User not added');
