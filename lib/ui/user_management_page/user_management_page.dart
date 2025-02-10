@@ -10,8 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
-
-double userTable = 860;
+double userTable = 890;
 double organisation = 340;
 
 class UserManagementPage extends StatefulWidget {
@@ -86,11 +85,11 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                 nameButton: 'Update & Send Login Details',
                                 callBack: ({required String premium}) {
                                   context.read<UserManagementProvider>().registerOrganization(
-                                    context: context,
-                                    id: date.millisecondsSinceEpoch.toString(),
-                                    name: _organizationNameController.text,
-                                    premium: premium,
-                                  );
+                                        context: context,
+                                        id: date.millisecondsSinceEpoch.toString(),
+                                        name: _organizationNameController.text,
+                                        premium: premium,
+                                      );
                                   _organizationNameController.clear();
                                 },
                               ),
@@ -103,7 +102,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                     Expanded(
                       child: Container(
                         width: organisation,
-                        padding: const EdgeInsets.all(25),
+                        padding: const EdgeInsets.fromLTRB(25, 0, 25, 25),
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(26.0)),
                           border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
@@ -123,11 +122,67 @@ class _UserManagementPageState extends State<UserManagementPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                _titleItemWidget(title: 'No.'),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 25),
+                                  child: _titleItemWidget(title: 'No.'),
+                                ),
                                 const SizedBox(width: 37),
-                                InkWell(child: _titleItemWidget(title: 'Organization Name'), onTap: (){
-                                  context.read<UserManagementProvider>().sortOrg(sort: OrgSort.name);
-                                },),
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(top: 3, bottom: 1),
+                                      width: _textSize(
+                                          'Organization',
+                                          Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                                color: const Color(0xff656575),
+                                              )).width,
+                                      height: 21,
+                                      child: TextField(
+                                        onChanged: (text) {
+                                          context.read<UserManagementProvider>().searchOrg(text: text);
+                                        },
+                                        decoration: InputDecoration(
+                                          hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                            color: const Color(0xff656575),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: Colors.black.withOpacity(0.1),
+                                              width: 1.3,
+                                            ),
+                                            borderRadius: BorderRadius.circular(2.0),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: Colors.black.withOpacity(0.1),
+                                              width: 0.5,
+                                            ),
+                                            borderRadius: BorderRadius.circular(2.0),
+                                          ),
+                                          hintText: 'Search',
+                                          contentPadding: EdgeInsets.only(
+                                            left: 2,
+                                            right: 2,
+                                            top: 0,
+                                            bottom: 2,
+                                          ),
+                                          counterText: '',
+                                        ),
+                                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                          color: const Color(0xff656575),
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      child: _titleItemWidget(title: 'Organization Name'),
+                                      onTap: () {
+                                        context.read<UserManagementProvider>().sortOrg(sort: OrgSort.name);
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                             Container(
@@ -146,19 +201,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                     height: MediaQuery.of(context).size.height * 0.8,
                                     child: ScrollConfiguration(
                                       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                                      child: ListView.builder(
-                                        controller: _scrollControllerOrg,
-                                        padding: EdgeInsets.zero,
-                                        shrinkWrap: true,
-                                        itemCount: value.state.listOrganizationModel.length,
-                                        itemBuilder: (context, index) {
-                                          OrganizationModel item = value.state.listOrganizationModel[index];
-                                          return _itemOrganizationWidget(
-                                            item: item,
-                                            index: index,
-                                          );
-                                        },
-                                      ),
+                                      child: listOrgWidget(value.state.listOrganizationModel, value.state.searchOrg)
                                     ),
                                   ),
                                 ),
@@ -188,7 +231,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               ),
                               const SizedBox(height: 8),
                               Text(
-                                'Users  List',
+                                'Users List',
                                 style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppTheme.textColorLight),
                               ),
                             ],
@@ -201,7 +244,6 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               _passwordController.clear();
                               showDialog(
                                 context: context,
-
                                 builder: (_) => EditUserDialog(
                                   title: 'Add New User',
                                   userNameController: _userNameController,
@@ -217,7 +259,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                     password: _passwordController.text,
                                     organisation: organisation,
                                     states: states,
-                                    duration: duration,//endPlans
+                                    duration: duration, //endPlans
                                   ),
                                 ),
                               );
@@ -230,7 +272,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                     Expanded(
                       child: Container(
                         width: userTable,
-                        padding: const EdgeInsets.all(25),
+                        padding: const EdgeInsets.fromLTRB(25, 0, 25, 25),
                         decoration: BoxDecoration(
                           borderRadius: const BorderRadius.all(Radius.circular(26.0)),
                           border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
@@ -250,23 +292,100 @@ class _UserManagementPageState extends State<UserManagementPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                _titleItemWidget(title: 'No.'),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 25),
+                                  child: _titleItemWidget(title: 'No.'),
+                                ),
                                 const SizedBox(width: 37),
-                                InkWell(child: _titleItemWidget(title: 'Name'), onTap: (){
-                                  context.read<UserManagementProvider>().sortUser(sort: UserSort.name);
-                                },),
-                                const SizedBox(width: 100),
-                                InkWell(child: _titleItemWidget(title: 'Email'), onTap: (){
-                                  context.read<UserManagementProvider>().sortUser(sort: UserSort.email);
-                                },),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(top: 3, bottom: 1),
+                                      width: _textSize(
+                                          'Name name',
+                                          Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                            color: const Color(0xff656575),
+                                          )).width,
+                                      height: 21,
+                                      child: TextField(
+                                        onChanged: (text) {
+                                          context.read<UserManagementProvider>().searchName(text: text);
+                                        },
+                                        decoration: InputDecoration(
+                                          hintStyle: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                                            color: const Color(0xff656575),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: Colors.black.withOpacity(0.1),
+                                              width: 1.3,
+                                            ),
+                                            borderRadius: BorderRadius.circular(2.0),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                              color: Colors.black.withOpacity(0.1),
+                                              width: 0.5,
+                                            ),
+                                            borderRadius: BorderRadius.circular(2.0),
+                                          ),
+                                          hintText: 'Search',
+                                          contentPadding: EdgeInsets.only(
+                                            left: 2,
+                                            right: 2,
+                                            top: 0,
+                                            bottom: 2,
+                                          ),
+                                          counterText: '',
+                                        ),
+                                        style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+                                          color: const Color(0xff656575),
+                                        ),
+                                      ),
+                                    ),
+                                    InkWell(
+                                      child: _titleItemWidget(title: 'Name'),
+                                      onTap: () {
+                                        context.read<UserManagementProvider>().sortUser(sort: UserSort.name);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(width: 65),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 25),
+                                  child: InkWell(
+                                    child: _titleItemWidget(title: 'Email'),
+                                    onTap: () {
+                                      context.read<UserManagementProvider>().sortUser(sort: UserSort.email);
+                                    },
+                                  ),
+                                ),
                                 const SizedBox(width: 180),
-                                InkWell(child: _titleItemWidget(title: 'Organization')),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 25),
+                                  child: InkWell(child: _titleItemWidget(title: 'Organization')),
+                                ),
                                 const SizedBox(width: 60),
-                                InkWell(child: _titleItemWidget(title: 'Status')),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 25, child: statusCounter(value.state.listUserModel),),
+                                    InkWell(child: _titleItemWidget(title: 'Status')),
+                                  ],
+                                ),
+                                const SizedBox(width: 25),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 25),
+                                  child: InkWell(child: _titleItemWidget(title: 'Terms of Use')),
+                                ),
                                 const SizedBox(width: 50),
-                                InkWell(child: _titleItemWidget(title: 'Terms of Use')),
-                                const SizedBox(width: 50),
-                                _titleItemWidget(title: 'Edit'),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 25),
+                                  child: _titleItemWidget(title: 'Edit'),
+                                ),
                               ],
                             ),
                             Container(
@@ -285,25 +404,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                     height: MediaQuery.of(context).size.height * 0.8,
                                     child: ScrollConfiguration(
                                       behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                                      child: ListView.builder(
-                                        controller: _scrollControllerUser,
-                                        padding: EdgeInsets.zero,
-                                        shrinkWrap: true,
-                                        itemCount: value.state.listUserModel.length,
-                                        itemBuilder: (context, index) {
-                                          bool showUser = _selectedOrgId == value.state.listUserModel[index].organisation && _selectedOrg;
-                                          bool showAllUser = !_selectedOrg;
-                                          UserModel item = value.state.listUserModel[index];
-                                          return _itemUserWidget(
-                                            list: value.state.listOrganizationModel,
-                                            item: item,
-                                            index: index,
-                                            showUser: showUser,
-                                            showAllUser: showAllUser,
-                                          );
-                                          // }
-                                        },
-                                      ),
+                                      child: listUsersWidget(value.state.listUserModel, value.state.searchName, value.state.listOrganizationModel),
                                     ),
                                   ),
                                 ),
@@ -315,9 +416,128 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   ],
                 ),
               ),
-            ],),
-          );
-        },
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget listUsersWidget(List<UserModel> users, String? search, List<OrganizationModel> organisations){
+    List<UserModel> list = getUserBySearch(users, search);
+    return ListView.builder(
+      controller: _scrollControllerUser,
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        UserModel item = list[index];
+        bool showUser =
+            _selectedOrgId == item.organisation &&
+                _selectedOrg;
+        bool showAllUser = !_selectedOrg;
+        return _itemUserWidget(
+          list: organisations,
+          item: item,
+          index: index,
+          showUser: showUser,
+          showAllUser: showAllUser,
+        );
+      },
+    );
+  }
+
+  Widget listOrgWidget(List<OrganizationModel> org, String? search){
+    List<OrganizationModel> list = getOrhBySearch(org, search);
+    return ListView.builder(
+      controller: _scrollControllerOrg,
+      padding: EdgeInsets.zero,
+      shrinkWrap: true,
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        OrganizationModel item = list[index];
+        return _itemOrganizationWidget(
+          item: item,
+          index: index,
+        );
+      },
+    );
+  }
+
+  List<UserModel> getUserBySearch(List<UserModel> list, String? search){
+    if(search == null || search.isEmpty){
+      return list;
+    }
+    return list.where((item){
+      if(item.fullName == null){
+        return false;
+      }
+      return item.fullName!.toLowerCase().contains(search.toLowerCase());
+    }).toList();
+  }
+
+  List<OrganizationModel> getOrhBySearch(List<OrganizationModel> list, String? search){
+    if(search == null || search.isEmpty){
+      return list;
+    }
+    return list.where((item){
+      if(item.name == null){
+        return false;
+      }
+      return item.name!.toLowerCase().contains(search.toLowerCase());
+    }).toList();
+  }
+
+  Widget statusCounter(List<UserModel> list){
+    int premium = 0;
+    int free = 0;
+    int trail = 0;
+    for (var i in list) {
+      String status = getStatusUser(item: i);
+      if(status == 'Free'){
+        free = free + 1;
+      } else if(status == 'Trial') {
+        trail = trail + 1;
+      } else {
+        premium = premium + 1;
+      }
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Tooltip(
+          message: 'Free',
+          child: Text(
+            '$free',
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 12,
+            ), //TextStyle
+          ), //Text
+        ),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 2), child: Text('/'),),
+        Tooltip(
+          message: 'Premium',
+          child: Text(
+            '$premium',
+            style: TextStyle(
+              color: Colors.orange,
+              fontSize: 12,
+            ), //TextStyle
+          ), //Text
+        ),
+        Padding(padding: EdgeInsets.symmetric(horizontal: 2), child: Text('/'),),
+        Tooltip(
+          message: 'Trail',
+          child: Text(
+            '$trail',
+            style: TextStyle(
+              color: Colors.blueAccent,
+              fontSize: 12,
+            ), //TextStyle
+          ), //Text
+        )
+      ],
     );
   }
 
@@ -330,82 +550,82 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }) {
     if (showUser || showAllUser) {
       return Container(
-      height: 30,
-      margin: const EdgeInsets.only(bottom: 10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: 25,
-            child: Text(
-              index < 9 ? "0${index + 1}" : "${index + 1}",
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: const Color(0xff1A1919),
-                fontSize: 12,
+        height: 30,
+        margin: const EdgeInsets.only(bottom: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 25,
+              child: Text(
+                index < 9 ? "0${index + 1}" : "${index + 1}",
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: const Color(0xff1A1919),
+                      fontSize: 12,
+                    ),
               ),
             ),
-          ),
-          const SizedBox(width: 37),
-          SizedBox(
-            width: 83,
-            child: Text(
-                  item.fullName!,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: const Color(0xff1A1919),
-                    fontSize: 12,
-                  ),
-                ),
-          ),
-          const SizedBox(width: 55),
-          SizedBox(
-            width: 190,
-            child: Text(
-              item.email!,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: const Color(0xff1A1919),
-                fontSize: 12,
+            const SizedBox(width: 37),
+            SizedBox(
+              width: 83,
+              child: Text(
+                item.fullName!,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: const Color(0xff1A1919),
+                      fontSize: 12,
+                    ),
               ),
             ),
-          ),
-          const SizedBox(width: 25),
-          SizedBox(
-            width: 80,
-            child: Text(
-              _getOrganizationName(organizationId: item.organisation ?? '', listOrganizationModel: list),
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: const Color(0xff1A1919),
-                fontSize: 12,
+            const SizedBox(width: 55),
+            SizedBox(
+              width: 190,
+              child: Text(
+                item.email!,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: const Color(0xff1A1919),
+                      fontSize: 12,
+                    ),
               ),
             ),
-          ),
-          const SizedBox(width: 60),
-          SizedBox(
-            width: 50,
-            child: Text(
-              // item.plans ?? '',
-                _getStatusUser(item: item),
+            const SizedBox(width: 25),
+            SizedBox(
+              width: 80,
+              child: Text(
+                _getOrganizationName(organizationId: item.organisation ?? '', listOrganizationModel: list),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: const Color(0xff1A1919),
+                      fontSize: 12,
+                    ),
+              ),
+            ),
+            const SizedBox(width: 60),
+            SizedBox(
+              width: 50,
+              child: Text(
+                // item.plans ?? '',
+                getStatusUser(item: item),
 
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: const Color(0xff1A1919),
-                fontSize: 12,
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: const Color(0xff1A1919),
+                      fontSize: 12,
+                    ),
               ),
             ),
-          ),
-          const SizedBox(width: 40),
-          SizedBox(
-            width: 90,
-            child: Text(
-              item.userRegisterDate?.substring(0, item.userRegisterDate!.length - 7) ?? '',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: const Color(0xff1A1919),
-                fontSize: 12,
+            const SizedBox(width: 40),
+            SizedBox(
+              width: 90,
+              child: Text(
+                item.userRegisterDate?.substring(0, item.userRegisterDate!.length - 7) ?? '',
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      color: const Color(0xff1A1919),
+                      fontSize: 12,
+                    ),
               ),
             ),
-          ),
-          const SizedBox(width: 20),
-          InkWell(
-            onTap: () => showDialog(
+            const SizedBox(width: 20),
+            InkWell(
+              onTap: () => showDialog(
                 context: context,
                 builder: (_) => DeleteUserDialog(
                   title: 'Delete User',
@@ -415,49 +635,48 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   userName: item.fullName!,
                 ),
               ),
-            child: SvgPicture.asset("assets/images/svg/delete.svg"),
-          ),
-          const SizedBox(width: 10),
-          InkWell(
-            onTap: () {
-              _userNameController.text = item.fullName!;
-              _emailController.text = item.email!;
-              _passwordController.text = item.password!;
-              showDialog(
-                context: context,
-
-                builder: (_) => EditUserDialog(
-                  title: 'Edit User',
-                  userUid: item.userUid!,
-                  userNameController: _userNameController,
-                  emailController: _emailController,
-                  passwordController: _passwordController,
-                  organisationId: item.organisation,
-                  organisations: list,
-                  nameButton: 'Update & Send Login Details',
-                  selectedOrgId: _selectedOrgId,
-                  callBack: (organisation, states, duration) => context.read<UserManagementProvider>().updateUser(
-                    context: context,
-                    userUid: item.userUid!,
-                    fullName: _userNameController.text,
-                    organisation: organisation,
-                    email: _emailController.text,
-                    password: _passwordController.text,
-                    states: states,
-                    duration: duration,
-                  ),
-                ),
-              );
-            },
-            child: SvgPicture.asset(
-              width: 20,
-              height: 20,
-              "assets/images/svg/edit.svg",
+              child: SvgPicture.asset("assets/images/svg/delete.svg"),
             ),
-          ),
-        ],
-      ),
-    );
+            const SizedBox(width: 10),
+            InkWell(
+              onTap: () {
+                _userNameController.text = item.fullName!;
+                _emailController.text = item.email!;
+                _passwordController.text = item.password!;
+                showDialog(
+                  context: context,
+                  builder: (_) => EditUserDialog(
+                    title: 'Edit User',
+                    userUid: item.userUid!,
+                    userNameController: _userNameController,
+                    emailController: _emailController,
+                    passwordController: _passwordController,
+                    organisationId: item.organisation,
+                    organisations: list,
+                    nameButton: 'Update & Send Login Details',
+                    selectedOrgId: _selectedOrgId,
+                    callBack: (organisation, states, duration) => context.read<UserManagementProvider>().updateUser(
+                          context: context,
+                          userUid: item.userUid!,
+                          fullName: _userNameController.text,
+                          organisation: organisation,
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                          states: states,
+                          duration: duration,
+                        ),
+                  ),
+                );
+              },
+              child: SvgPicture.asset(
+                width: 20,
+                height: 20,
+                "assets/images/svg/edit.svg",
+              ),
+            ),
+          ],
+        ),
+      );
     } else {
       return const SizedBox();
     }
@@ -501,9 +720,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
               child: Text(
                 index < 9 ? "0${index + 1}" : "${index + 1}",
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: const Color(0xff1A1919),
-                  fontSize: 12,
-                ),
+                      color: const Color(0xff1A1919),
+                      fontSize: 12,
+                    ),
               ),
             ),
             const SizedBox(width: 37),
@@ -517,9 +736,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
               child: Text(
                 item.name!,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: _selectedOrgIndex == index && _selectedOrg ? Colors.white : const Color(0xff1A1919),
-                  fontSize: 12,
-                ),
+                      color: _selectedOrgIndex == index && _selectedOrg ? Colors.white : const Color(0xff1A1919),
+                      fontSize: 12,
+                    ),
               ),
             ),
             const SizedBox(width: 90),
@@ -547,13 +766,12 @@ class _UserManagementPageState extends State<UserManagementPage> {
                     title: 'Edit Organization',
                     organizationNameController: _organizationNameController,
                     nameButton: 'Update & Send Login Details',
-                    callBack: ({required String premium}) =>
-                        context.read<UserManagementProvider>().updateOrganization(
-                      context: context,
-                      id: item.id!,
-                      name: _organizationNameController.text,
-                      premium: premium,
-                    ),
+                    callBack: ({required String premium}) => context.read<UserManagementProvider>().updateOrganization(
+                          context: context,
+                          id: item.id!,
+                          name: _organizationNameController.text,
+                          premium: premium,
+                        ),
                   ),
                   //     EditUserDialog(
                   //   title: 'Edit User',
@@ -588,15 +806,15 @@ class _UserManagementPageState extends State<UserManagementPage> {
     return Text(
       title,
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-        color: const Color(0xff656575),
-      ),
+            color: const Color(0xff656575),
+          ),
     );
   }
 
   String _getOrganizationName({
     required String organizationId,
     required List<OrganizationModel> listOrganizationModel,
-  }){
+  }) {
     for (var element in listOrganizationModel) {
       if (organizationId == element.id) {
         return element.name ?? '';
@@ -605,17 +823,31 @@ class _UserManagementPageState extends State<UserManagementPage> {
     return '';
   }
 
-  String _getStatusUser({required UserModel item}) {
-    if (item.startPlans != null && item.startPlans!.isNotEmpty && item.endPlans != null && item.endPlans!.isNotEmpty) {
-      DateTime now = DateTime.now();
-      DateTime startPlan = DateTime.parse(item.startPlans!);
-      DateTime endPlan = DateTime.parse(item.endPlans!);
-      Duration difference = endPlan.difference(startPlan);
-      if (difference.inDays < 8 && now.isBefore(DateTime.parse(item.endPlans!))) {return 'Trial';}
-      if (now.isAfter(DateTime.parse(item.endPlans!))) {return 'Free';}
-      if (now.isBefore(DateTime.parse(item.endPlans!))) {return 'Premium';}
-    }
-    return 'Free';
-  }
 
+}
+
+String getStatusUser({required UserModel item}) {
+  if (item.startPlans != null && item.startPlans!.isNotEmpty && item.endPlans != null && item.endPlans!.isNotEmpty) {
+    DateTime now = DateTime.now();
+    DateTime startPlan = DateTime.parse(item.startPlans!);
+    DateTime endPlan = DateTime.parse(item.endPlans!);
+    Duration difference = endPlan.difference(startPlan);
+    if (difference.inDays < 8 && now.isBefore(DateTime.parse(item.endPlans!))) {
+      return 'Trial';
+    }
+    if (now.isAfter(DateTime.parse(item.endPlans!))) {
+      return 'Free';
+    }
+    if (now.isBefore(DateTime.parse(item.endPlans!))) {
+      return 'Premium';
+    }
+  }
+  return 'Free';
+}
+
+Size _textSize(String text, TextStyle style) {
+  final TextPainter textPainter =
+      TextPainter(text: TextSpan(text: text, style: style), maxLines: 1, textDirection: TextDirection.ltr)
+        ..layout(minWidth: 0, maxWidth: double.infinity);
+  return textPainter.size;
 }

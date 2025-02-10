@@ -366,6 +366,19 @@ class UserManagementProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> searchOrg({
+    required String text,
+  }) async {
+    state.searchOrg = text;
+    notifyListeners();
+  }
+
+  Future<void> searchName({
+    required String text,
+  }) async {
+    state.searchName = text;
+    notifyListeners();
+  }
 }
 
 class UserManagementState {
@@ -374,6 +387,8 @@ class UserManagementState {
   UserSort userSort = UserSort.all;
   bool isUserRec = false;
   OrgSort orgSort = OrgSort.all;
+  String? searchName;
+  String? searchOrg;
   bool isOrgRec = false;
   String errorMessage = '';
 }
