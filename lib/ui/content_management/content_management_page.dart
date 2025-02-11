@@ -10,6 +10,7 @@ import 'package:adminecg/ui/dialog/delete_dialog.dart';
 import 'package:adminecg/ui/widgets/app_button_add.dart';
 import 'package:adminecg/ui/widgets/select_dialog_content_widget.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
+import 'package:adminecg/ui/widgets/select_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:extended_wrap/extended_wrap.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,10 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
 
   bool isShowEventOnly = false;
   bool isShowLearningOnly = false;
+
+  final GlobalKey _diagnosisKey = GlobalKey();
+
+  final GlobalKey _topicKey = GlobalKey();
 
   Future<void> fetchEvent() async {
     widget.eventRepo.getList().then((_) {
@@ -142,9 +147,6 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
       ));
     }
   }
-
-  List<String> _idsTopics = [];
-  List<String> _idsDiagnose = [];
   String? selectedTopic;
   String? selectedDiagnose;
 
@@ -159,8 +161,6 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
 
   @override
   Widget build(BuildContext context) {
-    _idsTopics = widget.topicRepo.ids();
-    _idsDiagnose = widget.diagnosisRepo.ids();
     return Container(
       height: double.maxFinite,
       padding: const EdgeInsets.all(25),
@@ -187,18 +187,17 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
               children: [
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 200),
-                  child: SelectDialogContentWidget(
-                    title: 'Select diagnosis',
-                    items: _idsDiagnose,
-                    diagnosisRepo: widget.diagnosisRepo,
-                    onSelect: (selected) {
-                      selectedDiagnose = selected;
-                      if (selected == '-1') {
-                        selectedDiagnose = null;
-                      }
-                      setEventOnScreen();
+                  child: InkWell(
+                    onTap: (){
+                      _showOverlayDiagnosis(context, (i){
+                        selectedDiagnose = i;
+                        if(selectedDiagnose == '-1'){
+                          selectedDiagnose = null;
+                        }
+                        setEventOnScreen();
+                      });
                     },
-                  ),
+                      child: SelectedWidget(text: selectedDiagnose == null ? 'Select diagnosis' : widget.diagnosisRepo.value(selectedDiagnose!, 'locale'), key: _diagnosisKey,)),
                 ),
                 Positioned(
                   top: 10,
@@ -269,19 +268,22 @@ class _ContentManagementPageState extends State<ContentManagementPage> {
               children: [
                 Container(
                   margin: const EdgeInsets.symmetric(horizontal: 200),
-                  child: SelectDialogContentWidget(
-                    title: 'Select Topic',
-                    items: _idsTopics,
-                    topicRepo: widget.topicRepo,
-                    onSelect: (selected) {
-                      selectedTopic = selected;
-                      if (selected == '-1') {
-                        selectedTopic = null;
-                      }
-                      setLearningOnScreen();
-                    },
+                  child: InkWell(
+                      onTap: () {
+                        _showOverlayTopic(context, (i) {
+                          selectedTopic = i;
+                          if(selectedTopic == '-1'){
+                            selectedTopic = null;
+                          }
+                          setLearningOnScreen();
+                        });
+                      },
+                      child: SelectedWidget(
+    text: selectedTopic == null ? 'Select Topic' : widget.topicRepo.value(selectedTopic!, 'locale'),
+                        key: _topicKey,
+                      ),
+                    ),
                   ),
-                ),
                 Positioned(
                   top: 10,
                   left: 0,
@@ -528,4 +530,70 @@ class LearningItemWidget extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showOverlayDiagnosis(BuildContext context, Function(String) success) {
+  DiagnosisRepo diagnosisRepo = context.read<DiagnosisRepo>();
+  OverlayEntry? _overlayEntry;
+  _overlayEntry = OverlayEntry(
+    builder: (context) => GestureDetector(
+      onTap: () {
+        _overlayEntry?.remove();
+        _overlayEntry = null;
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Material(
+        color: Colors.black.withOpacity(0.3),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Container(
+                color: Colors.transparent, // Щоб ловити кліки на вільній області
+              ),
+            ),
+            OverlaySearchWidget(diagnosisRepo: diagnosisRepo, success: (i){
+              _overlayEntry?.remove();
+              _overlayEntry = null;
+              success(i);
+            },)
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Overlay.of(context).insert(_overlayEntry!);
+}
+
+void _showOverlayTopic(BuildContext context, Function(String) success) {
+  TopicRepo topicRepo = context.read<TopicRepo>();
+  OverlayEntry? _overlayEntry;
+  _overlayEntry = OverlayEntry(
+    builder: (context) => GestureDetector(
+      onTap: () {
+        _overlayEntry?.remove();
+        _overlayEntry = null;
+      },
+      behavior: HitTestBehavior.translucent,
+      child: Material(
+        color: Colors.black.withOpacity(0.3),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Container(
+                color: Colors.transparent, // Щоб ловити кліки на вільній області
+              ),
+            ),
+            OverlaySearchWidget(topicRepo: topicRepo, success: (i){
+              _overlayEntry?.remove();
+              _overlayEntry = null;
+              success(i);
+            },)
+          ],
+        ),
+      ),
+    ),
+  );
+
+  Overlay.of(context).insert(_overlayEntry!);
 }
