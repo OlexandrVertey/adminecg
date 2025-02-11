@@ -11,19 +11,11 @@ extension ExtensionString on BuildContext {
   openMainManagementPage() => Navigator.push(this,
       MaterialPageRoute(builder: (context) => const MainManagementPage()));
 
-  openEventDialog(Function() success, {EventModel? event}) => showDialog(
-        context: this,
-        builder: (_) => CreateEventModule(
-          eventModel: event,
-          success: success,
-        ),
-      );
-
-  // openLearningDialog(Function() success, {LearningModel? learningModel}) => Navigator.push(this, MaterialPageRoute(builder: (context) =>  CreateLearningModule(
-  //   learningModel: learningModel,
-  //   success: success,
-  //   parentContext: this,
-  // )));
+  openEventDialog(Function() success, {EventModel? event}) => Navigator.push(this,
+      MaterialPageRoute(builder: (context) => CreateEventModule(
+        eventModel: event,
+        success: success,
+      )));
 
   openLearningDialog(Function() success, {LearningModel? learningModel}) =>
       Navigator.push(

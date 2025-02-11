@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/common/models/event/event_model.dart';
+import 'package:adminecg/common/models/learning/learning_model.dart';
 import 'package:adminecg/common/repo/add_diagnose_to_storage_repo/add_diagnose_to_storage_repo.dart';
 import 'package:adminecg/common/repo/diagnosis/diagnosis_repo.dart';
 import 'package:adminecg/common/repo/event/event_repo.dart';
@@ -39,7 +40,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   String? currentImage;
   Uint8List? newImage;
-  late final TextEditingController textController;
   String correctAnswer = '-1';
   String answerA = '-1';
   String answerB = '-1';
@@ -47,10 +47,15 @@ class _CreateEventPageState extends State<CreateEventPage> {
   String answerD = '-1';
   bool isPremium = false;
 
+  late final TextEditingController textController = TextEditingController();
+
+  late final TextEditingController titleController = TextEditingController();
+
+  List<ElementModel>? list;
+
   @override
   void initState() {
     ids = widget.diagnosisRepo.ids();
-    textController = TextEditingController(text: widget.eventModel?.text);
     if (widget.eventModel != null) {
       correctAnswer = widget.eventModel!.correctAnswer;
       answerA = widget.eventModel!.answerA;
@@ -59,247 +64,480 @@ class _CreateEventPageState extends State<CreateEventPage> {
       answerD = widget.eventModel!.answerD;
       isPremium = widget.eventModel!.isPremium;
       currentImage = widget.eventModel!.image;
+      list = widget.eventModel!.list;
       _downloadImage(widget.eventModel!.image);
     }
+    list ??= [];
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      contentPadding: const EdgeInsets.all(35),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(26.0),
-      ),
-      content: Container(
-        constraints: const BoxConstraints(maxWidth: 380),
-        child: Scrollbar(
-          thumbVisibility: true,
-          controller: _scrollController,
-          child: SingleChildScrollView(
-              controller: _scrollController,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Correct Diagnosis",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
+    return Scaffold(
+      backgroundColor: Colors.white.withOpacity(0.7),
+      body: Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            bodyContent(),
+            Expanded(
+              child: Container(
+                alignment: Alignment.topCenter,
+                color: Colors.transparent,
+                child: Container(
+                  padding: const EdgeInsets.all(25),
+                  constraints: const BoxConstraints(maxWidth: 380),
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+                    border:
+                    Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: const Offset(0, 3),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    SelectDialogWidget(
-                      title: '',
-                      items: ids,
-                      diagnosisRepo: widget.diagnosisRepo,
-                      onSelect: (item) => correctAnswer = item,
-                      currentValue: correctAnswer,
-                    ),
-                    const SizedBox(height: 16),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "ECG image",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    Stack(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(15.0)),
-                            border: Border.all(
-                                color: Colors.black.withOpacity(0.1), width: 1.3),
-                          ),
-                          width: 360,
-                          height: 150,
-                          child: _image(),
-                        ),
-                        Positioned(
-                          bottom: 15,
-                          right: 15,
-                          child: InkWell(
-                            hoverColor: Colors.transparent,
-                            splashColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onTap: () async {
-                              var a = await AppImagePicker.getImage(compress: true);
-                              if (a != null) {
-                                setState(() {
-                                  newImage = a;
-                                });
-                              }
-                            },
-                            child: SvgPicture.asset("assets/images/svg/plus.svg"),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Text(
-                          "4 Answers",
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Explain me Content",
                           style: Theme.of(context)
                               .textTheme
                               .labelMedium
                               ?.copyWith(fontSize: 14, color: Colors.black),
                         ),
-                        Spacer(),
-                        TextButton(
-                          onPressed: (){
-                            if(correctAnswer == '-1'){
-                              Toast.show(message: 'Select diagnosis');
-                            } else {
-                              List<String> copy = List.of(ids);
-                              copy.remove(correctAnswer);
-                              copy.shuffle();
-                              List<String> result =  copy.take(3).toList();
-                              result.add(correctAnswer);
-                              result.shuffle();
-                              setState(() {
-                                answerA = result[0];
-                                answerB = result[1];
-                                answerC = result[2];
-                                answerD = result[3];
-                              });
-                            }
-                          },
-                          child: Text(
-                            "Random",
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium
-                                ?.copyWith(fontSize: 14, color: AppTheme.actionColor),
-                          ),
+                      ),
+                      Expanded(
+                        child: ReorderableListView(
+                          onReorder: _onReorder,
+                          children: contentWidget(),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    SelectDialogWidget(
-                      title: 'A.',
-                      items: ids,
-                      diagnosisRepo: widget.diagnosisRepo,
-                      onSelect: (item) => answerA = item,
-                      currentValue: answerA,
-                    ),
-                    const SizedBox(height: 12),
-                    SelectDialogWidget(
-                      title: 'B.',
-                      items: ids,
-                      diagnosisRepo: widget.diagnosisRepo,
-                      onSelect: (item) => answerB = item,
-                      currentValue: answerB,
-                    ),
-                    const SizedBox(height: 12),
-                    SelectDialogWidget(
-                      title: 'C.',
-                      items: ids,
-                      diagnosisRepo: widget.diagnosisRepo,
-                      onSelect: (item) => answerC = item,
-                      currentValue: answerC,
-                    ),
-                    const SizedBox(height: 12),
-                    SelectDialogWidget(
-                      title: 'D.',
-                      items: ids,
-                      diagnosisRepo: widget.diagnosisRepo,
-                      onSelect: (item) => answerD = item,
-                      currentValue: answerD,
-                    ),
-                    const SizedBox(height: 36),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Explain Text",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(15),
+              constraints: const BoxConstraints(maxWidth: 380),
+              margin: const EdgeInsets.only(left: 20),
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+                border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              width: 380,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                      ),
+                      elevation: 8,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Add Title Element",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(fontSize: 14, color: Colors.black),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: 370,
+                              height: 70,
+                              child: TextField(
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                controller: titleController,
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                textAlign: TextAlign.justify,
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.black.withOpacity(0.1),
+                                      width: 1.3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.black.withOpacity(0.1),
+                                      width: 1.3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  hintText: 'Enter title',
+                                  contentPadding: const EdgeInsets.only(
+                                    left: 15,
+                                    right: 15,
+                                    top: 18,
+                                    bottom: 18,
+                                  ),
+                                  counterText: '',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            AppButton(
+                              width: 360,
+                              text: 'Save and add',
+                              isActive: true,
+                              onTap: () {
+                                if (titleController.text.isNotEmpty) {
+                                  setState(() {
+                                    if (editedIndex != null) {
+                                      list![editedIndex!].text =
+                                          titleController.text;
+                                    } else {
+                                      list!.add(
+                                        ElementModel(
+                                            text: titleController.text,
+                                            type: ElementType.title),
+                                      );
+                                    }
+                                  });
+                                  titleController.clear();
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            AppButton(
+                              width: 360,
+                              text: 'Clear title',
+                              isActive: false,
+                              onTap: () => titleController.clear(),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Container(
-                      width: 370,
-                      constraints: BoxConstraints(maxHeight: 150),
-                      child: TextField(
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        controller: textController,
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        // textAlign: TextAlign.justify,
-                        decoration: InputDecoration(
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black.withOpacity(0.1),
-                              width: 1.3,
-                            ),
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.black.withOpacity(0.1),
-                              width: 1.3,
-                            ),
-                            borderRadius: BorderRadius.circular(15.0),
-                          ),
-                          hintText: 'Enter text',
-                          contentPadding: const EdgeInsets.only(
-                            left: 15,
-                            right: 15,
-                            top: 18,
-                            bottom: 18,
-                          ),
-                          counterText: '',
-                        ),
-                      )
+                    SizedBox(
+                      height: 12,
                     ),
-                    const SizedBox(height: 20),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        "Choose the type of question",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
+                    Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    _premium(),
-                    const SizedBox(height: 30),
-                    AppButton(
-                      width: 360,
-                      text: widget.eventModel != null
-                          ? 'Update Question'
-                          : 'Add New Question',
-                      isActive: true,
-                      // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
-                      onTap: () => done(),
-                    ),
-                    const SizedBox(height: 20),
-                    AppButton(
-                      width: 360,
-                      text: 'Back',
-                      isActive: false,
-                      onTap: () => context.backPage(),
+                      elevation: 8,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Add Text Element",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(fontSize: 14, color: Colors.black),
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            SizedBox(
+                              width: 370,
+                              height: 150,
+                              child: TextField(
+                                style: Theme.of(context).textTheme.bodyLarge,
+                                controller: textController,
+                                maxLines: null,
+                                keyboardType: TextInputType.multiline,
+                                textAlign: TextAlign.justify,
+                                decoration: InputDecoration(
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.black.withOpacity(0.1),
+                                      width: 1.3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.black.withOpacity(0.1),
+                                      width: 1.3,
+                                    ),
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  hintText: 'Enter text',
+                                  contentPadding: const EdgeInsets.only(
+                                    left: 15,
+                                    right: 15,
+                                    top: 18,
+                                    bottom: 18,
+                                  ),
+                                  counterText: '',
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            AppButton(
+                              width: 360,
+                              text: 'Save and add',
+                              isActive: true,
+                              onTap: () {
+                                if (textController.text.isNotEmpty) {
+                                  setState(() {
+                                    if (editedIndex != null) {
+                                      list![editedIndex!].text =
+                                          textController.text;
+                                    } else {
+                                      list!.add(
+                                        ElementModel(
+                                            text: textController.text,
+                                            type: ElementType.text),
+                                      );
+                                    }
+                                  });
+                                  textController.clear();
+                                }
+                              },
+                            ),
+                            const SizedBox(height: 20),
+                            AppButton(
+                              width: 360,
+                              text: 'Clear text',
+                              isActive: false,
+                              onTap: () => textController.clear(),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              )),
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+    return bodyContent();
+  }
+
+  Widget bodyContent(){
+    return Container(
+      padding: const EdgeInsets.all(15),
+      margin: const EdgeInsets.only(left: 20),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(26.0)),
+        border: Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      constraints: const BoxConstraints(maxWidth: 380),
+      child: Scrollbar(
+        thumbVisibility: true,
+        controller: _scrollController,
+        child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Padding(
+              padding: const EdgeInsets.only(right: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Correct Diagnosis",
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium
+                          ?.copyWith(fontSize: 14, color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SelectDialogWidget(
+                    title: '',
+                    items: ids,
+                    diagnosisRepo: widget.diagnosisRepo,
+                    onSelect: (item) => correctAnswer = item,
+                    currentValue: correctAnswer,
+                  ),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "ECG image",
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium
+                          ?.copyWith(fontSize: 14, color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Stack(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          borderRadius:
+                          const BorderRadius.all(Radius.circular(15.0)),
+                          border: Border.all(
+                              color: Colors.black.withOpacity(0.1), width: 1.3),
+                        ),
+                        width: 360,
+                        height: 150,
+                        child: _image(),
+                      ),
+                      Positioned(
+                        bottom: 15,
+                        right: 15,
+                        child: InkWell(
+                          hoverColor: Colors.transparent,
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          onTap: () async {
+                            var a = await AppImagePicker.getImage(compress: true);
+                            if (a != null) {
+                              setState(() {
+                                newImage = a;
+                              });
+                            }
+                          },
+                          child: SvgPicture.asset("assets/images/svg/plus.svg"),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Text(
+                        "4 Answers",
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium
+                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      ),
+                      Spacer(),
+                      TextButton(
+                        onPressed: (){
+                          if(correctAnswer == '-1'){
+                            Toast.show(message: 'Select diagnosis');
+                          } else {
+                            List<String> copy = List.of(ids);
+                            copy.remove(correctAnswer);
+                            copy.shuffle();
+                            List<String> result =  copy.take(3).toList();
+                            result.add(correctAnswer);
+                            result.shuffle();
+                            setState(() {
+                              answerA = result[0];
+                              answerB = result[1];
+                              answerC = result[2];
+                              answerD = result[3];
+                            });
+                          }
+                        },
+                        child: Text(
+                          "Random",
+                          style: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(fontSize: 14, color: AppTheme.actionColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  SelectDialogWidget(
+                    title: 'A.',
+                    items: ids,
+                    diagnosisRepo: widget.diagnosisRepo,
+                    onSelect: (item) => answerA = item,
+                    currentValue: answerA,
+                  ),
+                  const SizedBox(height: 12),
+                  SelectDialogWidget(
+                    title: 'B.',
+                    items: ids,
+                    diagnosisRepo: widget.diagnosisRepo,
+                    onSelect: (item) => answerB = item,
+                    currentValue: answerB,
+                  ),
+                  const SizedBox(height: 12),
+                  SelectDialogWidget(
+                    title: 'C.',
+                    items: ids,
+                    diagnosisRepo: widget.diagnosisRepo,
+                    onSelect: (item) => answerC = item,
+                    currentValue: answerC,
+                  ),
+                  const SizedBox(height: 12),
+                  SelectDialogWidget(
+                    title: 'D.',
+                    items: ids,
+                    diagnosisRepo: widget.diagnosisRepo,
+                    onSelect: (item) => answerD = item,
+                    currentValue: answerD,
+                  ),
+                  const SizedBox(height: 16),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Choose the type of question",
+                      style: Theme.of(context)
+                          .textTheme
+                          .labelMedium
+                          ?.copyWith(fontSize: 14, color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _premium(),
+                  const SizedBox(height: 30),
+                  AppButton(
+                    width: 360,
+                    text: widget.eventModel != null
+                        ? 'Update Question'
+                        : 'Add New Question',
+                    isActive: true,
+                    // onTap: () => context.read<UserManagementProvider>().deleteUser(userUid: userUid),
+                    onTap: () => done(),
+                  ),
+                  const SizedBox(height: 20),
+                  AppButton(
+                    width: 360,
+                    text: 'Back',
+                    isActive: false,
+                    onTap: () => context.backPage(),
+                  ),
+                ],
+              ),
+            )),
       ),
     );
   }
@@ -383,6 +621,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
       return;
     }
 
+    if(list!.isEmpty){
+      Toast.show(message: 'Add Explain me content');
+      return;
+    }
+
     if (newImage != null) {
       String name = '${DateTime.now().millisecondsSinceEpoch.toString()}.png';
       await context.read<AddDiagnoseToStorageRepo>().addDiagnose(
@@ -399,6 +642,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
       // resizeAndCompressImage(newImage!, (image) async {});
     }
 
+
+
+
     if (newImage == null && currentImage != null) {
       setModel(currentImage!);
     }
@@ -409,20 +655,18 @@ class _CreateEventPageState extends State<CreateEventPage> {
       id: widget.eventModel?.id ??
           DateTime.now().millisecondsSinceEpoch.toString(),
       image: downloadImageUri,
-      text: textController.text,
       correctAnswer: correctAnswer,
       answerA: answerA,
       answerB: answerB,
       answerC: answerC,
       answerD: answerD,
+      list: list,
       isPremium: isPremium,
     );
     if (widget.eventModel != null) {
       await widget.eventRepo.edit(model).then((_) => finish());
     } else {
-
       await widget.eventRepo.add(model).then((_) => finish());
-
     }
   }
 
@@ -446,5 +690,106 @@ class _CreateEventPageState extends State<CreateEventPage> {
     } catch (e) {
       print('Error image download: $e');
     }
+  }
+
+  List<Widget> contentWidget() {
+    List<Widget> list = [];
+    for (int index = 0; index < this.list!.length; index++) {
+      var element = this.list![index];
+      if (element.uint8list != null) {
+        list.add(
+          item(Image.memory(element.uint8list!), '$index', () => edit(index),
+                  () => remove(index)),
+        );
+      } else {
+        if (element.type == ElementType.image) {
+          list.add(
+            item(Image.network(element.text!), '$index', () => edit(index),
+                    () => remove(index)),
+          );
+        } else {
+          list.add(
+            item(
+                Text(
+                  element.text ?? '',
+                  style: element.type == ElementType.title
+                      ? Theme.of(context).textTheme.labelMedium
+                      : Theme.of(context).textTheme.bodyLarge,
+                ),
+                '$index',
+                    () => edit(index),
+                    () => remove(index)),
+          );
+        }
+      }
+    }
+    return list;
+  }
+
+  int? editedIndex;
+
+  void edit(int index) async {
+    ElementModel elementModel = list![index];
+    if(elementModel.type == ElementType.text){
+      textController.text = elementModel.text!;
+    } else {
+      titleController.text = elementModel.text!;
+    }
+    editedIndex = index;
+  }
+
+  void remove(int index) {
+    setState(() {
+      list!.removeAt(index);
+    });
+  }
+
+  Widget item(Widget widget, String key, Function() edit, Function() remove) {
+    return Container(
+      key: Key(key),
+      padding: const EdgeInsets.only(left: 16, right: 30, top: 6, bottom: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(16.0)),
+        border: Border.all(color: const Color(0xffD9D9D9), width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Expanded(child: widget),
+          const SizedBox(
+            width: 3,
+          ),
+          InkWell(
+            onTap: edit,
+            child: SvgPicture.asset(
+              width: 20,
+              height: 20,
+              "assets/images/svg/edit.svg",
+            ),
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          InkWell(
+            onTap: remove,
+            child: SvgPicture.asset(
+              width: 20,
+              height: 20,
+              "assets/images/svg/delete.svg",
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) {
+        newIndex -= 1;
+      }
+      final item = list!.removeAt(oldIndex);
+      list!.insert(newIndex, item);
+    });
   }
 }
