@@ -458,6 +458,14 @@ class LearningItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    String? text;
+    model.list?.forEach((e){
+      if(e.type == ElementType.text){
+        text ??= e.text!;
+      }
+    });
+
     return Container(
       margin: const EdgeInsets.all(5),
       padding: const EdgeInsets.all(10),
@@ -469,6 +477,7 @@ class LearningItemWidget extends StatelessWidget {
       width: 200,
       height: 120,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -509,9 +518,12 @@ class LearningItemWidget extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          const Text(
-              'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,'),
+         SizedBox(height: 10,),
+          Text(
+              text ?? '', maxLines: 4, style: Theme.of(context)
+              .textTheme
+              .bodyMedium
+          ),
         ],
       ),
     );

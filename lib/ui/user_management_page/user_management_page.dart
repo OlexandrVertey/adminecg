@@ -640,6 +640,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
             const SizedBox(width: 10),
             InkWell(
               onTap: () {
+                String? endPlan;
+                if(getStatusUser(item: item) != 'Free'){
+                  endPlan = item.endPlans;
+                }
                 _userNameController.text = item.fullName!;
                 _emailController.text = item.email!;
                 _passwordController.text = item.password!;
@@ -648,6 +652,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   builder: (_) => EditUserDialog(
                     title: 'Edit User',
                     userUid: item.userUid!,
+                    premiumEnd: endPlan,
                     userNameController: _userNameController,
                     emailController: _emailController,
                     passwordController: _passwordController,

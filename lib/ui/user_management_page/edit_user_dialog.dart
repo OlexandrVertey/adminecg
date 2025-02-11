@@ -4,6 +4,7 @@ import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/select_dialog_widget.dart';
 import 'package:adminecg/ui/widgets/text_field_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_rounded_date_picker/flutter_rounded_date_picker.dart';
 
 class EditUserDialog extends StatefulWidget {
@@ -18,10 +19,12 @@ class EditUserDialog extends StatefulWidget {
     this.organisationId,
     this.selectedOrgId,
     this.organisations,
+    this.premiumEnd,
   });
 
   final String title;
   final String userUid;
+  final String? premiumEnd;
   final TextEditingController userNameController;
   final TextEditingController emailController;
   final TextEditingController passwordController;
@@ -145,10 +148,19 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 const SizedBox(height: 12),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text(
-                    'States',
-                    style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
-                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                    Text(
+                      'States',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 14, color: Colors.black),
+                    ),
+                    if(widget.premiumEnd != null)const SizedBox(width: 10),
+                    if(widget.premiumEnd != null)Text(
+                      'Premium will ended ${DateFormat('yyyy-MM-dd – kk:mm').format(DateTime.parse(widget.premiumEnd!))}',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 10, color: Colors.black),
+                    )
+                  ],),
                 ),
                 const SizedBox(height: 10),
                 Row(
@@ -200,7 +212,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                         context: context,
                         initialDate: DateTime.now(),
                         firstDate: DateTime(DateTime.now().year - 1),
-                        lastDate: DateTime(DateTime.now().year + 1),
+                        lastDate: DateTime(DateTime.now().year + 10),
                         borderRadius: 16,
                       ).then((value) {
                         setState(() {
