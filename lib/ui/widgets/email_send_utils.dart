@@ -6,7 +6,7 @@ Future<void> sendEmail(Map<String, dynamic> map) async {
   final response = await http.post(
     url,
     headers: {
-      'Authorization': 'Bearer QShi0DRjSNK9JDVraCBE0w',
+      ///TODO: need add token
       'Content-Type': 'application/json',
     },
     body: jsonEncode({
@@ -15,13 +15,16 @@ Future<void> sendEmail(Map<String, dynamic> map) async {
           'to': [
             {'email': map['email']}
           ],
-          'subject': 'subject',
+          'subject': "You have a registered account in the ECG Practice Application",
         }
       ],
+      'from': {
+        'email': 'ecgpracticeapp@gmail.com',
+      },
       'content': [
         {
           'type': 'text/plain',
-          'value': 'message',
+          'value': "You have a registered account in the ECG Practice Application\nemail: ${map['email']}\n password: ${map['password']}\nlink to the app: not avalible yet",
         }
       ],
     }),

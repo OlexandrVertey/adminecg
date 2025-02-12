@@ -72,15 +72,16 @@ class UserManagementProvider extends ChangeNotifier {
     required String userUid,
     required String userEmail,
     required String userName,
+    required String password,
   }) async {
     try {
-      await deleteUserRepo.deleteUser(userUid: userUid);
+      await deleteUserRepo.deleteUser(userUid: userUid, email: userEmail, password: password,);
 
-      await removedUsersRepo.setRemovedUser(
-        userUid: userUid,
-        userName: userName,
-        email: userEmail,
-      );
+      // await removedUsersRepo.setRemovedUser(
+      //   userUid: userUid,
+      //   userName: userName,
+      //   email: userEmail,
+      // );
 
       getUserModel();
     } catch (e) {}

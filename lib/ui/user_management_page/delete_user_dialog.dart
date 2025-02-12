@@ -11,6 +11,7 @@ class DeleteUserDialog extends StatelessWidget {
     required this.userUid,
     required this.userEmail,
     required this.userName,
+    required this.password,
     required this.isUser,
   });
 
@@ -18,6 +19,7 @@ class DeleteUserDialog extends StatelessWidget {
   final String userUid;
   final String userEmail;
   final String userName;
+  final String password;
   final bool isUser;
 
   @override
@@ -45,6 +47,7 @@ class DeleteUserDialog extends StatelessWidget {
                       userUid: userUid,
                       userEmail: userEmail,
                       userName: userName,
+                      password: password,
                     )
                 : context.read<UserManagementProvider>().deleteOrganization(context: context, id: userUid),
           ),
