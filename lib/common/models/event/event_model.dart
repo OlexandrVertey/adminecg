@@ -8,6 +8,7 @@ class EventModel {
   final String answerC;
   final String answerD;
   final bool isPremium;
+  final String? photoName;
 
   EventModel({
     required this.id,
@@ -19,6 +20,7 @@ class EventModel {
     required this.answerC,
     required this.answerD,
     required this.isPremium,
+    this.photoName,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) => EventModel(
@@ -31,6 +33,7 @@ class EventModel {
     answerC: json["answerC"],
     answerD: json["answerD"],
     isPremium: json["isPremium"],
+    photoName: json["photoName"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -43,5 +46,6 @@ class EventModel {
     "answerC": answerC,
     "answerD": answerD,
     "isPremium": isPremium,
+    "photoName": photoName,
   };
 }

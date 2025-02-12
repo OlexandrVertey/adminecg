@@ -46,6 +46,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
   String answerC = '-1';
   String answerD = '-1';
   bool isPremium = false;
+  String? name;
 
   @override
   void initState() {
@@ -104,12 +105,27 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     const SizedBox(height: 16),
                     Align(
                       alignment: Alignment.centerLeft,
-                      child: Text(
-                        "ECG image",
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelMedium
-                            ?.copyWith(fontSize: 14, color: Colors.black),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            "ECG image",
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(fontSize: 14, color: Colors.black),
+                          ),
+                          if(name != null)SizedBox(width: 8,),
+                          if(name != null)Expanded(
+                            child: Text(
+                              name!,
+                              maxLines: 1,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -135,7 +151,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             splashColor: Colors.transparent,
                             highlightColor: Colors.transparent,
                             onTap: () async {
-                              var a = await AppImagePicker.getImage(compress: true);
+                              var a = await AppImagePicker.getImage(compress: true, getName: (name){
+                                this.name = name;
+                              });
                               if (a != null) {
                                 setState(() {
                                   newImage = a;
