@@ -115,7 +115,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                 .labelMedium
                                 ?.copyWith(fontSize: 14, color: Colors.black),
                           ),
-                          if(name != null)SizedBox(width: 8,),
+                          if(name != null)const SizedBox(width: 8,),
                           if(name != null)Expanded(
                             child: Text(
                               name!,
@@ -175,7 +175,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                               .labelMedium
                               ?.copyWith(fontSize: 14, color: Colors.black),
                         ),
-                        Spacer(),
+                        const Spacer(),
                         TextButton(
                           onPressed: (){
                             if(correctAnswer == '-1'){
@@ -251,7 +251,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     const SizedBox(height: 10),
                     Container(
                         width: 370,
-                        constraints: BoxConstraints(maxHeight: 150),
+                        constraints: const BoxConstraints(maxHeight: 150),
                         child: TextField(
                           style: Theme.of(context).textTheme.bodyLarge,
                           controller: textController,

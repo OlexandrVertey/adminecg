@@ -51,4 +51,10 @@ class LearningCollection extends Collection {
   }
 }
 
+class StatisticCollection extends Collection {
+  StatisticCollection() {
+    _ref = cloud_firestore.FirebaseFirestore.instance.collection('Statistic');
+  }
+}
+
 
