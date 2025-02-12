@@ -58,6 +58,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       answerB = widget.eventModel!.answerB;
       answerC = widget.eventModel!.answerC;
       answerD = widget.eventModel!.answerD;
+      name = widget.eventModel!.photoName;
       isPremium = widget.eventModel!.isPremium;
       currentImage = widget.eventModel!.image;
       _downloadImage(widget.eventModel!.image);
@@ -434,6 +435,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
       answerC: answerC,
       answerD: answerD,
       isPremium: isPremium,
+      photoName: name,
     );
     if (widget.eventModel != null) {
       await widget.eventRepo.edit(model).then((_) => finish());
