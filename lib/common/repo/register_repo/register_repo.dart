@@ -13,6 +13,7 @@ class RegisterRepo {
     try {
       UserCredential user = await auth.createUserWithEmailAndPassword(email: email, password: password);
       if (user.user != null) {
+        await auth.currentUser?.sendEmailVerification();
         return user;
       }
     }  on FirebaseAuthException catch (e) {
