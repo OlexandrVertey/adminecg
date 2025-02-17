@@ -1,14 +1,10 @@
-import 'dart:convert';
-
 import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/ui/login_page/login_page_provider.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/text_field_widget.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -61,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
                         spreadRadius: 5,
                         blurRadius: 7,
                         offset:
-                        const Offset(0, 3), // changes position of shadow
+                        const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -138,60 +134,5 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
     );
-  }
-}
-
-class TempTestRequest extends StatefulWidget {
-  const TempTestRequest({super.key});
-
-  @override
-  State<TempTestRequest> createState() => _TempTestRequestState();
-}
-
-class _TempTestRequestState extends State<TempTestRequest> {
-  String status = 'Sleep';
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SelectableText(status),
-            SizedBox(
-              height: 20,
-            ),
-            TextButton(
-              onPressed: () {
-                sendEmailV3();
-              },
-              child: Text('run3'),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  Future<void> sendEmailV3() async {
-    updateStatus('response.data');
-    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendEmail');
-    try {
-      final response = await callable.call({
-        'toEmail': 'gss.guru.info@gmail.com',
-        'subject': 'Hello from Flutter V3',
-        'content': 'This is a test email sent from Flutter using Firebase Cloud Functions. Ve ${DateTime.now()}',
-      });
-      updateStatus(response.data); // {message: "Email sent successfully!"}
-    } catch (e) {
-      updateStatus('Error: $e');
-    }
-  }
-
-  void updateStatus(String text) {
-    setState(() {
-      status = text;
-    });
   }
 }
