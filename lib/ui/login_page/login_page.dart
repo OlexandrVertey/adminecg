@@ -4,6 +4,7 @@ import 'package:adminecg/common/extensions/navigation.dart';
 import 'package:adminecg/ui/login_page/login_page_provider.dart';
 import 'package:adminecg/ui/widgets/app_button.dart';
 import 'package:adminecg/ui/widgets/text_field_widget.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
@@ -36,25 +37,23 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 40),
                     SvgPicture.asset("assets/images/svg/get_started.svg"),
                     const SizedBox(height: 60),
-                    InkWell(child: Text(
+                    Text(
                       'Application Management Panel',
-                      style: Theme.of(context)
+                      style: Theme
+                          .of(context)
                           .textTheme
                           .headlineMedium
                           ?.copyWith(fontSize: 26),
-                    ), onTap: (){
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => const TempTestRequest()));
-                    },),
+                    )
                   ],
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 70, vertical: 100),
+                  const EdgeInsets.symmetric(horizontal: 70, vertical: 100),
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(26.0)),
                     border:
-                        Border.all(color: const Color(0xffD9D9D9), width: 1.3),
+                    Border.all(color: const Color(0xffD9D9D9), width: 1.3),
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(
@@ -62,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
                         spreadRadius: 5,
                         blurRadius: 7,
                         offset:
-                            const Offset(0, 3), // changes position of shadow
+                        const Offset(0, 3), // changes position of shadow
                       ),
                     ],
                   ),
@@ -71,7 +70,8 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       Text(
                         'Username',
-                        style: Theme.of(context)
+                        style: Theme
+                            .of(context)
                             .textTheme
                             .labelMedium
                             ?.copyWith(fontSize: 12),
@@ -91,7 +91,8 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 20),
                       Text(
                         'Password',
-                        style: Theme.of(context)
+                        style: Theme
+                            .of(context)
                             .textTheme
                             .labelMedium
                             ?.copyWith(fontSize: 12),
@@ -121,7 +122,7 @@ class _LoginPageState extends State<LoginPage> {
                         isActive: value.state.loginButtonIsActive,
                         onTap: () {
                           if (value.state.userNameController.text ==
-                                  'nadav7415@gmail.com' &&
+                              'nadav7415@gmail.com' &&
                               value.state.passwordController.text ==
                                   'A!dmin74150603') {
                             context.openMainManagementPage();
@@ -149,23 +150,23 @@ class TempTestRequest extends StatefulWidget {
 
 class _TempTestRequestState extends State<TempTestRequest> {
   String status = 'Sleep';
+
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(status),
+            SelectableText(status),
             SizedBox(
               height: 20,
             ),
             TextButton(
               onPressed: () {
-                sendEmail();
+                sendEmailV3();
               },
-              child: Text('run'),
+              child: Text('run3'),
             )
           ],
         ),
@@ -173,51 +174,22 @@ class _TempTestRequestState extends State<TempTestRequest> {
     );
   }
 
-  Future<void> sendEmail() async {
-    updateStatus('runing');
-    final url = Uri.parse('https://api.sendgrid.com/v3/mail/send');
-    try{
-      final response = await http.post(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          "Access-Control-Allow-Origin": "https://api.sendgrid.com", // Required for CORS support to work
-          "Access-Control-Allow-Credentials": 'true', // Required for cookies, authorization headers with HTTPS
-          "Access-Control-Allow-Headers": "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-          "Access-Control-Allow-Methods": "POST, OPTIONS"
-        },
-        body: jsonEncode({
-          'personalizations': [
-            {
-              'to': [
-                {'email': 'bulasovmikhailo@gmail.com'}
-              ],
-              'subject': 'subject',
-            }
-          ],
-          'from': {
-            'email': 'ecgpracticeapp@gmail.com',
-          },
-          'content': [
-            {
-              'type': 'text/plain',
-              'value': 'message',
-            }
-          ],
-        }),
-      );
-
-      if (response.statusCode == 202) {
-        updateStatus('Email sent successfully!');
-      } else {
-        updateStatus('Failed to send email: ${response.body}');
-      }
-    } catch (e){
-      updateStatus('$e');
+  Future<void> sendEmailV3() async {
+    updateStatus('response.data');
+    HttpsCallable callable = FirebaseFunctions.instance.httpsCallable('sendEmail');
+    try {
+      final response = await callable.call({
+        'toEmail': 'gss.guru.info@gmail.com',
+        'subject': 'Hello from Flutter V3',
+        'content': 'This is a test email sent from Flutter using Firebase Cloud Functions. Ve ${DateTime.now()}',
+      });
+      updateStatus(response.data); // {message: "Email sent successfully!"}
+    } catch (e) {
+      updateStatus('Error: $e');
     }
   }
 
-  void updateStatus(String text){
+  void updateStatus(String text) {
     setState(() {
       status = text;
     });
