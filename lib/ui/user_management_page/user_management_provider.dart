@@ -207,7 +207,7 @@ class UserManagementProvider extends ChangeNotifier {
             organisation: organisation,
             registerData: now.toString(),
             states: states,
-            endPlans: duration.isNotEmpty ? duration : DateTime(now.year, now.month, now.day + 7, now.minute, now.second).toString(),
+            endPlans: duration.isNotEmpty ? duration : DateTime(now.year, now.month, now.day + 6, now.minute, now.second).toString(),
           );
           print('---RegisterProvider register 5 userCredential.user!.uid = ${userCredential.user!.uid}');
           getUserModel();
